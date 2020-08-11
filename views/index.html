@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="style1.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Messanger project</title>
+    <link rel="icon" href="Messenger-icon.png">
+    <audio id="myAudio">
+        <source src="audioping.mp3" type="audio/mp3">
+    </audio>
+</head>
+<body onload="serverPostDataOnLoad()">
+    <!--Settings menu=========================-->
+    <div id='all_settings' class="all_settings">
+        <div class="Exit" onclick="closesettings()"></div>
+        <div class="title">Info</div>
+    <div class="peopleCount">active users <span id="Count">1</span></div>
+    <div class="subTitle">Loged in as <span id="Yourname"></span></div>
+    <div class="tips"><a href="https://tipsandbugreport.netlify.app/">Tips/Report Bugs</a></div>
+        <div class="title">Settings</div>
+        <div class="subTitle">Theme</div>
+        <div class="div_Themesetting"><select onchange="themeselect()" class="themesetting" id="themesetting">
+            <option value="1">Dark Theme</option>
+            <option value="2">Gray Theme</option>
+            <option value="3">Light Theme</option>
+        </select></div>
+        <div class="logout"><button onclick="logout()">Logout</button></div>
+    </div>
+    <!--Settings menu=========================-->
+    <div id='uiWrapper' class="uiWrapper">
+        <a type='button' class="hamburger" onclick="opensettings()"></a>
+        <div id="message"></div>
+        <div class="filllermessageInputFeild"></div>
+        <div class="messageInputFeild">
+            <textarea placeholder="type a message here" id="input" maxlength="170" onkeydown="_EnterKey(event)" ></textarea>
+            <button onclick="inputMessage();">Enter</button>
+        </div>
+    </div>
+<!--====================================================================-->
+<script src="java.js"></script>
+<!--====================================================================-->
+</body>
+</html>

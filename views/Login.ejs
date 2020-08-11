@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style2.css" rel="stylesheet">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="form">
+        <div class="title">Messaging Project</div>
+        <form id="theform" method="POST" action="/authentication">
+            <input autocomplete="username" name="username" maxlength="40" class="Username" type="text" placeholder="Username" required><br>
+            <input autocomplete="current-password" name="password" maxlength="15" class="Password" type="password" placeholder="Password" required><br>
+            <input id="ccookie" name="userId" maxlength="21" type="text" style="display: none;" readonly>
+            <button class="LoginButton">login</button>
+        </form>
+        <!--
+        <a href="register">Dont have an acount?</a>
+        -->
+    </div>
+    <script>
+            //function declaration
+            var B
+            var A
+            function edituidform(){
+            document.getElementById("ccookie").value = B
+            }
+            function checkcookie(){
+                if (document.cookie != ''){
+                    A = document.cookie.split(/[;=]+/);
+                    B = A.indexOf("userId") + 1
+                    B = A[B]
+                    edituidform()
+                }else{
+                    document.cookie = "userId = " + rand + ";"   
+                    cookiecheck()
+                }
+            }
+            function cookiecheck(){
+                if (document.cookie == ''){
+                    alert('this site cannot function properly without cookies, please activate cookies')
+                    wait()
+                }else{     
+                    A = document.cookie.split(/[;=]+/);
+                    B = A.indexOf("userId") + 1
+                    B = A[B]
+                    edituidform()
+                }
+            }
+            //===================
+            rand = Math.random()
+                 checkcookie()
+                    
+            document.forms['theform'].addEventListener('submit', (event) => {
+            event.preventDefault(); 
+            fetch( '/authentication', {
+                method: 'POST',
+                body: new URLSearchParams(new FormData(theform))
+
+            }).then((resp) => {
+                return resp.text(); // or resp.text() or whatever the server sends
+            }).then((body) => {
+                if (body == 'Wrong password or Username'){
+                    alert(body)
+                } else if (body == 'correct password and username'){
+                    location.replace("/")
+                }
+            })
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+/*========================variables============================*/
+:root{
+    --bodyColor: rgb(20, 20, 20);
+    --textColor: white;
+    --hamburgerColor: brightness(100%);
+    --textareaColor: rgb(20, 20, 20);
+    --buttonColor:rgb(20, 20, 20);
+    --textareaAbuttonTextColor: white;
+    --yellowColor: rgb(196, 199, 0);
+    --greenColor: #52fb9e ;
+    --blueColor: ;
+    --lineColor: white;
+}
+
+/*=============================body and html=================================*/
+html,body{
+    margin: 0 0 0 0;
+    background-color: var(--bodyColor);
+}
+/*==================all settings========================*/
+.all_settings{
+    display: none;
+    background-color:  var(--bodyColor);
+    border-color: seashell;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+}
+.Exit{
+    content:url('sculHXa0yTwnjua8K7MixqA.png');
+    height: 3vw;
+    width: 4vw;
+    position: fixed;
+    top:.5vw;
+    right: 0;
+    cursor: pointer;
+}
+.title{
+    letter-spacing: .1em;
+    margin:2vh 0 0 0;
+    color: var(--textareaAbuttonTextColor);
+    text-align: center;
+    font-size: 3vw;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.peopleCount{
+    text-align: center;
+    top:0;
+    position: sticky;
+    padding: 5px;
+    border-color: black !important;
+    margin: 0;
+    font-size: 2vw;
+    color: var(--yellowColor);
+    font-family: Arial, Helvetica, sans-serif;
+}
+.subTitle{
+    margin:.5vw 0 0 0;
+    color: var(--yellowColor);
+    text-align: center;
+    font-size: 2vw;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.tips{
+    text-align: center;
+    font-size: 2vw;
+    margin-top: .5vw;
+}
+.tips a{
+    color:yellowgreen;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.div_Themesetting{
+    text-align: center;
+}
+.themesetting{
+    margin: .5vw 0 0 0;
+    font-size: 2vw;
+    cursor: pointer;
+}
+.logout{
+    margin: 2vw 0 0 0;
+    text-align: center;
+}
+.logout button{
+    font-size: 2vw;
+    cursor: pointer;
+}
+/*=====================================================*/
+.hamburger{
+    content:url('snmsl4Qwk07akNVlEC4aSEw.png');
+    height: 2.7vw;
+    width: 3.2vw;
+    right: 0;
+    margin: .5vw 1vw 0 0;
+    filter: var(--hamburgerColor);
+    position: fixed;
+    transition: all .5s;
+    cursor: pointer;
+}
+.hamburger:hover{
+    transition: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+.text{
+    position: static;
+    text-align: center;
+    word-wrap: break-word;
+    padding: 20px 40px 20px 40px ;
+    border:solid;
+    border-width: 0 0 1px 0;
+    border-radius: 8px;
+    border-color: var(--lineColor) !important;
+    margin: 0;
+    font-size: 2vw;
+    color: var(--textColor);
+    font-family: Arial, Helvetica, sans-serif;
+}
+.textSenderName{
+    color: var(--greenColor);
+    float: left;
+}
+.filllermessageInputFeild{
+    bottom: 0;
+    display: flex;
+    position: relative;
+    font-size: 2vw;
+    height: 3em;
+    margin: 0; 
+}
+.messageInputFeild{
+    background-color: var(--bodyColor);
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    position: fixed;
+    font-size: 2vw;
+    height: 3em;
+    margin: 0; 
+}
+.messageInputFeild textarea{
+    outline: none;
+    color: var(--textareaAbuttonTextColor);
+    background-color: var(--textareaColor);
+    display: inline-block;
+    margin: 0;
+    height: 100%;
+    width: 90%;
+    position: static;
+    font-size: 2vw;
+    resize: none;
+    padding:10px 2px 0 15px;
+    line-height:1em;
+    font-family: Arial, Helvetica, sans-serif;
+    border:none;
+}
+.messageInputFeild button{
+    outline: none;
+    color: var(--textareaAbuttonTextColor);
+    background-color: var(--buttonColor);
+    display: inline-block;
+    margin: 0;
+    height: 100%;
+    width: 10%;
+    position: static;
+    font-size: 2vw;
+    line-height:1em;
+    font-family: Arial, Helvetica, sans-serif;
+    border:none;
+}
+@media only screen and (max-width: 1000px){
+    html,body{
+    margin: 0 0 0 0;
+    } 
+    .Exit{
+        height: 10vw;
+        width: 13vw;
+    }
+    .all_settings .title{
+    font-size: 7vw;
+    }
+    .peopleCount{ 
+        font-size: 5vw;
+    }
+    .themesetting{
+        font-size: 5vw;
+    }
+    .subTitle{
+        font-size: 5vw;
+    }
+    .tips a{
+        font-size: 5vw;
+    }
+    .logout button{
+        font-size: 5vw;
+    }
+    .hamburger{
+        height: 10vw;
+        width: 10vw;
+    }
+    .text{
+        font-size: 5vw;
+        padding: 20px 20px 20px 10px;
+    }
+    .filllermessageInputFeild{
+        font-size: 5vw;
+    }
+    .messageInputFeild{
+        font-size: 5vw;
+    }
+    .messageInputFeild button{
+        font-size: 5vw;
+        width: 20%;
+    }
+    .messageInputFeild textarea{
+       font-size: 5vw;
+       width: 80%;
+    }
+}
