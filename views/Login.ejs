@@ -1,6 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        if (document.cookie != ''){
+            var cA
+            var cB
+            cA = document.cookie.split(/[;=]+/);
+            cB = cA.indexOf("userId") + 1
+            cB = cA[cB]
+            cB = cB.toString()
+            cB = {cook: cB}
+            console.log(cB)
+            let options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cB)
+            };
+            fetch('/userauth', options)
+            .then(response=>response.json())
+            .then((body)=>{
+                if (body.access == 'denied') {
+                    document.cookie = "userId = ; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+                } else if (body.access == 'granted') {
+                    location.replace("/")
+                }
+            }
+            )
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="style2.css" rel="stylesheet">
@@ -29,6 +58,7 @@
             }
             function checkcookie(){
                 if (document.cookie != ''){
+                    //usless to have but just in case
                     A = document.cookie.split(/[;=]+/);
                     B = A.indexOf("userId") + 1
                     B = A[B]

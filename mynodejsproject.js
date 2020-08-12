@@ -28,19 +28,14 @@ var F
 var L
 var E = []
 var A = [];
-var onlyuid = []
+var onlyuid = []//only uid not username
 const allusers = [
     {username : 'Tony',password : 'HY76365g4q65g4'},
     {username : 'Lee', password : 'ta3DK4sRD4b5cz'},
     {username : 'Finn',password : 'Km3reCY3qrEANG'},
-    {username : 'Blaise',password : 'raognS39hdAz7H'},
-    {username : 'Dad',password : 'Dad'},
-    {username : 'Seb',password : 'Seb'},
-    {username : 'Mom',password : 'Mom'}
+    {username : 'Blaise',password : 'raognS39hdAz7H'}
 ]
-const allUid = [
-
-]
+const allUid = []//username and uid
 //=============================================================================function decleration
 function uchange(){
     L = undefined
@@ -65,7 +60,11 @@ function pushUsers(){
 function pushUid(){
     for (i = 0; i < allUid.length ; i++){
         onlyuid.push(allUid[i].uid)
+        onlyuid = removeDuplicates(onlyuid)
     }
+}
+function removeDuplicates(data){
+    return data.filter((value, index) => data.indexOf (value) === index);
 }
 //=============================================================================page directorys rendered
 app.get('/',(request, response) =>{
@@ -93,7 +92,6 @@ app.post('/Ucount', (request, response) =>{
 //=========================================/AUTHENTICATION
 pushUsers()
 app.post('/authentication', (request, response) =>{
-    console.log(request.body)
     var username = request.body.username
     var password = request.body.password
     var userId = request.body.userId
@@ -115,7 +113,7 @@ app.post('/userauth', (request, response) =>{
     var cookie = request.body.cook
     if (onlyuid.indexOf(cookie) != -1){
         var C = onlyuid.indexOf(cookie)
-        var usernameresponse  = allUid[C].username
+        var usernameresponse  = allUid[C].username  
         response.send({access: 'granted', username: usernameresponse})
     }else{
         response.send({access: 'denied'})

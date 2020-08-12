@@ -59,7 +59,7 @@ function logout(){
 async function UserIdSend(){
     /*send user id to see how
      many users there are*/
-    data = {string: Uid};
+    data = {string: answer};
     const options = {
         method: 'POST',
         headers: {
@@ -69,7 +69,11 @@ async function UserIdSend(){
     };
     const response = await fetch('/Ucount', options);
     const json = await response.json();
-    document.getElementById("Count").innerHTML = json;
+    if (json == 1){
+        document.getElementById("Count").innerHTML = '= only you';
+    }else{
+        document.getElementById("Count").innerHTML = json;
+    }
 } 
 //=======================================sajax
 async function sajax(info){
