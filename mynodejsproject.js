@@ -1,5 +1,6 @@
 /*contents
 -package decelaration
+-database
 -server info/ start server
 -var decleration
 -function decleration
@@ -7,17 +8,66 @@
 -page directorys un-rendered
 -setinterval functions
 */
+
+
 //=============================================================================package decleration
 const express = require('express');
-const { request, response } = require('express');
+const mongoose = require('mongoose');
+const { request, response, json } = require('express');
 const app = express();
 //
 app.use(express.urlencoded({
     extended: true
   })) 
+//=================================================================================database
+const uri = 'mongodb+srv://user:w1USbmlx1czTHgBR@my-very-first-cluster.x6gyx.gcp.mongodb.net/messaging?retryWrites=true&w=majority'
+mongoose.connect(uri, {
+    useNewUrlParser:true,
+    useUnifiedTopology:true
+}) 
+mongoose.connection.on('connected', () => {
+    console.log('mongoose is connected!!!!')
+})
+//schema
+const schema = mongoose.schema
+const DataSchema = new mongoose.Schema({
+    username: String,
+    password: String
+})/*
+const DataPost = mongoose.model('DataPost', DataSchema);//model
+var omg = "Lee"
+var fpw = 'ta3DK4sRD4b5cz'
+DataPost.find({ username: omg})
+.then((data)=>{
+   if (data == ''){
+        console.log('-query not found')
+   }else {
+       console.log('username correct')
+       if (data[0].password == fpw){
+        console.log('succsessfull login')
+       }else{
+           console.log('password incorect')
+       }
+   }
+    
+})
+*/
+//instanse
+/*const datadb = {
+    title: 'yo wasup',
+    body: 'my name is tony'
+}
+const newDataPost = new DataPost(datadb);
+newDataPost.save((error) => {
+    if (error) {
+        console.log('somthing happened witht the db')
+    } else {
+        console.log('data has been saved')
+    }
+})*/
 //=============================================================================server info/ start server
 const port = process.env.Port || 3000; 
-app.listen(port, () => console.log('server started on ' + port));
+app.listen(port, () => console.log('server started on port ' + port));
 app.use(express.static('views'))  
 app.use(express.json()) 
 //=============================================================================var decleration
@@ -30,10 +80,10 @@ var E = []
 var A = [];
 var onlyuid = []//only uid not username
 const allusers = [
-    {username : 'Tony',password : 'HY76365g4q65g4'},
-    {username : 'Lee', password : 'ta3DK4sRD4b5cz'},
-    {username : 'Finn',password : 'Km3reCY3qrEANG'},
-    {username : 'Blaise',password : 'raognS39hdAz7H'}
+    {"username" : "Tony","password" : "HY76365g4q65g4"},
+    {"username" : "Lee","password" : "ta3DK4sRD4b5cz"},
+    {"username" : "Finn","password" : "Km3reCY3qrEANG"},
+    {"username" : "Blaise","password" : "raognS39hdAz7H"} 
 ]
 const allUid = []//username and uid
 //=============================================================================function decleration

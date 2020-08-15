@@ -206,7 +206,6 @@ function inputMessage(){
     let inputValue = document.getElementById("input").value;
     if (inputValue !== "" && inputValue.trim().length !== 0 && inputValue.includes("<") !== true && inputValue.includes(">") !== true ){
         //inputValue = inputValue.replace(/<|>/g, " ");
-        console.log(inputValue)
         let div = document.createElement("div")
         div.innerHTML = '<span style="color:#63caec; float:left;">'+ 'you- ' + '</span>' + inputValue;
         div.setAttribute('class', 'text')
@@ -257,7 +256,7 @@ function themeselect(){
     let root = document.documentElement;
     switch (document.getElementById('themesetting').value){
         case '1':
-            console.log('black')
+            //black
             root.style.setProperty('--bodyColor', "rgb(20, 20, 20)");
             root.style.setProperty('--textColor', "white");
             root.style.setProperty('--hamburgerColor', "brightness(100%)");
@@ -269,7 +268,7 @@ function themeselect(){
             root.style.setProperty('--greenColor', "#52fb9e");
             break;
         case '2':
-            console.log('gray')
+            //gray
             root.style.setProperty('--bodyColor', "rgb(56, 56, 56)");
             root.style.setProperty('--textColor', "white");
             root.style.setProperty('--hamburgerColor', "brightness(100%)");
@@ -281,7 +280,7 @@ function themeselect(){
             root.style.setProperty('--greenColor', "#52fb9e");
         break;
         case '3':
-            console.log('white')
+            //white
             root.style.setProperty('--bodyColor', "white");
             root.style.setProperty('--textColor', "rgb(56, 56, 56)");
             root.style.setProperty('--hamburgerColor', "brightness(30%)");
