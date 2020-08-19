@@ -20,7 +20,7 @@ app.use(express.urlencoded({
     extended: true
   })) 
 //=================================================================================database
-const uri = 'mongodb+srv://lkNCQEUVe9bN3L1Q:xv5n97R1YMuIkR9R@my-very-first-cluster.x6gyx.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority'
+const uri = 'mongodb+srv://lkNCQEUVe9bN3L1Q:xv5n97R1YMuIkR9R@my-very-first-cluster.x6gyx.gcp.mongodb.net/messaging?retryWrites=true&w=majority'
 mongoose.connect(uri, {
     useNewUrlParser:true,
     useUnifiedTopology:true
