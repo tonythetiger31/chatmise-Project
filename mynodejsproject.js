@@ -32,9 +32,20 @@ mongoose.connection.on('connected', () => {
 const schema = mongoose.schema
 const DataSchema = new mongoose.Schema({
     username: String,
-    password: String
-})/*
+    password: String,
+    usertoken: Number,
+    text: String,
+    time: Number,
+    sender: String,
+})
+
 const DataPost = mongoose.model('DataPost', DataSchema);//model
+const usertoken = mongoose.model('usertoken', DataSchema)
+const texts = mongoose.model('texts', DataSchema)
+
+
+
+/*
 var omg = "Lee"
 var fpw = 'ta3DK4sRD4b5cz'
 DataPost.find({ username: omg})
@@ -48,44 +59,21 @@ DataPost.find({ username: omg})
        }else{
            console.log('password incorect')
        }
-   }
-    
+   } 
 })
 */
-//instanse
-/*const datadb = {
-    title: 'yo wasup',
-    body: 'my name is tony'
-}
-const newDataPost = new DataPost(datadb);
-newDataPost.save((error) => {
-    if (error) {
-        console.log('somthing happened witht the db')
-    } else {
-        console.log('data has been saved')
-    }
-})*/
 //=============================================================================server info/ start server
 const port = process.env.Port || 3000; 
 app.listen(port, () => console.log('server started on port ' + port));
 app.use(express.static('views'))  
 app.use(express.json()) 
 //=============================================================================var decleration
-var data = [{ text: 'Start of the conversation', time: 1595995547750, sender:'server'}]
 var S = []
 var U = '1';
 var F
 var L
 var E = []
 var A = [];
-var onlyuid = []//only uid not username
-const allusers = [
-    {"username" : "Tony","password" : "HY76365g4q65g4"},
-    {"username" : "Lee","password" : "ta3DK4sRD4b5cz"},
-    {"username" : "Finn","password" : "Km3reCY3qrEANG"},
-    {"username" : "Blaise","password" : "raognS39hdAz7H"} 
-]
-const allUid = []//username and uid
 //=============================================================================function decleration
 function uchange(){
     L = undefined
@@ -101,17 +89,6 @@ function uchange(){
     U = L
     U = U.toString()
     S = []
-} 
-function pushUsers(){
-    for (i = 0; i < allusers.length ; i++){
-        A.push(allusers[i].username)
-    }
-}
-function pushUid(){
-    for (i = 0; i < allUid.length ; i++){
-        onlyuid.push(allUid[i].uid)
-        onlyuid = removeDuplicates(onlyuid)
-    }
 }
 function removeDuplicates(data){
     return data.filter((value, index) => data.indexOf (value) === index);
@@ -123,51 +100,102 @@ app.get('/',(request, response) =>{
 app.get('/login',(request, response) =>{
     response.render('Login.ejs')
 });
-app.get('/register',(request, response) =>{
+/*app.get('/register',(request, response) =>{
     response.render('register.ejs')
-});
+});*/
 //=============================================================================page directorys un-rendered
-app.post('/api',(request, response) =>{
+app.post('/texts',(request, response) =>{
     if (Object.keys(request.body).length !== 0){
-        data.push(request.body);
-        console.log('new transmiton----')
-        console.log(request.body)
+        text = request.body.text
+        time = request.body.time
+        sender = request.body.sender
+        console.log('new transmiton----',request.body,'------------')
+        var datadb = {
+            text: text,
+            time: time,
+            sender: sender
+        }
+        var newtexts = new texts(datadb);
+        newtexts.save((error) => {
+            if (error) {
+                console.log('somthing happened witht the db -texts')
+            } else {
+                console.log('text saved')
+            }
+        })
     }
+    texts.find({})
+    .then((data)=>{
     response.send(data);
+})
 });
+//=========================================/USERCOUNT
 app.post('/Ucount', (request, response) =>{
     S.push(request.body);
     response.send(U);
 });
 //=========================================/AUTHENTICATION
-pushUsers()
 app.post('/authentication', (request, response) =>{
     var username = request.body.username
     var password = request.body.password
     var userId = request.body.userId
-    if (A.indexOf(username) != -1){
-        var B = A.indexOf(username)
-        if (password == allusers[B].password){
-            allUid.push({uid: userId, username: username})
-            console.log(allUid)
-            response.send('correct password and username')
-        } else {
+    DataPost.find({ username: username})
+    .then((data)=>{ 
+        if (data == ''){
             response.send('Wrong password or Username')
-        }
-    }else{
-        response.send('Wrong password or Username')
-    }
+        }else {
+            if (data[0].password == password){
+                var datadb = {
+                    usertoken: userId,
+                    username: username
+                }
+                var newusertoken = new usertoken(datadb);
+                newusertoken.save((error) => {
+                    if (error) {
+                        console.log('somthing happened witht the db')
+                    } else {
+                        response.send('correct password and username')
+                        console.log('user loged in')
+                        console.log(userId)
+                    }
+                })
+            }else{
+                response.send('Wrong password or Username')
+            }
+        } 
+     })
 })
 app.post('/userauth', (request, response) =>{
-    pushUid()
     var cookie = request.body.cook
-    if (onlyuid.indexOf(cookie) != -1){
-        var C = onlyuid.indexOf(cookie)
-        var usernameresponse  = allUid[C].username  
-        response.send({access: 'granted', username: usernameresponse})
-    }else{
-        response.send({access: 'denied'})
-    }
+    usertoken.find({ usertoken: cookie})
+    .then((data)=>{ 
+        if (data == ''){
+            response.send({access: 'denied'})
+        } else {
+            if (data[0].usertoken == cookie){
+                var usernameresponse = data[0].username
+                response.send({access: 'granted', username: usernameresponse})
+            }
+        }
+    })
+})
+app.delete('/logout', (request, response) => {
+
+    var cookie = request.body.cook
+   /*usertoken.find({ usertoken: cookie})
+    .then((data)=>{
+        console.log(data[0].usertoken)
+     })*/
+    usertoken.findOneAndRemove({usertoken: cookie}, function (err, ){
+        if(err){
+            console.log('error')  
+            response.send('400')
+        }
+        else{
+            console.log('success')
+            response.send('200')
+        }
+    });
 })
 //=============================================================================setinterval functions
 setInterval(uchange, 5000);

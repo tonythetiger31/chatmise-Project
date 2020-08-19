@@ -16,12 +16,13 @@ cB = cA.indexOf("userId") + 1
 cB = cA[cB]
 cB = cB.toString()
 cB = {cook: cB}
+const usertokenauth = cB
 let options = {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
     },
-    body: JSON.stringify(cB)
+    body: JSON.stringify(usertokenauth)
 };
 fetch('/userauth', options)
 .then(response=>response.json())
@@ -50,8 +51,17 @@ var date = new Date();
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=======================================logout
-function logout(){
+async function logout(){
     //logs user out
+    const options = {
+        method: 'delete',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(usertokenauth)
+    };
+    const response = await fetch('/logout', options);
+    const json = await response.json();
     document.cookie = "userId = ; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
     location.replace("/login")
 }
@@ -70,11 +80,11 @@ async function UserIdSend(){
     const response = await fetch('/Ucount', options);
     const json = await response.json();
     if (json == 1){
-        document.getElementById("Count").innerHTML = '= only you';
+        document.getElementById("Count").innerHTML = ': only you';
     }else{
-        document.getElementById("Count").innerHTML = json;
-    }
-} 
+        document.getElementById("Count").innerHTML = ": "+json;
+    } 
+}
 //=======================================sajax
 async function sajax(info){
     /*semi ajax to load user 
@@ -92,7 +102,7 @@ async function sajax(info){
         },
         body: JSON.stringify(data)
     };
-    const response = await fetch('/api', options);
+    const response = await fetch('/texts', options);
     const json = await response.json();
     for (i = 0; i < json.length; i++){
         /*leaves only a array [] for each text
@@ -146,7 +156,7 @@ async function serverPostData(info){
         },
         body: JSON.stringify(data)
     }; 
-    const response = await fetch('/api', options);
+    const response = await fetch('/texts', options);
     const json = await response.json();
     check = CTime
 };
@@ -163,7 +173,7 @@ async function serverPostData(info){
         },
         body: JSON.stringify(data)
     };
-    const response = await fetch('/api', options);//post data
+    const response = await fetch('/texts', options);//post data
     const json = await response.json();// recives response
     
     for (i = 0; i < json.length; i++){
@@ -214,6 +224,7 @@ function inputMessage(){
         document.getElementById("input").value = "";
         J.push(inputValue);
         serverPostData(J);
+        document.getElementById('input').focus();
     }
     else if (inputValue.includes("<") == true || inputValue.includes(">") == true ){
         alert('please do not use < or > characters')
