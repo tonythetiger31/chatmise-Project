@@ -2,9 +2,10 @@
   "name": "nodejsproject",
   "version": "1.0.0",
   "description": "first time using express",
-  "main": "mynodejsproject.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "keywords": [
     "first"
@@ -12,11 +13,13 @@
   "author": "Tony Flores",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.0",
+    "dotenv": "^8.2.0",
     "ejs": "^3.1.3",
     "express": "^4.17.1",
-    "express-sse": "^0.5.3",
     "mongodb": "^3.6.0",
     "mongoose": "^5.9.28",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "passport": "^0.4.1"
   }
 }

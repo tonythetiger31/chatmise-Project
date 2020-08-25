@@ -10,7 +10,7 @@
         <source src="audioping.mp3" type="audio/mp3">
     </audio>
 </head>
-<body onload="serverPostDataOnLoad()">
+<body onload="serverPostDataOnLoad();">
     <!--Settings menu=========================-->
     <div id='all_settings' class="all_settings">
         <div class="Exit" onclick="closesettings()"></div>
@@ -20,7 +20,7 @@
     <div class="tips"><a href="https://tipsandbugreport.netlify.app/">Tips/Report Bugs</a></div>
         <div class="title">Settings</div>
         <div class="subTitle">Theme</div>
-        <div class="div_Themesetting"><select onchange="themeselect()" class="themesetting" id="themesetting">
+        <div class="div_Themesetting"><select onchange="passValOfTheme()" class="themesetting" id="themesetting">
             <option value="1">Dark Theme</option>
             <option value="2">Gray Theme</option>
             <option value="3">Light Theme</option>

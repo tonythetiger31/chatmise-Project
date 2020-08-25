@@ -8,7 +8,6 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================authentication
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-var answer
 var cA
 var cB
 cA = document.cookie.split(/[;=]+/);
@@ -30,11 +29,17 @@ fetch('/userauth', options)
     if (body.access == 'denied') {
         location.replace("/login")
     } else if (body.access == 'granted') {
-        answer = body.username
-        document.getElementById("Yourname").innerHTML = answer
+        Object.defineProperty(window, 'currentUser', {
+            value: body.username,
+            configurable: false,
+            writable: false})
+        console.log('currentUser = ',currentUser)
+        document.getElementById("Yourname").innerHTML = currentUser
+        settheme()
     }
-}
-)
+})
+currentUser = "ignored"
+console.log(currentUser)
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================Variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -47,9 +52,43 @@ var sa = true
 var oy = true
 var check
 var date = new Date();
+var themeStore
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//=======================================changeSettings
+async function changeSettings(settingval){
+    data = {val : settingval,
+            user: currentUser}
+    const options = {
+        method: 'Post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    };
+    const response = await fetch('/themeset', options);
+    const json = await response.json();
+    console.log(json)
+}
+//=======================================settheme
+function settheme(){
+    data = {user : currentUser}
+    console.log(data)
+    const options = {
+        method: 'Post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    };
+    fetch('/themeget', options)
+    .then(response=>response.json())
+    .then((body)=>{
+        themetype = body.settings
+        themeselect(themetype)
+    })
+}
 //=======================================logout
 async function logout(){
     //logs user out
@@ -69,7 +108,7 @@ async function logout(){
 async function UserIdSend(){
     /*send user id to see how
      many users there are*/
-    data = {string: answer};
+    data = {string: currentUser};
     const options = {
         method: 'POST',
         headers: {
@@ -147,7 +186,7 @@ async function serverPostData(info){
     data = {
         text: info,
         time: CTime,
-        sender: answer
+        sender: currentUser
     };
     const options = {
         method: 'POST',
@@ -261,11 +300,19 @@ function closesettings(){
     document.getElementById('uiWrapper').style.display = "block";
     document.getElementById('all_settings').style.display = "none";  
 }
+//=======================================passValOfTheme
+function passValOfTheme(){
+    var themesetting =  document.getElementById('themesetting').value
+    themeselect(themesetting)
+    changeSettings(themesetting)
+}
 //=======================================themeselect
-function themeselect(){
+function themeselect(themeint){
     //selects from multiple themes
+    ti = themeint.toString()
     let root = document.documentElement;
-    switch (document.getElementById('themesetting').value){
+    document.getElementById('themesetting').value = ti
+    switch (ti){
         case '1':
             //black
             root.style.setProperty('--bodyColor', "rgb(20, 20, 20)");

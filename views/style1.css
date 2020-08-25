@@ -97,6 +97,7 @@ html,body{
     position: fixed;
     transition: all .5s;
     cursor: pointer;
+    z-index: +1;
 }
 .hamburger:hover{
     transition: cubic-bezier(0.445, 0.05, 0.55, 0.95);
