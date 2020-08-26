@@ -1,4 +1,4 @@
-const database = require('./database')
+const database = require('../database')
 const { response } = require('express')
 const DataPost = database.DataPost
 exports.themeset = (request, response) => {

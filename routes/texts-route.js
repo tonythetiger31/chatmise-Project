@@ -1,4 +1,4 @@
-const database = require('./database')
+const database = require('../database')
 const texts = database.texts
 exports.main =  function(request, response){
         if (Object.keys(request.body).length !== 0){

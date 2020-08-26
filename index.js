@@ -19,13 +19,14 @@ require('dotenv').config()
 //eviorment variables
 const uri = process.env.uri
 //project files
-const textsFunc = require('./texts-route')
+const textsFunc = require('./routes/texts-route')
 const database = require('./database')
-const theme = require('./theme')
+const theme = require('./routes/theme')
 //
 app.use(express.urlencoded({
     extended: true
   })) 
+//header_options
 app.disable('x-powered-by');  
 //=================================================================================database
 database.main(uri)
@@ -46,14 +47,11 @@ var E = []
 var A = [];
 //=============================================================================function decleration
 function uchange(){
-    L = undefined
-    F = undefined
-    E = []
+    //counts number of active users
+    L = undefined;F = undefined;E = []
     for (i = 0; i < S.length; i++){//leaves only a array [] for each text, still multidementional 
-        E.push(S[i].string)
-    }
+        E.push(S[i].string)}
     F = E.filter((item, i, ar) => ar.indexOf(item) === i);
-    
     L = F.length 
     //console.log('users = ' + L)
     U = L
@@ -82,57 +80,68 @@ app.post('/Ucount', (request, response) =>{
     response.send(U);
 });
 //=========================================/AUTHENTICATION
-app.post('/authentication', (request, response) =>{
+app.post('/authentication', (request, response) => {
     var username = request.body.username
     var password = request.body.password
     var userId = request.body.userId
     console.log(request.body)
-    DataPost.find({ username: username})
-    .then((data)=>{ 
-        if (data == ''){
-            response.send('Wrong password or Username')
-        }else {
-            if (data[0].password === password){
-                var datadb = {
-                    usertoken: userId,
-                    username: username
-                }
-                var newusertoken = new usertoken(datadb);
-                newusertoken.save((error) => {
-                    if (error) {
-                        console.log('somthing happened witht the db')
-                    } else {
-                        response.send('correct password and username')
-                        console.log('user loged in')
-                        console.log(userId)
-                    }
-                })
-            }else{
+    DataPost.find({
+            username: username
+        })
+        .then((data) => {
+            if (data == '') {
                 response.send('Wrong password or Username')
+            } else {
+                if (data[0].password === password) {
+                    var datadb = {
+                        usertoken: userId,
+                        username: username
+                    }
+                    var newusertoken = new usertoken(datadb);
+                    newusertoken.save((error) => {
+                        if (error) {
+                            console.log('somthing happened witht the db')
+                        } else {
+                            response.send('correct password and username')
+                            console.log('user loged in')
+                            console.log(userId)
+                        }
+                    })
+                } else {
+                    response.send('Wrong password or Username')
+                }
             }
-        } 
-     })
+        })
 })
 //=========================================/AUTHORISATION
-app.post('/userauth', (request, response) =>{
+app.post('/userauth', (request, response) => {
     var cookie = request.body.cook
-    if(cookie === undefined || cookie === null || cookie === ''){
+    if (cookie === undefined || cookie === null || cookie === '') {
         console.log('denied1')
-        response.send({"access": "denied"})
+        response.send({
+            "access": "denied"
+        })
     } else {
-    usertoken.find({ usertoken: cookie})
-    .then((data)=>{ 
-        if (data == ''){
-            console.log('denied2')
-            response.send({"access": "denied"})
-        } else {
-            if (data[0].usertoken == cookie){
-                var usernameresponse = data[0].username
-                response.send({access: 'granted', username: usernameresponse})
-            }
-        }
-    })
-}
+        usertoken.find({
+                usertoken: cookie
+            })
+            .then((data) => {
+                if (data == '') {
+                    console.log('denied2')
+                    response.send({
+                        "access": "denied"
+                    })
+                } else {
+                    if (data[0].usertoken == cookie) {
+                        var usernameresponse = data[0].username
+                        response.send({
+                            access: 'granted',
+                            username: usernameresponse
+                        })
+                    }
+                }
+            })
+    }
 })
 //=========================================/LOGOUT
 app.delete('/logout', (request, response) => {
