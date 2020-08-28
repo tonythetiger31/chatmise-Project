@@ -2,7 +2,6 @@ const database = require('../database')
 const texts = database.texts
 const usertoken = database.usertoken
 const methods = require('../methods')
-const { compare } = require('bcrypt')
 
 exports.post = function(request, response) {
     //if (request.body.text > 1000){
