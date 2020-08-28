@@ -33,16 +33,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="style2.css" rel="stylesheet">
-    <title>Loginn</title>
+    <title>Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="form">
         <div class="title">Messaging Project</div>
         <form id="theform" method="POST" action="/authentication">
-            <input autocomplete="username" name="username" maxlength="40" class="Username" type="text" placeholder="Username" required><br>
-            <input autocomplete="current-password" name="password" maxlength="15" class="Password" type="password" placeholder="Password" required><br>
-            <input id="ccookie" name="userId" maxlength="21" type="text" style="display: none;" readonly>
+            <input autocomplete="username" name="username" maxlength="30" class="Username" type="text" placeholder="Username" required><br>
+            <input autocomplete="current-password" name="password" maxlength="30" class="Password" type="password" placeholder="Password" required><br>
+            <input id="ccookie" name="userId" maxlength="30" type="text" style="display: none;" readonly>
             <button class="LoginButton">login</button>
         </form>
         <!--
@@ -95,7 +95,7 @@
      }).then((resp) => {
          return resp.text(); // or resp.text() or whatever the server sends
      }).then((body) => {
-         if (body == 'Wrong password or Username') {
+         if (body != 'correct password and username') {
              alert(body)
          } else if (body == 'correct password and username') {
              location.replace("/")

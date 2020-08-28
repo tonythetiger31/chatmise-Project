@@ -6,41 +6,6 @@
 -style functions
 */
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//=============================================================================authentication
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-var cA
-var cB
-cA = document.cookie.split(/[;=]+/);
-cB = cA.indexOf("userId") + 1
-cB = cA[cB]
-cB = cB.toString()
-cB = {cook: cB}
-const usertokenauth = cB
-let options = {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(usertokenauth)
-};
-fetch('/userauth', options)
-.then(response=>response.json())
-.then((body)=>{
-    if (body.access == 'denied') {
-        location.replace("/login")
-    } else if (body.access == 'granted') {
-        Object.defineProperty(window, 'currentUser', {
-            value: body.username,
-            configurable: false,
-            writable: false})
-        console.log('currentUser = ',currentUser)
-        document.getElementById("Yourname").innerHTML = currentUser
-        settheme()
-    }
-})
-currentUser = "ignored"
-console.log(currentUser)
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================Variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 var Uid = Math.random()
@@ -53,10 +18,18 @@ var oy = true
 var check
 var date = new Date();
 var themeStore
+const currentUser = cookieParse(document.cookie, 'userId')
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=======================================changeSettings
+function cookieParse(cookie, key){
+    cA = cookie.split(/[;=]+/);
+    cB = cA.indexOf(key) + 1
+    cB = cA[cB]
+    cB = cB.toString()
+    return(cB)
+}
 async function changeSettings(settingval){
     data = {val : settingval,
             user: currentUser}
@@ -94,10 +67,6 @@ async function logout(){
     //logs user out
     const options = {
         method: 'delete',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(usertokenauth)
     };
     const response = await fetch('/logout', options);
     const json = await response.json();

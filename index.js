@@ -7,12 +7,14 @@
 -page directorys rendered
 -page directorys un-rendered
 -setinterval functions
+-exports
 */
 //=============================================================================package decleration
 //npm
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt')
+const ejs = require('ejs')
 const { request, response, json, Router } = require('express');
 const app = express();
 require('dotenv').config()
@@ -22,20 +24,22 @@ const uri = process.env.uri
 const textsFunc = require('./routes/texts-route')
 const database = require('./database')
 const theme = require('./routes/theme')
+const methods = require('./methods')
 //
 app.use(express.urlencoded({
     extended: true
   })) 
 //header_options
 app.disable('x-powered-by');  
+
 //=================================================================================database
 database.main(uri)
 const DataPost = database.DataPost
 const usertoken = database.usertoken
 const texts = database.texts
 //=============================================================================server info/ start server
-const port = process.env.Port || 3000; 
-app.listen(port, () => console.log('server started on port ' + port));
+const PORT = process.env.PORT || 80; 
+app.listen(PORT, () => console.log('server started on port ' + PORT));
 app.use(express.static('views'))
 app.use(express.json())
 //=============================================================================var decleration
@@ -63,7 +67,37 @@ function removeDuplicates(data){
 }
 //=============================================================================page directorys rendered
 app.get('/',(request, response) =>{
-    response.render('index.html')
+    var cookie = request.headers.cookie
+    if (cookie === undefined || cookie === null || cookie === '') {
+        response.status(403)
+        response.redirect('/login');
+    } else {
+        if (cookie.length > 50) {
+            response.redirect('/login');
+         } else {
+            var cookie = methods.cookieParse(request.headers.cookie, 'userId')
+            if (cookie === undefined || cookie === null || cookie === '') {
+                console.log('denied1')
+                response.status(403)
+                response.redirect('/login');
+            } else {
+                usertoken.find({
+                        usertoken: cookie
+                    })
+                    .then((data) => {
+                        if (data == '') {
+                            console.log('denied2')
+                            response.status(403)
+                            response.redirect('/login');
+                        } else if (data[0].usertoken == cookie) {
+                            username = data[0].username
+                            response.render('index.ejs', {username: username})
+                            response.status(200)
+                        }
+                    })
+            }
+        }
+    }
 });
 app.get('/login',(request, response) =>{
     response.render('Login.ejs')
@@ -73,7 +107,7 @@ app.get('/login',(request, response) =>{
 });*/
 //=============================================================================page directorys un-rendered
 //=========================================/TEXTS
-app.post('/texts', textsFunc.main)
+app.post('/texts', textsFunc.post)
 //=========================================/USERCOUNT
 app.post('/Ucount', (request, response) =>{
     S.push(request.body);
@@ -85,7 +119,12 @@ app.post('/authentication', (request, response) => {
     var password = request.body.password
     var userId = request.body.userId
     console.log(request.body)
-    DataPost.find({
+    if (request.body.username.length > 25
+        || request.body.password.length > 25
+        || request.body.userId.length > 25){
+            response.send('one or multiple of your inputs was too long, max size is 25 characters')
+        }else{
+            DataPost.find({
             username: username
         })
         .then((data) => {
@@ -112,52 +151,23 @@ app.post('/authentication', (request, response) => {
                 }
             }
         })
-})
-//=========================================/AUTHORISATION
-app.post('/userauth', (request, response) => {
-    var cookie = request.body.cook
-    if (cookie === undefined || cookie === null || cookie === '') {
-        console.log('denied1')
-        response.send({
-            "access": "denied"
-        })
-    } else {
-        usertoken.find({
-                usertoken: cookie
-            })
-            .then((data) => {
-                if (data == '') {
-                    console.log('denied2')
-                    response.send({
-                        "access": "denied"
-                    })
-                } else {
-                    if (data[0].usertoken == cookie) {
-                        var usernameresponse = data[0].username
-                        response.send({
-                            access: 'granted',
-                            username: usernameresponse
-                        })
-                    }
-                }
-            })
     }
 })
 //=========================================/LOGOUT
 app.delete('/logout', (request, response) => {
-    var cookie = request.body.cook
-   /*usertoken.find({ usertoken: cookie})
-    .then((data)=>{
-        console.log(data[0].usertoken)
-     })*/
+    var cookie = request.headers.cookie
+    cookie = methods.cookieParse(cookie, 'userId')
+    cookie = Number(cookie)
+    console.log(cookie)
     usertoken.findOneAndRemove({usertoken: cookie}, function (err, ){
+        console.log(cookie)
         if(err){
             console.log('error')  
-            response.send('400')
+            response.status(400)
         }
         else{
             console.log('success')
-            response.send('200')
+            response.status(200)
         }
     });
 })
@@ -165,6 +175,11 @@ app.delete('/logout', (request, response) => {
 app.post('/themeset', theme.themeset)
 //=========================================/themeget
 app.post('/themeget', theme.themeget) 
+//
+
+
+
 //=============================================================================setinterval functions
 setInterval(uchange, 5000);
+//=============================================================================exports
 //node index.js
