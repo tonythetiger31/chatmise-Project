@@ -22,7 +22,7 @@ const currentUser = cookieParse(document.cookie, 'userId')
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//=======================================changeSettings
+//=======================================cookiepareser
 function cookieParse(cookie, key){
     cA = cookie.split(/[;=]+/);
     cB = cA.indexOf(key) + 1
@@ -30,6 +30,7 @@ function cookieParse(cookie, key){
     cB = cB.toString()
     return(cB)
 }
+//=======================================changeSettings
 async function changeSettings(settingval){
     data = {val : settingval,
             user: currentUser}
@@ -191,6 +192,7 @@ async function serverPostData(info){
         person.push(json[i].sender)
     }
     displayServerMessage(SMSG2, person)
+    settheme()
 }; 
 //=======================================displayServerMessage
 function displayServerMessage(text, sender){
