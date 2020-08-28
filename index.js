@@ -167,6 +167,7 @@ app.delete('/logout', (request, response) => {
         }
         else{
             console.log('success')
+            response.send({'response':'success'})
             response.status(200)
         }
     });
