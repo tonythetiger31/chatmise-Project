@@ -5,6 +5,7 @@
 -setinterval functions
 -style functions
 */
+setTimeout(loadstop, 1000)
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================Variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -314,4 +315,7 @@ function themeselect(themeint){
             root.style.setProperty('--lineColor', "black");
             root.style.setProperty('--greenColor', "#0bdc12");
     }
+}
+function loadstop(){
+    document.getElementById("loadimg").style.display="none";
 }

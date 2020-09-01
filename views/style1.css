@@ -17,6 +17,25 @@ html,body{
     margin: 0 0 0 0;
     background-color: var(--bodyColor);
 }
+/*loadimg*/
+#loadimg{
+    background-image:url('load.gif');
+    background-position:center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    width: auto;
+    height: 100vh;
+}
+#postloadwraper{
+    opacity: 1;
+    visibility: visible;
+    animation-name: apear;
+    animation-duration: 2s;
+}
+@keyframes apear{
+    0%,50%{opacity: 0;}
+    100%{opacity: 1;}
+}
 /*==================all settings========================*/
 .all_settings{
     display: none;
