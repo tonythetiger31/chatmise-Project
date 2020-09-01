@@ -10,7 +10,7 @@
 <body>
     <div class="form">
         <div class="title">Messaging Project</div>
-        <form id="theform" method="POST" action="/authentication">
+        <form id="theform" method="POST" action="/login">
             <input autocomplete="username" name="username" maxlength="30" class="Username" type="text" placeholder="Username" required><br>
             <input autocomplete="current-password" name="password" maxlength="30" class="Password" type="password" placeholder="Password" required><br>
             <button class="LoginButton">login</button>
@@ -25,7 +25,7 @@
  //===================
  document.forms['theform'].addEventListener('submit', (event) => {
      event.preventDefault();
-     fetch('/authentication', {
+     fetch('/login', {
          method: 'POST',
          body: new URLSearchParams(new FormData(theform))
 

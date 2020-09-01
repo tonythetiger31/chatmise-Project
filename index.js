@@ -21,12 +21,13 @@ require('dotenv').config()
 //eviorment variables
 const uri = process.env.uri
 //project files
-const textsFunc = require('./routes/texts-route')
+const textsDir = require('./routes/texts-route')
 const database = require('./database')
-const theme = require('./routes/theme')
+const themeDir = require('./routes/theme-route')
 const methods = require('./methods')
-const mainDir = require('./routes/MainDir')
-const LoginDir = require('./routes/login-route')
+const mainDir = require('./routes/main-route')
+const loginDir = require('./routes/login-route')
+const logoutDir = require('./routes/logout-route')
 //
 app.use(express.urlencoded({
     extended: true
@@ -70,90 +71,26 @@ function removeDuplicates(data){
 }
 //=============================================================================page directorys rendered
 app.get('/', mainDir.main)
-app.get('/login', LoginDir.main)
+app.get('/login', loginDir.get)
 /*app.get('/register',(request, response) =>{
     response.render('register.ejs')
 });*/
 //=============================================================================page directorys un-rendered
 //=========================================/TEXTS
-app.post('/texts', textsFunc.post)
+app.post('/texts', textsDir.post)
+app.get('/texts', textsDir.get)
 //=========================================/USERCOUNT
 app.post('/Ucount', (request, response) =>{
     S.push(request.body);
     response.send(U);
 });
-//=========================================/AUTHENTICATION
-app.post('/authentication', (request, response) => {
-    var username = request.body.username
-    var password = request.body.password
-    console.log(request.body)
-    if (request.body.username.length > 25
-        || request.body.password.length > 25){
-            response.send('one or multiple of your inputs was too long, max size is 25 characters')
-        }else{
-            DataPost.find({
-            username: username
-        })
-        .then((data) => {
-            if (data == '') {
-                response.send('Wrong password or Username')
-            } else {
-                if (data[0].password === password) {
-                    let userId = Math.random()
-                    var datadb = {
-                        usertoken: userId,
-                        username: username
-                    }
-                    var newusertoken = new usertoken(datadb);
-                    newusertoken.save((error) => {
-                        if (error) {
-                            console.log('somthing happened witht the db')
-                        } else {
-                            response.cookie('userId',userId, { maxAge: 302400000, httpOnly: true })
-                            response.send('You are now logedin')
-                            console.log('user loged in')
-                            console.log(userId)
-                        }
-                    })
-                } else {
-                    response.send('Wrong password or Username')
-                }
-            }
-        })
-    }
-})
+//=========================================/loginPost
+app.post('/login', loginDir.post)
 //=========================================/LOGOUT
-app.delete('/logout', (request, response) => {
-    var cookie = request.headers.cookie
-    if (cookie === undefined || cookie === null || cookie === '') {
-            response.send({'response':'success'})
-        } else {
-            var cookie = methods.cookieParse(request.headers.cookie, 'userId')
-            if (cookie === undefined || cookie === null || cookie === '') {
-            response.send({'response':'success'})
-            } else {
-                cookie = Number(cookie)
-                console.log(cookie)
-                usertoken.findOneAndRemove({usertoken: cookie}, function (err, ){
-                    console.log(cookie)
-                    if(err){
-                        console.log('error')  
-                        response.status(400)
-                    }
-                    else{
-                        console.log('success')
-                        response.cookie('userId','', { maxAge: 0, httpOnly: true })
-                        response.send({'response':'success'})
-                        response.status(200)
-                    }
-                });
-            }
-        }
-})
+app.delete('/logout', logoutDir.main)
 //=========================================/theme
-app.post('/theme', theme.themePost)
-app.get('/theme', theme.themeGet)
-//
+app.post('/theme', themeDir.themePost)
+app.get('/theme', themeDir.themeGet)
 //=============================================================================setinterval functions
 setInterval(uchange, 5000);
 //=============================================================================exports

@@ -90,7 +90,7 @@ async function UserIdSend(){
     } 
 }
 //=======================================sajax
-async function sajax(info){
+async function sajax(){
     /*semi ajax to load user 
     messages*/
     var name = []
@@ -98,13 +98,11 @@ async function sajax(info){
     pr = []
     SMSG1 = []
     last = []
-    data = {string: info};
     const options = {
-        method: 'POST',
+        method: 'get',
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        }
     };
     const response = await fetch('/texts', options);
     const json = await response.json();
@@ -168,17 +166,15 @@ async function serverPostData(info){
     check = CTime
 };
 //=======================================serverPostDataOnLoad
-    async function serverPostDataOnLoad(info){
+    async function serverPostDataOnLoad(){
         /*sends epmty string to 
         server and recives data*/
         person = []
-        data = {string: info};
     const options = {//meta data for post
-        method: 'POST',
+        method: 'get',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
     };
     const response = await fetch('/texts', options);//post data
     const json = await response.json();// recives response
