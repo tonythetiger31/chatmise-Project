@@ -25,6 +25,8 @@ const textsFunc = require('./routes/texts-route')
 const database = require('./database')
 const theme = require('./routes/theme')
 const methods = require('./methods')
+const mainDir = require('./routes/MainDir')
+const LoginDir = require('./routes/login-route')
 //
 app.use(express.urlencoded({
     extended: true
@@ -40,6 +42,7 @@ const texts = database.texts
 //=============================================================================server info/ start server
 const PORT = process.env.PORT || 80; 
 app.listen(PORT, () => console.log('server started on port ' + PORT));
+//app.use(express.static('views'))
 app.use(express.static('views'))
 app.use(express.json())
 //=============================================================================var decleration
@@ -66,42 +69,8 @@ function removeDuplicates(data){
     return data.filter((value, index) => data.indexOf (value) === index);
 }
 //=============================================================================page directorys rendered
-app.get('/',(request, response) =>{
-    var cookie = request.headers.cookie
-    if (cookie === undefined || cookie === null || cookie === '') {
-        response.status(403)
-        response.redirect('/login');
-    } else {
-        if (cookie.length > 50) {
-            response.redirect('/login');
-         } else {
-            var cookie = methods.cookieParse(request.headers.cookie, 'userId')
-            if (cookie === undefined || cookie === null || cookie === '') {
-                console.log('denied1')
-                response.status(403)
-                response.redirect('/login');
-            } else {
-                usertoken.find({
-                        usertoken: cookie
-                    })
-                    .then((data) => {
-                        if (data == '') {
-                            console.log('denied2')
-                            response.status(403)
-                            response.redirect('/login');
-                        } else if (data[0].usertoken == cookie) {
-                            username = data[0].username
-                            response.render('index.ejs', {username: username})
-                            response.status(200)
-                        }
-                    })
-            }
-        }
-    }
-});
-app.get('/login',(request, response) =>{
-    response.render('Login.ejs')
-});
+app.get('/', mainDir.main)
+app.get('/login', LoginDir.main)
 /*app.get('/register',(request, response) =>{
     response.render('register.ejs')
 });*/
@@ -117,11 +86,9 @@ app.post('/Ucount', (request, response) =>{
 app.post('/authentication', (request, response) => {
     var username = request.body.username
     var password = request.body.password
-    var userId = request.body.userId
     console.log(request.body)
     if (request.body.username.length > 25
-        || request.body.password.length > 25
-        || request.body.userId.length > 25){
+        || request.body.password.length > 25){
             response.send('one or multiple of your inputs was too long, max size is 25 characters')
         }else{
             DataPost.find({
@@ -132,6 +99,7 @@ app.post('/authentication', (request, response) => {
                 response.send('Wrong password or Username')
             } else {
                 if (data[0].password === password) {
+                    let userId = Math.random()
                     var datadb = {
                         usertoken: userId,
                         username: username
@@ -141,7 +109,8 @@ app.post('/authentication', (request, response) => {
                         if (error) {
                             console.log('somthing happened witht the db')
                         } else {
-                            response.send('correct password and username')
+                            response.cookie('userId',userId, { maxAge: 302400000, httpOnly: true })
+                            response.send('You are now logedin')
                             console.log('user loged in')
                             console.log(userId)
                         }
@@ -156,30 +125,35 @@ app.post('/authentication', (request, response) => {
 //=========================================/LOGOUT
 app.delete('/logout', (request, response) => {
     var cookie = request.headers.cookie
-    cookie = methods.cookieParse(cookie, 'userId')
-    cookie = Number(cookie)
-    console.log(cookie)
-    usertoken.findOneAndRemove({usertoken: cookie}, function (err, ){
-        console.log(cookie)
-        if(err){
-            console.log('error')  
-            response.status(400)
-        }
-        else{
-            console.log('success')
+    if (cookie === undefined || cookie === null || cookie === '') {
             response.send({'response':'success'})
-            response.status(200)
+        } else {
+            var cookie = methods.cookieParse(request.headers.cookie, 'userId')
+            if (cookie === undefined || cookie === null || cookie === '') {
+            response.send({'response':'success'})
+            } else {
+                cookie = Number(cookie)
+                console.log(cookie)
+                usertoken.findOneAndRemove({usertoken: cookie}, function (err, ){
+                    console.log(cookie)
+                    if(err){
+                        console.log('error')  
+                        response.status(400)
+                    }
+                    else{
+                        console.log('success')
+                        response.cookie('userId','', { maxAge: 0, httpOnly: true })
+                        response.send({'response':'success'})
+                        response.status(200)
+                    }
+                });
+            }
         }
-    });
 })
-//=========================================/themeset
-app.post('/themeset', theme.themeset)
-//=========================================/themeget
-app.post('/themeget', theme.themeget) 
+//=========================================/theme
+app.post('/theme', theme.themePost)
+app.get('/theme', theme.themeGet)
 //
-
-
-
 //=============================================================================setinterval functions
 setInterval(uchange, 5000);
 //=============================================================================exports

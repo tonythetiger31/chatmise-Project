@@ -30,10 +30,9 @@ function cookieParse(cookie, key){
     cB = cB.toString()
     return(cB)
 }
-//=======================================changeSettings
+//=======================================themePost
 async function changeSettings(settingval){
-    data = {val : settingval,
-            user: currentUser}
+    data = {val : settingval}
     const options = {
         method: 'Post',
         headers: {
@@ -41,22 +40,19 @@ async function changeSettings(settingval){
         },
         body: JSON.stringify(data)
     };
-    const response = await fetch('/themeset', options);
+    const response = await fetch('/theme', options);
     const json = await response.json();
     console.log(json)
 }
-//=======================================settheme
+//=======================================themeGet
 function settheme(){
-    data = {user : currentUser}
-    console.log(data)
     const options = {
-        method: 'Post',
+        method: 'get',
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        }
     };
-    fetch('/themeget', options)
+    fetch('/theme', options)
     .then(response=>response.json())
     .then((body)=>{
         themetype = body.settings
@@ -71,7 +67,6 @@ async function logout(){
     };
     const response = await fetch('/logout', options);
     const json = await response.json();
-    document.cookie = "userId = ; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
     location.replace("/login")
 }
 //=======================================useridsend
@@ -113,6 +108,9 @@ async function sajax(info){
     };
     const response = await fetch('/texts', options);
     const json = await response.json();
+    if (json.redirect == 'true'){
+        location.replace('/login')
+    }
     for (i = 0; i < json.length; i++){
         /*leaves only a array [] for each text
         , still multidementional*/

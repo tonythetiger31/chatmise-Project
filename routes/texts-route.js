@@ -10,8 +10,8 @@ exports.post = function(request, response) {
     
     var sender = request.headers.cookie
     if (sender == undefined || sender == null || sender == ''){
-        response.redirect('/login');
         console.log('redirected')
+        response.send({'redirect':'true'})
     }else{
     sender = methods.cookieParse(sender, 'userId')
     cSender = sender
@@ -20,7 +20,7 @@ exports.post = function(request, response) {
         })
         .then((data) => {
             if (data == '') {
-                response.redirect('/login');
+                response.send({'redirect':'true'})
             } else {
                     if(data[0].usertoken == cSender) {
                     sender = data[0].username

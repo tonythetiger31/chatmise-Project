@@ -3,11 +3,10 @@ const { response } = require('express')
 const DataPost = database.DataPost
 const usertoken = database.usertoken
 const methods = require('../methods')
-exports.themeset = (request, response) => {
+exports.themePost = (request, response) => {
     val = request.body.val
     var user = request.headers.cookie
     user = methods.cookieParse(user, 'userId')
-    console.log(user)
     usertoken.find({
         usertoken: user
     }).then((data) => {
@@ -23,11 +22,10 @@ exports.themeset = (request, response) => {
 })
     response.send('200')
 }
-exports.themeget = (request, response) => {
+exports.themeGet = (request, response) => {
     val = request.body.val
     var user = request.headers.cookie
     user = methods.cookieParse(user, 'userId')
-    console.log(user)
     usertoken.find({
         usertoken: user
     }).then((data) => {
