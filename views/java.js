@@ -11,15 +11,15 @@ setTimeout(loadstop, 1000)
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 var Uid = Math.random()
 var J = [];
-var SMSG2 = [];
+var SMSG2 = [];//STORES TEXTS
 var SMSG1 = [];
+var txtNum//number of texts currently loaded
 var ot = undefined
 var sa = true
 var oy = true
 var check
 var date = new Date();
 var themeStore
-const currentUser = cookieParse(document.cookie, 'userId')
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -74,13 +74,11 @@ async function logout(){
 async function UserIdSend(){
     /*send user id to see how
      many users there are*/
-    data = {string: currentUser};
     const options = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        }
     };
     const response = await fetch('/Ucount', options);
     const json = await response.json();
@@ -91,59 +89,59 @@ async function UserIdSend(){
     } 
 }
 //=======================================sajax
-async function sajax(){
+function sajax(){
+    var stext = []
+    var sperson = []
+    var send2 = []
     /*semi ajax to load user 
     messages*/
-    var name = []
-    var bruh = undefined
-    pr = []
-    SMSG1 = []
-    last = []
     const options = {
         method: 'get',
         headers: {
             'Content-Type': 'application/json'
         }
     };
-    const response = await fetch('/texts', options);
-    const json = await response.json();
-    if (json.redirect == 'true'){
+    fetch('/texts', options)
+    .then(response=>response.json())
+    .then((body)=>{
+    if (body.redirect == 'true'){
         location.replace('/login')
-    }
-    for (i = 0; i < json.length; i++){
-        /*leaves only a array [] for each text
-        , still multidementional*/
-        SMSG1.push(json[i].time)
-    }
-    if (sa === true){
-        ot = json
-        sa = false
-    } 
-    if (oy === true){
-        SMSG2 = SMSG1  
-        oy = false
-    }
-    if (ot.length !== json.length && json[json.length -1].time != check){
-        
-        arr =   SMSG1.filter(x => SMSG2.indexOf(x) === -1)
-        for(i = 0; i < arr.length; i++){
-           pr.push(json.findIndex(x => x.time === arr[i]))
+    }else if (body.textNum != txtNum){
+        dif = body.textNum - txtNum
+        for (i = 0; i < dif;i++){
+            send1 = txtNum + i
+            send2.push(send1)
         }
-        for(i = 0; i < pr.length; i++){
-            bruh = pr[i]
-            last.push(json[bruh].text)
+        console.log('send2', send2)
+        data = {required: send2}
+        const options = {//meta data for post
+            method: 'Post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        };
+        fetch('/texts', options)//post data
+        .then(response=>response.json())// recives response
+        .then((body2)=>{
+        console.log(body2)
+        for (i = 0; i < body2.length; i++){
+            stext.push(body2[i].text)
         }
-        for(i = 0; i < pr.length; i++){
-            bruh = pr[i]
-            name.push(json[bruh].sender)
+        for (i = 0; i < body2.length; i++){  
+        sperson.push(body2[i].sender)
         }
-        sAjaxInputMessage(last, name) 
+        console.log('stext',stext,'sperson',sperson)
+        sAjaxInputMessage(stext, sperson)
+        txtNum = body.textNum
+    })
+    console.log('text num',body.textNum,'txt',txtNum)
     }
-    ot = json
-    SMSG2 = SMSG1
+})
 }
-//=======================================serverPostData
-async function serverPostData(info){
+
+//=======================================serverPutData
+async function serverPutData(info){
     /*sends data to server
      and recives*/
     info[0] = info[0].trim()//removes white space
@@ -152,11 +150,10 @@ async function serverPostData(info){
     CTime = date.getTime()
     data = {
         text: info,
-        time: CTime,
-        sender: currentUser
+        time: CTime
     };
     const options = {
-        method: 'POST',
+        method: 'put',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -166,16 +163,18 @@ async function serverPostData(info){
     const json = await response.json();
     check = CTime
 };
-//=======================================serverPostDataOnLoad
-    async function serverPostDataOnLoad(){
+//=======================================serverGetDataOnLoad
+    async function serverGetDataOnLoad(){
         /*sends epmty string to 
         server and recives data*/
         person = []
+        data = {required:'all'}
     const options = {//meta data for post
-        method: 'get',
+        method: 'Post',
         headers: {
             'Content-Type': 'application/json'
         },
+        body: JSON.stringify(data)
     };
     const response = await fetch('/texts', options);//post data
     const json = await response.json();// recives response
@@ -186,13 +185,14 @@ async function serverPostData(info){
     for (i = 0; i < json.length; i++){  
         person.push(json[i].sender)
     }
+    txtNum = SMSG2.length
     displayServerMessage(SMSG2, person)
     settheme()
 }; 
 //=======================================displayServerMessage
 function displayServerMessage(text, sender){
     /*displays message procesed
-     by serverPostDataOnLoad()*/
+     by serverGetDataOnLoad()*/
     for (i = 0; i < text.length; i++){
         var div = document.createElement("div");
         div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>'  + text[i];
@@ -204,6 +204,7 @@ function displayServerMessage(text, sender){
 //=======================================sAjaxInputMessage
 function sAjaxInputMessage(text, sender){
     //adds ajax messages
+    console.log('sajax executed')
     for (i = 0; i < text.length; i++){
     var div = document.createElement("div")
     div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>'+ text[i];
@@ -228,7 +229,7 @@ function inputMessage(){
         div.scrollIntoView();
         document.getElementById("input").value = "";
         J.push(inputValue);
-        serverPostData(J);
+        serverPutData(J);
         document.getElementById('input').focus();
     }
     else if (inputValue.includes("<") == true || inputValue.includes(">") == true ){
@@ -248,7 +249,7 @@ function _EnterKey(event){
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================setinterval functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-setInterval(sajax, 1500);
+setInterval(sajax, 3000);
 setInterval(UserIdSend, 5000);
 UserIdSend()//sends id as soon as load instead of waiting 5s
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

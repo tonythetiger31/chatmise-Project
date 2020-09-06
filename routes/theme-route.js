@@ -34,7 +34,7 @@ exports.themeGet = (request, response) => {
     .then((data) => {
         info = data[0].settings
         response.send({settings: info})
-        console.log('data',data[0].settings)
+        //console.log('data',data[0].settings)
     })
 })
 }

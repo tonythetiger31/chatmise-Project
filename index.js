@@ -77,11 +77,12 @@ app.get('/login', loginDir.get)
 });*/
 //=============================================================================page directorys un-rendered
 //=========================================/TEXTS
-app.post('/texts', textsDir.post)
+app.put('/texts', textsDir.put)
 app.get('/texts', textsDir.get)
+app.post('/texts', textsDir.post)
 //=========================================/USERCOUNT
 app.post('/Ucount', (request, response) =>{
-    S.push(request.body);
+    S.push(request.headers.cookie);
     response.send(U);
 });
 //=========================================/loginPost
