@@ -7,7 +7,7 @@ exports.main = function(request, response) {
         response.status(403)
         response.redirect('/login');
     } else {
-        if (cookie.length > 50) {
+        if (cookie.length > 400) {
             response.redirect('/login');
          } else {
             var cookie = methods.cookieParse(request.headers.cookie, 'userId')

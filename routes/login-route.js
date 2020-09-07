@@ -7,10 +7,11 @@ exports.get = function(request, response) {
     if (cookie === undefined || cookie === null || cookie === '') {
         response.render('Login.ejs')
     } else {
-        if (cookie.length > 50) {
+        if (cookie.length > 400) {
             response.render('Login.ejs')
         } else {
             var cookie = methods.cookieParse(request.headers.cookie, 'userId')
+            
             if (cookie === undefined || cookie === null || cookie === '') {
                 response.render('Login.ejs')
             } else {

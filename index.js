@@ -56,6 +56,7 @@ var A = [];
 //=============================================================================function decleration
 function uchange(){
     //counts number of active users
+    try{
     L = undefined;F = undefined;E = []
     for (i = 0; i < S.length; i++){//leaves only a array [] for each text, still multidementional 
         E.push(S[i].string)}
@@ -65,6 +66,10 @@ function uchange(){
     U = L
     U = U.toString()
     S = []
+    } catch(err){
+        console.log('error with uchange() function')
+        U = '1'
+    } 
 }
 function removeDuplicates(data){
     return data.filter((value, index) => data.indexOf (value) === index);
