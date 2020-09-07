@@ -29,6 +29,8 @@ const mainDir = require('./routes/main-route')
 const loginDir = require('./routes/login-route')
 const logoutDir = require('./routes/logout-route')
 //
+
+//
 app.use(express.urlencoded({
     extended: true
   })) 
@@ -56,20 +58,15 @@ var A = [];
 //=============================================================================function decleration
 function uchange(){
     //counts number of active users
-    try{
     L = undefined;F = undefined;E = []
     for (i = 0; i < S.length; i++){//leaves only a array [] for each text, still multidementional 
         E.push(S[i].string)}
     F = E.filter((item, i, ar) => ar.indexOf(item) === i);
     L = F.length 
-    //console.log('users = ' + L)
+    console.log('users = ' + L)
     U = L
     U = U.toString()
     S = []
-    } catch(err){
-        console.log('error with uchange() function')
-        U = '1'
-    } 
 }
 function removeDuplicates(data){
     return data.filter((value, index) => data.indexOf (value) === index);
