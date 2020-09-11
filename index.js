@@ -19,10 +19,12 @@ const { request, response, json, Router } = require('express');
 const app = express();
 require('dotenv').config()
 //eviorment variables
-const uri = process.env.uri
+const uriuserdata = process.env.uriuserdata
+const urichatrooms = process.env.urichatrooms
 //project files
 const textsDir = require('./routes/texts-route')
-const database = require('./database')
+const userdb = require('./db_config/db_userdata')
+// const chatroomdb = require('./db_config/db_chatrooms')
 const themeDir = require('./routes/theme-route')
 const methods = require('./methods')
 const mainDir = require('./routes/main-route')
@@ -38,10 +40,11 @@ app.use(express.urlencoded({
 app.disable('x-powered-by');  
 
 //=================================================================================database
-database.main(uri)
-const DataPost = database.DataPost
-const usertoken = database.usertoken
-const texts = database.texts
+userdb.main(uriuserdata)
+users = userdb.users
+usertoken = userdb.usertoken
+texts = userdb.texts
+
 //=============================================================================server info/ start server
 const PORT = process.env.PORT || 80; 
 app.listen(PORT, () => console.log('server started on port ' + PORT));

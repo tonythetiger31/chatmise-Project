@@ -1,6 +1,6 @@
-const database = require('../database')
-const usertoken = database.usertoken
-const DataPost = database.DataPost
+const userdb = require('../db_config/db_userdata')
+const usertoken = userdb.usertoken
+const users = userdb.users
 const methods = require('../methods')
 exports.get = function(request, response) { 
     var cookie = request.headers.cookie
@@ -37,7 +37,7 @@ exports.post = function(request, response) {
         || request.body.password.length > 25){
             response.send('one or multiple of your inputs was too long, max size is 25 characters')
         }else{
-            DataPost.find({
+            users.find({
             username: username
         })
         .then((data) => {

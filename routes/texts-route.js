@@ -1,6 +1,7 @@
-const database = require('../database')
-const texts = database.texts
-const usertoken = database.usertoken
+const userdb = require('../db_config/db_userdata')
+// const chatroomdb = require('../db_config/db_chatrooms')
+const texts = userdb.texts
+const usertoken = userdb.usertoken
 const methods = require('../methods')
 exports.put = function(request, response) {
     //if (request.body.text > 1000){

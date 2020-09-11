@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
-exports.main =  function(uri){
+const main =  function(uri){
 mongoose.connect(uri, {
     useNewUrlParser:true,
-    useUnifiedTopology:true
-}) 
-mongoose.connection.on('connected', () => {
-    console.log('mongoose is connected!!!!')
+    useUnifiedTopology:true,
+    server: {poolSize: 10}
 })
-//schema
+//connection test
+mongoose.connection.on('connected', () => {
+    console.log('mongoose is connected to chatrooms db')
+})
 }
-const schema = mongoose.schema
+//schema
 const DataSchema = new mongoose.Schema({
     username: String,
     password: String,
@@ -19,6 +20,6 @@ const DataSchema = new mongoose.Schema({
     sender: String,
     settings: Number
 })
-exports.DataPost = mongoose.model('DataPost', DataSchema);//model
-exports.usertoken = mongoose.model('usertoken', DataSchema)
-exports.texts = mongoose.model('texts', DataSchema)
+//model
+const texts = mongoose.model('main', DataSchema);
+module.exports = {main, texts}

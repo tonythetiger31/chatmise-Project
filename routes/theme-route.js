@@ -1,7 +1,7 @@
-const database = require('../database')
+const userdb = require('../db_config/db_userdata')
 const { response } = require('express')
-const DataPost = database.DataPost
-const usertoken = database.usertoken
+const users = userdb.users
+const usertoken = userdb.usertoken
 const methods = require('../methods')
 exports.themePost = (request, response) => {
     val = request.body.val
@@ -13,7 +13,7 @@ exports.themePost = (request, response) => {
         var user = data[0].username
         console.log('user',user)
     
-    DataPost.findOneAndUpdate({username: user}, {settings : val},function(err, doc){
+        users.findOneAndUpdate({username: user}, {settings : val},function(err, doc){
         if(err){
             console.log("Something wrong when updating data!");
         }
@@ -30,7 +30,7 @@ exports.themeGet = (request, response) => {
         usertoken: user
     }).then((data) => {
         var user = data[0].username
-    DataPost.find({username: user})
+        users.find({username: user})
     .then((data) => {
         info = data[0].settings
         response.send({settings: info})

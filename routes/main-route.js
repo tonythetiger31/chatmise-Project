@@ -1,5 +1,5 @@
-const database = require('../database')
-const usertoken = database.usertoken
+const userdb = require('../db_config/db_userdata')
+const usertoken = userdb.usertoken
 const methods = require('../methods')
 exports.main = function(request, response) {
     var cookie = request.headers.cookie
