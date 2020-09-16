@@ -2,27 +2,31 @@ const userdb = require('../db_config/db_userdata')
 const usertoken = userdb.usertoken
 const methods = require('../methods')
 exports.main = function(request, response){
+//variable decleration
     var cookie = request.headers.cookie
+//check 1
     if (cookie === undefined || cookie === null || cookie === '') {
-            response.send({'response':'success'})
-        } else {
+        response.status(200)
+        response.send({'response':'success'})
+    } else {
+//check 2
             var cookie = methods.cookieParse(request.headers.cookie, 'userId')
             if (cookie === undefined || cookie === null || cookie === '') {
-            response.send({'response':'success'})
+                response.status(200)
+                response.send({'response':'success'})
             } else {
+//check 3
                 cookie = Number(cookie)
-                console.log(cookie)
                 usertoken.findOneAndRemove({usertoken: cookie}, function (err, ){
-                    console.log(cookie)
                     if(err){
-                        console.log('error')  
-                        response.status(400)
+                        console.log('error removing user token')  
+                        response.status(200)
+                        response.send({'response':'success'})
                     }
                     else{
-                        console.log('success')
                         response.cookie('userId','', { maxAge: 0, httpOnly: true })
-                        response.send({'response':'success'})
                         response.status(200)
+                        response.send({'response':'success'})
                     }
                 });
             }

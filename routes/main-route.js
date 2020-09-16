@@ -2,20 +2,26 @@ const userdb = require('../db_config/db_userdata')
 const usertoken = userdb.usertoken
 const methods = require('../methods')
 exports.main = function(request, response) {
+//var declaration
     var cookie = request.headers.cookie
+//sucurity phase 1
     if (cookie === undefined || cookie === null || cookie === '') {
         response.status(403)
         response.redirect('/login');
     } else {
+//sucurity phase 2
         if (cookie.length > 400) {
+            response.status(413)
             response.redirect('/login');
          } else {
+//sucurity phase 3
             var cookie = methods.cookieParse(request.headers.cookie, 'userId')
             if (cookie === undefined || cookie === null || cookie === '') {
                 console.log('denied1')
                 response.status(403)
                 response.redirect('/login');
             } else {
+//sucurity phase 4
                 usertoken.find({
                         usertoken: cookie
                     })
@@ -25,9 +31,10 @@ exports.main = function(request, response) {
                             response.status(403)
                             response.redirect('/login');
                         } else if (data[0].usertoken == cookie) {
+//response
                             username = data[0].username
-                            response.render('index.ejs', {username: username})
                             response.status(200)
+                            response.render('index.ejs', {username: username})                           
                         }
                     })
             }

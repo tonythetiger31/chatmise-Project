@@ -1,4 +1,5 @@
 exports.cookieParse = function cookieParse(cookie, key){
+    
     str = cookie.replace(/\s+/g, "")
     cA = str.split(/[;=]+/);
     cB = cA.indexOf(key)

@@ -7,10 +7,12 @@
 -page directorys rendered
 -page directorys un-rendered
 -setinterval functions
--exports
 */
-//=============================================================================package decleration
+//_______________________________________________________|
+//____________________________________|package decleration
+//_______________________________________________________|
 //npm
+"use strict"
 const express = require('express');
 const mongoose = require('mongoose');
 //const bcrypt = require('bcrypt')
@@ -31,63 +33,68 @@ const mainDir = require('./routes/main-route')
 const loginDir = require('./routes/login-route')
 const logoutDir = require('./routes/logout-route')
 //
-
-//
 app.use(express.urlencoded({
     extended: true
   })) 
 //header_options
 app.disable('x-powered-by');  
-
-//=================================================================================database
+//_______________________________________________________|
+//_______________________________________________|database
+//_______________________________________________________|
 userdb.main(uriuserdata)
-users = userdb.users
-usertoken = userdb.usertoken
-texts = userdb.texts
-
-//=============================================================================server info/ start server
+var users = userdb.users
+var usertoken = userdb.usertoken
+var texts = userdb.texts
+//_______________________________________________________|
+//______________________________|server info/ start server
+//_______________________________________________________|
 const PORT = process.env.PORT || 80; 
 app.listen(PORT, () => console.log('server started on port ' + PORT));
 //app.use(express.static('views'))
 app.use(express.static('views'))
 app.use(express.json())
-//=============================================================================var decleration
+app.use(require('express-status-monitor')());
+//_______________________________________________________|
+//________________________________________|var decleration
+//_______________________________________________________|
 var S = []
 var U = '1';
 var F
-var L
-var E = []
-var A = [];
-//=============================================================================function decleration
+//_______________________________________________________|
+//___________________________________|function decleration
+//_______________________________________________________|
 function uchange(){
     //counts number of active users
-    L = undefined;F = undefined;E = []
-    for (i = 0; i < S.length; i++){//leaves only a array [] for each text, still multidementional 
-        E.push(S[i].string)}
-    F = E.filter((item, i, ar) => ar.indexOf(item) === i);
-    L = F.length 
-    console.log('users = ' + L)
-    U = L
+    F = undefined
+    F = S.filter((item, i, ar) => ar.indexOf(item) === i);//removes duplicates
+    F = F.length 
+    console.log(F, 'users')
+    U = F
     U = U.toString()
     S = []
 }
 function removeDuplicates(data){
-    return data.filter((value, index) => data.indexOf (value) === index);
+    return data.filter((value, index) => data.indexOf(value) === index);
 }
-//=============================================================================page directorys rendered
+//_______________________________________________________|
+//_______________________________|page directorys rendered
+//_______________________________________________________|
 app.get('/', mainDir.main)
 app.get('/login', loginDir.get)
 /*app.get('/register',(request, response) =>{
     response.render('register.ejs')
 });*/
-//=============================================================================page directorys un-rendered
+//_______________________________________________________|
+//____________________________|page directorys un-rendered
+//_______________________________________________________|
 //=========================================/TEXTS
 app.put('/texts', textsDir.put)
 app.get('/texts', textsDir.get)
 app.post('/texts', textsDir.post)
 //=========================================/USERCOUNT
 app.post('/Ucount', (request, response) =>{
-    S.push(request.headers.cookie);
+    S.push(methods.cookieParse(request.headers.cookie, "userId"));
+    response.status(200)
     response.send(U);
 });
 //=========================================/loginPost
@@ -95,9 +102,12 @@ app.post('/login', loginDir.post)
 //=========================================/LOGOUT
 app.delete('/logout', logoutDir.main)
 //=========================================/theme
-app.post('/theme', themeDir.themePost)
-app.get('/theme', themeDir.themeGet)
-//=============================================================================setinterval functions
+app.post('/theme', themeDir.post)
+app.get('/theme', themeDir.get)
+//_______________________________________________________|
+//__________________________________|setinterval functions
+//_______________________________________________________|
 setInterval(uchange, 5000);
-//=============================================================================exports
+//==========notes
 //node index.js
+//localhost/status

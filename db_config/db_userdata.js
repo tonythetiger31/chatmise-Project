@@ -3,7 +3,7 @@ const main =  function(uri){
 mongoose.connect(uri, {
     useNewUrlParser:true,
     useUnifiedTopology:true,
-    server: {poolSize: 10}
+    poolSize: 20,
 })
 //connection test
 mongoose.connection.on('connected', () => {
@@ -25,4 +25,3 @@ const users = mongoose.model('users', DataSchema);
 const usertoken = mongoose.model('usertoken', DataSchema)
 const texts = mongoose.model('texts', DataSchema);
 module.exports = {main, users, usertoken, texts}
-
