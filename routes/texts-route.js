@@ -1,15 +1,18 @@
-//"use strict"
+"use strict"
 const userdb = require('../db_config/db_userdata')
 // const chatroomdb = require('../db_config/db_chatrooms')
 const texts = userdb.texts
 const usertoken = userdb.usertoken
 const methods = require('../methods')
 //===============================================================PUT
-exports.put = function(request, response) {
+exports.put = async function(request, response) {
 //var declaration
     //if (request.body.text > 1000){}// protection against DDOS in progress
     console.log('just sent-- ', request.body.text)
     var sender = request.headers.cookie
+    var cSender
+    var time
+    var text
 //sucurity phase 1
     if (sender == undefined || sender == null || sender == '') {
         console.log('texts PUT denial phase 1')
@@ -38,9 +41,10 @@ exports.put = function(request, response) {
 //response
                             sender = data[0].username
                             if (Object.keys(request.body).length !== 0) {
+
                                 text = request.body.text
                                 time = request.body.time
-                                console.log('new transmiton----', request.body, '----')
+                                console.log('new transmiton----', sender, request.body, '----')
                                 var datadb = {
                                     text: text,
                                     time: time,
@@ -65,7 +69,7 @@ exports.put = function(request, response) {
     }
 }
 //===============================================================GET
-exports.get = function(request, response) {
+exports.get = async function(request, response) {
 //var declaration
     var sender = request.headers.cookie
     var datalength 
@@ -108,11 +112,13 @@ exports.get = function(request, response) {
     }
 }
 //===============================================================POST
-exports.post = function(request, response) {
+exports.post = async function(request, response) {
 //var declaration
     var send2 = []
     var required = request.body.required
     var sender = request.headers.cookie
+    var cSender
+    var send1
 //sucurity phase 1
     if (sender == undefined || sender == null || sender == '') {
         console.log('texts POST denial phase 1')
@@ -155,7 +161,7 @@ exports.post = function(request, response) {
                             } else if (typeof(required) != "string"){
                                 texts.find({})
                                 .then((data2) => {
-                                    for (i = 0; i < required.length;i++){
+                                    for (let i = 0; i < required.length;i++){
                                         if (data2[required[i]].sender != data[0].username){
                                         send1 = data2[required[i]]
                                         send2.push(send1)
