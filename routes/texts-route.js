@@ -1,3 +1,9 @@
+/*
+WARNING
+-if the user is trying to communicate with another tab on the same browser, no data will be sent
+-if the user is on two devices, the devices won't be able to communicate
+-only different users on separate devices will be able to communicate
+*/
 "use strict"
 const userdb = require('../db_config/db_userdata')
 // const chatroomdb = require('../db_config/db_chatrooms')

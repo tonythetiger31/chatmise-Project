@@ -63,8 +63,9 @@ var F
 //_______________________________________________________|
 //___________________________________|function decleration
 //_______________________________________________________|
-function uchange(){
+function uChange(){
     //counts number of active users
+    try{
     F = undefined
     F = S.filter((item, i, ar) => ar.indexOf(item) === i);//removes duplicates
     F = F.length 
@@ -72,9 +73,11 @@ function uchange(){
     U = F
     U = U.toString()
     S = []
-}
-function removeDuplicates(data){
-    return data.filter((value, index) => data.indexOf(value) === index);
+    }
+    catch(err){
+        S = []
+        F = undefined
+    }
 }
 //_______________________________________________________|
 //_______________________________|page directorys rendered
@@ -107,7 +110,7 @@ app.get('/theme', themeDir.get)
 //_______________________________________________________|
 //__________________________________|setinterval functions
 //_______________________________________________________|
-setInterval(uchange, 5000);
+setInterval(uChange, 5000);
 //==========notes
 //node index.js
 //localhost/status
