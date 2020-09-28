@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-176266475-4"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+
+	function gtag() {
+		dataLayer.push(arguments);
+	}
+	gtag('js', new Date());
+	gtag('config', 'UA-176266475-4');
+	</script>
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="stylesheet" type="text/css" href="file.style1.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<title>chatmise</title>
+	<audio id="myAudio">
+		<source src="audioping.mp3" type="audio/mp3"> </audio>
+</head>
+
+<body onload="serverGetDataOnLoad();">
+	<!--gif onload-->
+	<div id="loadimg"></div>
+	<div id="postloadwraper">
+		<!--Settings menu=========================-->
+		<div id='all_settings' class="all_settings">
+			<div class="Exit" onclick="controlSettings('close')"></div>
+			<div class="title">Info</div>
+			<div class="peopleCount">active users<span id="Count">: 1</span></div>
+			<div class="subTitle">Loged in as
+				<%= username %>
+			</div>
+			<div class="tips"><a href="https://tipsandbugreport.netlify.app/">Tips/Report Bugs</a></div>
+			<div class="title">Settings</div>
+			<div class="subTitle">Theme</div>
+			<div class="div_Themesetting">
+				<select onchange="passValOfTheme()" class="themesetting" id="themesetting">
+					<option value="1">Dark Theme</option>
+					<option value="2">Gray Theme</option>
+					<option value="3">Light Theme</option>
+				</select>
+			</div>
+			<div class="logout">
+				<button onclick="logout()">Logout</button>
+			</div>
+		</div>
+        <!--Settings menu=========================-->
+        <!--Chats menu-->
+        <div id='chatMenu'>
+            <a type="button" class="exitChatButton" onclick="controlChatMenu('close')"></a>
+            Chats
+        </div>
+        <!--Chats menu-->
+		<div id='uiWrapper' class="uiWrapper">
+			<div class="topBar">
+				<!--topBar-->
+				<a type='button' class="chatButton" onclick="controlChatMenu('open')"></a>
+				<div>The Boys Chat</div>
+				<a type='button' class="hamburger" onclick="controlSettings('open')"></a>
+			</div>
+			<div id="message"></div>
+			<!--messages go bellow #message-->
+			<div class="filllermessageInputFeild"></div>
+			<div class="messageInputFeild">
+				<textarea placeholder="type a message here" id="input" maxlength="170" onkeydown="_EnterKey(event)"></textarea>
+				<button onclick="inputMessage();">Enter</button>
+			</div>
+		</div>
+	</div>
+	<!--====================================================================-->
+	<script src="file.java.js"></script>
+	<!--====================================================================-->
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+
 /*contents
 -authentication
 -variable declerations
@@ -5,7 +6,7 @@
 -setinterval functions
 -style functions
 */
-setTimeout(loadstop, 1000)
+document.addEventListener("DOMContentLoaded", loadstop);
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================Variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -20,6 +21,7 @@ var oy = true
 var check
 var date = new Date();
 var themeStore
+var messageSound =  document.getElementById("myAudio")
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -89,7 +91,7 @@ async function UserIdSend(){
     } 
 }
 //=======================================sajax
-function sajax(){
+async function sajax(){
     var stext = []
     var sperson = []
     var send2 = []
@@ -112,7 +114,6 @@ function sajax(){
             send1 = txtNum + i
             send2.push(send1)
         }
-        console.log('send2', send2)
         data = {required: send2}
         const options = {//meta data for post
             method: 'Post',
@@ -124,18 +125,15 @@ function sajax(){
         fetch('/texts', options)//post data
         .then(response=>response.json())// recives response
         .then((body2)=>{
-        console.log(body2)
         for (i = 0; i < body2.length; i++){
             stext.push(body2[i].text)
         }
         for (i = 0; i < body2.length; i++){  
         sperson.push(body2[i].sender)
         }
-        console.log('stext',stext,'sperson',sperson)
-        sAjaxInputMessage(stext, sperson)
         txtNum = body.textNum
+        sAjaxInputMessage(stext, sperson)
     })
-    console.log('text num',body.textNum,'txt',txtNum)
     }
 })
 }
@@ -205,14 +203,14 @@ function displayServerMessage(text, sender){
 function sAjaxInputMessage(text, sender){
     //adds ajax messages
     console.log('sajax executed')
+    messageSound.play()
     for (i = 0; i < text.length; i++){
     var div = document.createElement("div")
     div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>'+ text[i];
     div.setAttribute('class', 'text')
     document.getElementById("message").appendChild(div);   
     div.scrollIntoView();
-    document.getElementById("myAudio").play();
-    }
+    } 
 }
 //=======================================inputMessage
 function inputMessage(){
@@ -255,17 +253,24 @@ UserIdSend()//sends id as soon as load instead of waiting 5s
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================style functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//=======================================opensettings
-function opensettings(){
-    //opens settings
+//=======================================controlSettings
+function controlSettings(arg){
+    if (arg === 'open'){//opens settings
     document.getElementById('uiWrapper').style.display = "none";
     document.getElementById('all_settings').style.display = "block";
-}
-//=======================================closesettings
-function closesettings(){
-    //closes settings
+    document.getElementById('chatMenu').style.display = "none";
+    } else if (arg === 'close'){
     document.getElementById('uiWrapper').style.display = "block";
-    document.getElementById('all_settings').style.display = "none";  
+    document.getElementById('all_settings').style.display = "none";
+    document.getElementById('chatMenu').style.display = "none";
+    }
+}
+function controlChatMenu(arg){
+    if (arg === 'open'){//opens settings
+    document.getElementById('chatMenu').style.display = "block";
+    } else if (arg === 'close'){
+    document.getElementById('chatMenu').style.display = "none";
+    }
 }
 //=======================================passValOfTheme
 function passValOfTheme(){
@@ -319,4 +324,5 @@ function themeselect(themeint){
 }
 function loadstop(){
     document.getElementById("loadimg").style.display="none";
+    console.log('ran loadstop()')
 }

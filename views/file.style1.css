@@ -2,6 +2,7 @@
 :root{
     --bodyColor: rgb(20, 20, 20);
     --textColor: white;
+    --topBarColor: rgb(30, 30, 30);
     --hamburgerColor: brightness(100%);
     --textareaColor: rgb(20, 20, 20);
     --buttonColor:rgb(20, 20, 20);
@@ -46,7 +47,7 @@ html,body{
     width: 100vw;
 }
 .Exit{
-    content:url('sculHXa0yTwnjua8K7MixqA.png');
+    content:url('exit.png');
     height: 3vw;
     width: 4vw;
     position: fixed;
@@ -105,9 +106,65 @@ html,body{
     font-size: 2vw;
     cursor: pointer;
 }
-/*=====================================================*/
+/*=======================chatMenu=========================*/
+#chatMenu{
+    display: none;
+    position: fixed;
+    height: 100vh;
+    width: 50vw;
+    top:0;
+    background-color: var(--topBarColor);
+    border:solid var(--lineColor);
+    border-width: 0 1px 0 0;
+    z-index: +3;
+    text-align: center;
+    color: var(--textColor);
+    font-size: 2vw;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0px 0px 0px 0px;
+}
+/*=======================TopBar=========================*/
+.topBar{
+    display: block;
+    position: sticky;
+    background-color: var(--topBarColor);
+    top:0;
+    border: solid var(--lineColor);
+    border-width: 0 0 1px 0;
+    text-align: center;
+    font-size: 2vw;
+    color: var(--textColor);
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0px 0px 0px 0px;
+}
+.exitChatButton{
+    -webkit-tap-highlight-color: transparent;
+    content:url('exit.png');
+    display: inline-block;
+    left:0;
+    height: 3vw;
+    width: 4vw;
+    position: absolute;
+    cursor: pointer;
+}
+.chatButton{
+    content:url('back.png');
+    height: 2.7vw;
+    width: 3.2vw;
+    left: 0;
+    margin: .5vw 1vw 0 0;
+    filter: var(--hamburgerColor);
+    position: fixed;
+    transition: all .5s;
+    cursor: pointer;
+    z-index: +2;
+}
+.topBar div{
+    display: inline-block;
+    padding: 15px 0px 15px 0px;
+}
 .hamburger{
-    content:url('snmsl4Qwk07akNVlEC4aSEw.png');
+    content:url('https://docs.google.com/drawings/d/e/2PACX-1vS3e1kzM75xEe-MQROzoY9dl6JZgR_0FPQbnOo0PRbmrx-e2E12xdXpu-4vynWbAbPaofckWS0MZeky/pub?w=396&h=291');
     height: 2.7vw;
     width: 3.2vw;
     right: 0;
@@ -116,11 +173,12 @@ html,body{
     position: fixed;
     transition: all .5s;
     cursor: pointer;
-    z-index: +1;
+    z-index: +2;
 }
 .hamburger:hover{
     transition: cubic-bezier(0.445, 0.05, 0.55, 0.95);
 }
+/*========================Texts==========================*/
 .text{
     position: static;
     text-align: center;
@@ -188,7 +246,7 @@ html,body{
     font-family: Arial, Helvetica, sans-serif;
     border:none;
 }
-@media only screen and (max-width: 1000px){
+@media only screen and (max-device-width: 1000px){
     html,body{
     margin: 0 0 0 0;
     } 
@@ -213,6 +271,17 @@ html,body{
     }
     .logout button{
         font-size: 5vw;
+    }
+    .topBar{
+        font-size: 5vw;
+    }
+    .chatButton{
+        height: 10vw;
+        width: 10vw;
+    }
+    .exitChatButton{
+        height: 10vw;
+        width: 13vw;
     }
     .hamburger{
         height: 10vw;

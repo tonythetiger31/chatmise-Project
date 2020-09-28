@@ -34,7 +34,7 @@ exports.main = function(request, response) {
 //response
                             username = data[0].username
                             response.status(200)
-                            response.render('index.ejs', {username: username})                           
+                            response.render('file.index.ejs', {username: username})                           
                         }
                     })
             }
