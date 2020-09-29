@@ -48,8 +48,8 @@ html,body{
 }
 .Exit{
     content:url('exit.png');
-    height: 3vw;
-    width: 4vw;
+    height: 40px;
+    width: 53px;
     position: fixed;
     top:.5vw;
     right: 0;
@@ -60,7 +60,7 @@ html,body{
     margin:2vh 0 0 0;
     color: var(--textareaAbuttonTextColor);
     text-align: center;
-    font-size: 3vw;
+    font-size: 40px;
     font-family: Arial, Helvetica, sans-serif;
 }
 .peopleCount{
@@ -70,7 +70,7 @@ html,body{
     padding: 5px;
     border-color: black !important;
     margin: 0;
-    font-size: 2vw;
+    font-size: 30px;
     color: var(--yellowColor);
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -78,12 +78,12 @@ html,body{
     margin:.5vw 0 0 0;
     color: var(--yellowColor);
     text-align: center;
-    font-size: 2vw;
+    font-size: 30px;
     font-family: Arial, Helvetica, sans-serif;
 }
 .tips{
     text-align: center;
-    font-size: 2vw;
+    font-size: 30px;
     margin-top: .5vw;
 }
 .tips a{
@@ -94,16 +94,16 @@ html,body{
     text-align: center;
 }
 .themesetting{
-    margin: .5vw 0 0 0;
-    font-size: 2vw;
+    margin: 10px 0 0 0;
+    font-size: 30px;
     cursor: pointer;
 }
 .logout{
-    margin: 2vw 0 0 0;
+    margin: 30px 0 0 0;
     text-align: center;
 }
 .logout button{
-    font-size: 2vw;
+    font-size: 30px;
     cursor: pointer;
 }
 /*=======================chatMenu=========================*/
@@ -111,7 +111,9 @@ html,body{
     display: none;
     position: fixed;
     height: 100vh;
-    width: 50vw;
+    min-width: 400px;
+    max-width: 800px;
+    width: 600px;
     top:0;
     background-color: var(--topBarColor);
     border:solid var(--lineColor);
@@ -119,9 +121,23 @@ html,body{
     z-index: +3;
     text-align: center;
     color: var(--textColor);
-    font-size: 2vw;
+    font-size: 30px;
     font-family: Arial, Helvetica, sans-serif;
     padding: 0px 0px 0px 0px;
+    resize: horizontal;
+    overflow: auto;
+    
+}
+.exitChatButton{
+    outline: none;
+    content:url('exit.png');
+    display: inline-block;
+    left:0;
+    height: 40px;
+    width: 53px;
+    position: absolute;
+    cursor: pointer;
+    z-index: +2;
 }
 /*=======================TopBar=========================*/
 .topBar{
@@ -132,29 +148,22 @@ html,body{
     border: solid var(--lineColor);
     border-width: 0 0 1px 0;
     text-align: center;
-    font-size: 2vw;
+    font-size: 30px;
     color: var(--textColor);
     font-family: Arial, Helvetica, sans-serif;
     padding: 0px 0px 0px 0px;
 }
-.exitChatButton{
-    -webkit-tap-highlight-color: transparent;
-    content:url('exit.png');
-    display: inline-block;
-    left:0;
-    height: 3vw;
-    width: 4vw;
-    position: absolute;
-    cursor: pointer;
-}
 .chatButton{
+    -webkit-tap-highlight-color: transparent;
     content:url('back.png');
-    height: 2.7vw;
-    width: 3.2vw;
+    height: 40px;
+    width: 50px;
     left: 0;
     margin: .5vw 1vw 0 0;
     filter: var(--hamburgerColor);
-    position: fixed;
+    display: inline-block;
+    float: left;
+    position: static;
     transition: all .5s;
     cursor: pointer;
     z-index: +2;
@@ -165,12 +174,14 @@ html,body{
 }
 .hamburger{
     content:url('https://docs.google.com/drawings/d/e/2PACX-1vS3e1kzM75xEe-MQROzoY9dl6JZgR_0FPQbnOo0PRbmrx-e2E12xdXpu-4vynWbAbPaofckWS0MZeky/pub?w=396&h=291');
-    height: 2.7vw;
-    width: 3.2vw;
+    height: 40px;
+    width: 45px;
     right: 0;
     margin: .5vw 1vw 0 0;
     filter: var(--hamburgerColor);
-    position: fixed;
+    display: inline-block;
+    float: right;
+    position: static;
     transition: all .5s;
     cursor: pointer;
     z-index: +2;
@@ -189,7 +200,7 @@ html,body{
     border-radius: 8px;
     border-color: var(--lineColor) !important;
     margin: 0;
-    font-size: 2vw;
+    font-size: 30px;
     color: var(--textColor);
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -197,13 +208,18 @@ html,body{
     color: var(--greenColor);
     float: left;
 }
-.filllermessageInputFeild{
-    bottom: 0;
-    display: flex;
-    position: relative;
-    font-size: 2vw;
-    height: 3em;
-    margin: 0; 
+.scrollBottomButton{
+    z-index: 1;
+    bottom: 3em;
+    padding: 3px 4vw 3px 4vw;
+    display: none;
+    position: sticky;
+    text-align: center;
+    background-color: gray;
+    border-radius: 25px 25px 0 0;
+    color:white;
+    font-size: 30px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 .messageInputFeild{
     background-color: var(--bodyColor);
@@ -211,8 +227,8 @@ html,body{
     right: 0;
     left: 0;
     display: flex;
-    position: fixed;
-    font-size: 2vw;
+    position: sticky;
+    font-size: 30px;
     height: 3em;
     margin: 0; 
 }
@@ -225,7 +241,7 @@ html,body{
     height: 100%;
     width: 90%;
     position: static;
-    font-size: 2vw;
+    font-size: 30px;
     resize: none;
     padding:10px 2px 0 15px;
     line-height:1em;
@@ -241,7 +257,7 @@ html,body{
     height: 100%;
     width: 10%;
     position: static;
-    font-size: 2vw;
+    font-size: 30px;
     line-height:1em;
     font-family: Arial, Helvetica, sans-serif;
     border:none;
@@ -275,6 +291,10 @@ html,body{
     .topBar{
         font-size: 5vw;
     }
+    #chatMenu{
+        min-width: 50vw;
+        max-width: 80vw;
+    }
     .chatButton{
         height: 10vw;
         width: 10vw;
@@ -291,8 +311,9 @@ html,body{
         font-size: 5vw;
         padding: 20px 20px 20px 10px;
     }
-    .filllermessageInputFeild{
+    .scrollBottomButton{
         font-size: 5vw;
+        bottom: 3em;
     }
     .messageInputFeild{
         font-size: 5vw;

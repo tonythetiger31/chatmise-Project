@@ -296,6 +296,7 @@ function themeselect(themeint){
             root.style.setProperty('--yellowColor', "rgb(238, 241, 35);");
             root.style.setProperty('--lineColor', "white");
             root.style.setProperty('--greenColor', "#52fb9e");
+            root.style.setProperty('--topBarColor', 'rgb(30,30,30)')
             break;
         case '2':
             //gray
@@ -308,6 +309,7 @@ function themeselect(themeint){
             root.style.setProperty('--yellowColor', "rgb(238, 241, 35);");
             root.style.setProperty('--lineColor', "white");
             root.style.setProperty('--greenColor', "#52fb9e");
+            root.style.setProperty('--topBarColor', 'rgb(70,70,70)')
         break;
         case '3':
             //white
@@ -320,6 +322,7 @@ function themeselect(themeint){
             root.style.setProperty('--yellowColor', "rgb(196, 199, 0);");
             root.style.setProperty('--lineColor', "black");
             root.style.setProperty('--greenColor', "#0bdc12");
+            root.style.setProperty('--topBarColor', 'rgb(200,200,200)')
     }
 }
 function loadstop(){
