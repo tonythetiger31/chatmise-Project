@@ -55,14 +55,15 @@
         <!--Chats menu-->
         <div id='chatMenu'>
             <a type="button" class="exitChatButton" onclick="controlChatMenu('close')"></a>
-            Chats
+			<div>Chats</div>
+			<div id='topchat'></div>
         </div>
         <!--Chats menu-->
 		<div id='uiWrapper' class="uiWrapper">
 			<div class="topBar">
 				<!--topBar-->
 				<a type='button' class="chatButton" onclick="controlChatMenu('open')"></a>
-				<div>The Boys Chat</div>
+				<div id="chatTitle">pick a chat</div>
 				<a type='button' class="hamburger" onclick="controlSettings('open')"></a>
 			</div>
 			<div class="messages"><div id="message"></div>

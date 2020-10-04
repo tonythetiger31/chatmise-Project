@@ -139,6 +139,12 @@ html,body{
     cursor: pointer;
     z-index: +2;
 }
+.chatFuncButton{
+    cursor: pointer;
+}
+#topchat{
+    display: block;
+}
 /*=======================TopBar=========================*/
 .topBar{
     display: block;

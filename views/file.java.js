@@ -10,17 +10,11 @@ document.addEventListener("DOMContentLoaded", loadstop);
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================Variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-var Uid = Math.random()
-var J = [];
-var SMSG2 = [];//STORES TEXTS
-var SMSG1 = [];
-var txtNum//number of texts currently loaded
-var ot = undefined
-var sa = true
-var oy = true
-var check
+var txtNum = []//number of texts currently loaded
+var currentTxtNum
+var userChats
+var currentChat
 var date = new Date();
-var themeStore
 var messageSound =  document.getElementById("myAudio")
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
@@ -92,6 +86,7 @@ async function UserIdSend(){
 }
 //=======================================sajax
 async function sajax(){
+    if (currentChat != undefined){
     var stext = []
     var sperson = []
     var send2 = []
@@ -103,18 +98,21 @@ async function sajax(){
             'Content-Type': 'application/json'
         }
     };
-    fetch('/texts', options)
+    fetch('/texts/' + currentChat,options)
     .then(response=>response.json())
     .then((body)=>{
+    //SECOND PART
     if (body.redirect == 'true'){
         location.replace('/login')
-    }else if (body.textNum != txtNum){
-        dif = body.textNum - txtNum
+    // if current text and recived texts dont match make post req
+    }else if (body.textNum != txtNum[currentTxtNum]){
+        dif = body.textNum - txtNum[currentTxtNum]
         for (i = 0; i < dif;i++){
-            send1 = txtNum + i
+            send1 = txtNum[currentTxtNum] + i
             send2.push(send1)
         }
-        data = {required: send2}
+        data = {required: send2,
+                chat: currentChat }
         const options = {//meta data for post
             method: 'Post',
             headers: {
@@ -131,13 +129,13 @@ async function sajax(){
         for (i = 0; i < body2.length; i++){  
         sperson.push(body2[i].sender)
         }
-        txtNum = body.textNum
+        txtNum[currentTxtNum] = body.textNum
         sAjaxInputMessage(stext, sperson)
     })
     }
 })
+    }
 }
-
 //=======================================serverPutData
 async function serverPutData(info){
     /*sends data to server
@@ -148,7 +146,8 @@ async function serverPutData(info){
     CTime = date.getTime()
     data = {
         text: info,
-        time: CTime
+        time: CTime,
+        chat: currentChat
     };
     const options = {
         method: 'put',
@@ -159,7 +158,6 @@ async function serverPutData(info){
     }; 
     const response = await fetch('/texts', options);
     const json = await response.json();
-    check = CTime
 };
 //=======================================serverGetDataOnLoad
     async function serverGetDataOnLoad(){
@@ -176,31 +174,62 @@ async function serverPutData(info){
     };
     const response = await fetch('/texts', options);//post data
     const json = await response.json();// recives response
+//display chat
+userChats = json.collections
+json.collections.forEach((element,i, arr) => {
+displayChatOptions(element, i)
+});
+//
+json.collections.forEach((element1, i1 )=> { 
+    var SMSG2 = []
+    json.data[i1].forEach((element, i) =>{
+        SMSG2.push(json.data[i1][i].text)
+    })
+    json.data[i1].forEach((element, i) =>{  
+        person.push(json.data[i1][i].sender)
+    })   
+    displayServerMessage( element1, SMSG2, person)
+    txtNum.push( SMSG2.length) 
+})
     
-    for (i = 0; i < json.length; i++){
-            SMSG2.push(json[i].text)
-    }
-    for (i = 0; i < json.length; i++){  
-        person.push(json[i].sender)
-    }
-    txtNum = SMSG2.length
-    displayServerMessage(SMSG2, person)
-    settheme()
+settheme()
 }; 
+//=======================================displayChat
+function displayChat(current, index){
+    // displays chat pressed
+    userChats.forEach((element)=>{
+        document.getElementById(element + 'Anchor').style.display = "none";
+    })
+    document.getElementById(current + 'Anchor').style.display = "block";
+    document.getElementById('chatTitle').innerHTML = current
+    currentChat =  current;
+    currentTxtNum = index
+}
+//=======================================displayChatOptions
+function displayChatOptions(chat, index){
+    // displays all chats
+    var div = document.createElement("div");
+    div.innerHTML = '<div class="chatFuncButton" onclick="displayChat(\'' + chat + '\',' + index + ')">' + chat + '</div>'
+    document.getElementById("topchat").appendChild(div);
+}
 //=======================================displayServerMessage
-function displayServerMessage(text, sender){
+function displayServerMessage(chat, text, sender){
     /*displays message procesed
      by serverGetDataOnLoad()*/
-    for (i = 0; i < text.length; i++){
+     var parentDiv = document.createElement("div")
+     parentDiv.id = chat + 'Anchor'
+     parentDiv.style.display = "none"
+     document.getElementById("message").appendChild(parentDiv);
+    text.forEach((element, i) =>{
         var div = document.createElement("div");
         div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>'  + text[i];
         div.setAttribute('class', 'text')
-        document.getElementById("message").appendChild(div);
+        document.getElementById(parentDiv.id).appendChild(div);
         div.scrollIntoView();
-    } 
+    })    
 };
 //=======================================sAjaxInputMessage
-function sAjaxInputMessage(text, sender){
+function sAjaxInputMessage(chat, text, sender){
     //adds ajax messages
     console.log('sajax executed')
     messageSound.play()
@@ -208,14 +237,14 @@ function sAjaxInputMessage(text, sender){
     var div = document.createElement("div")
     div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>'+ text[i];
     div.setAttribute('class', 'text')
-    document.getElementById("message").appendChild(div);   
+    document.getElementById(currentChat + 'Anchor').appendChild(div);   
     div.scrollIntoView();
     } 
 }
 //=======================================inputMessage
 function inputMessage(){
     //adds messages in input
-    J = []
+    var J = []
     let R = "";
     let inputValue = document.getElementById("input").value;
     if (inputValue !== "" && inputValue.trim().length !== 0 && inputValue.includes("<") !== true && inputValue.includes(">") !== true ){
@@ -327,5 +356,4 @@ function themeselect(themeint){
 }
 function loadstop(){
     document.getElementById("loadimg").style.display="none";
-    console.log('ran loadstop()')
 }

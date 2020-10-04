@@ -14,14 +14,16 @@ mongoose.connection.on('connected', () => {
 const DataSchema = new mongoose.Schema({
     username: String,
     password: String,
-    usertoken: Number,
-    text: String,
-    time: Number,
+    chats: Array,
     sender: String,
+    text: String,
+    usertoken: Number,
+    time: Number,
     settings: Number
 })
 //model
 const users = mongoose.model('users', DataSchema);
 const usertoken = mongoose.model('usertoken', DataSchema)
-const texts = mongoose.model('texts', DataSchema);
-module.exports = {main, users, usertoken, texts}
+const theboys = mongoose.model('chat.theboys', DataSchema);
+const regulars = mongoose.model('chat.regulars', DataSchema);
+module.exports = {main, users, usertoken, theboys, regulars}

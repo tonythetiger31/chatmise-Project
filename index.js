@@ -92,7 +92,7 @@ app.get('/login', loginDir.get)
 //_______________________________________________________|
 //=========================================/TEXTS
 app.put('/texts', textsDir.put)
-app.get('/texts', textsDir.get)
+app.get('/texts/:chat', textsDir.get)
 app.post('/texts', textsDir.post)
 //=========================================/USERCOUNT
 app.post('/Ucount', (request, response) =>{
