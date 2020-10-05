@@ -1,7 +1,7 @@
 <h1>Description</h1>
-This Chatmise.com, a messaging platform where you can comunicate with others in a ultra customizable way.
+This Chatmise.com, a messaging platform where you can communicate with others in an ultra customizable way.
 <h1>Warning</h1>
 <ul>
-<li>Dont try using seperate acounts on the same browser</li>
-<li>Dont you the same acount on seperate browsers as you will not be able to comunicate between them</li>
+<li>Don't try using separate accounts on the same browser</li>
+<li>Don't use the same account on separate browsers as you will not be able to communicate between them</li>
 </ul>
