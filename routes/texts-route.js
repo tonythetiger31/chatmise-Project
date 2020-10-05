@@ -252,16 +252,13 @@ exports.post = async function(request, response) {
                                 switch(request.body.chat){
                                     case('flores'):
                                         choose = regulars
-                                        chooseN = 'regulars'
-                                        console.log('reguars')
+                                        chooseN = 'flores'
                                     break;
                                     case('theboys'):
                                         choose = theboys
                                         chooseN = 'theboys'
-                                        console.log('rstheboys')
                                     break;
                                     default:
-                                        console.log('stupid')
                                         choose = false
                                         response.send(400)
                                         response.send('give me data')
@@ -270,7 +267,6 @@ exports.post = async function(request, response) {
                                 choose.find({})
                                     .then((data2) => {
                                         for (let i = 0; i < required.length; i++) {
-                                            console.log(required)
                                             if (data2[required[i]].sender != data[0].username) {
                                                 send1 = data2[required[i]]
                                                 send2.push(send1)

@@ -108,6 +108,7 @@ html,body{
 }
 /*=======================chatMenu=========================*/
 #chatMenu{
+    outline: none;
     display: none;
     position: fixed;
     height: 100vh;
@@ -128,7 +129,12 @@ html,body{
     overflow: auto;
     
 }
+.topOfChatMenu{
+    border: white solid;
+    border-width: 0 0 2px 0;
+}
 .exitChatButton{
+    -webkit-tap-highlight-color: transparent;
     outline: none;
     content:url('exit.png');
     display: inline-block;
@@ -140,7 +146,20 @@ html,body{
     z-index: +2;
 }
 .chatFuncButton{
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    margin: 0 0 5px 0;
+    padding: 5px 0 0 0;
     cursor: pointer;
+    display: block;
+    border-radius: 170px;
+}
+.chatFuncButton div{
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+.chatTitle{
+    margin: 10px 0 10px 0;
 }
 #topchat{
     display: block;
@@ -195,6 +214,16 @@ html,body{
 .hamburger:hover{
     transition: cubic-bezier(0.445, 0.05, 0.55, 0.95);
 }
+#tip1{
+    display: block;
+    position: static;
+    width: 17em;
+    font-size: 30px;
+    color: var(--textColor);
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    margin: 30vh auto 70vh auto;
+}
 /*========================Texts==========================*/
 .messages{
     overflow: auto;
@@ -234,21 +263,21 @@ html,body{
     font-size: 30px;
     font-family: Arial, Helvetica, sans-serif;
 }
-.messageInputFeild{
+#messageInputFeild{
     
     z-index: 1;
     background-color: var(--bodyColor);
     bottom: 0;
     right: 0;
     left: 0;
-    display: flex;
+    display: none;
     position: fixed;
     font-size: 30px;
     height: 3em;
     margin: 0; 
     z-index: 0;
 }
-.messageInputFeild textarea{
+#messageInputFeild textarea{
     outline: none;
     color: var(--textareaAbuttonTextColor);
     background-color: var(--textareaColor);
@@ -264,7 +293,7 @@ html,body{
     font-family: Arial, Helvetica, sans-serif;
     border:none;
 }
-.messageInputFeild button{
+#messageInputFeild button{
     outline: none;
     color: var(--textareaAbuttonTextColor);
     background-color: var(--buttonColor);
@@ -307,9 +336,12 @@ html,body{
     .topBar{
         font-size: 5vw;
     }
+    #tip1{
+        width: unset;
+    }
     #chatMenu{
         min-width: 50vw;
-        max-width: 80vw;
+        max-width: 55vw;
     }
     .chatButton{
         height: 10vw;
@@ -334,14 +366,14 @@ html,body{
         font-size: 5vw;
         bottom: 3em;
     }
-    .messageInputFeild{
+    #messageInputFeild{
         font-size: 5vw;
     }
-    .messageInputFeild button{
+    #messageInputFeild button{
         font-size: 5vw;
         width: 20%;
     }
-    .messageInputFeild textarea{
+    #messageInputFeild textarea{
        font-size: 5vw;
        width: 80%;
     }

@@ -10,25 +10,25 @@ document.addEventListener("DOMContentLoaded", loadstop);
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================Variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-var txtNum = []//number of texts currently loaded
-var currentTxtNum
+var txtNum = []//number of texts currently loaded for all chats
+var currentTxtNum//index of current chat withing textNum
 var userChats
-var currentChat
+var currentChat//current chat user is in
 var date = new Date();
 var messageSound =  document.getElementById("myAudio")
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=======================================cookiepareser
-function cookieParse(cookie, key){
+function parseCookie(cookie, key) {
     cA = cookie.split(/[;=]+/);
     cB = cA.indexOf(key) + 1
     cB = cA[cB]
     cB = cB.toString()
-    return(cB)
+    return (cB)
 }
 //=======================================themePost
-async function changeSettings(settingval){
+async function postChangedSettings(settingval){
     data = {val : settingval}
     const options = {
         method: 'Post',
@@ -42,7 +42,7 @@ async function changeSettings(settingval){
     console.log(json)
 }
 //=======================================themeGet
-function settheme(){
+function getSettings(){
     const options = {
         method: 'get',
         headers: {
@@ -53,11 +53,11 @@ function settheme(){
     .then(response=>response.json())
     .then((body)=>{
         themetype = body.settings
-        themeselect(themetype)
+        selectTheme(themetype)
     })
 }
 //=======================================logout
-async function logout(){
+async function logoutUser(){
     //logs user out
     const options = {
         method: 'delete',
@@ -66,8 +66,8 @@ async function logout(){
     const json = await response.json();
     location.replace("/login")
 }
-//=======================================useridsend
-async function UserIdSend(){
+//=======================================postUserToken
+async function postUserToken(){
     /*send user id to see how
      many users there are*/
     const options = {
@@ -85,61 +85,67 @@ async function UserIdSend(){
     } 
 }
 //=======================================sajax
-async function sajax(){
-    if (currentChat != undefined){
+async function getChatSize() {
+    if (currentChat != undefined) {
+        const options = {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        fetch('/texts/' + currentChat, options)
+            .then(response => response.json())
+            .then((body) => {
+                //SECOND PART
+                if (body.redirect == 'true') {
+                    location.replace('/login')
+                    // if current text and recived texts dont match make post req
+                } else if (body.textNum != txtNum[currentTxtNum]) {
+                    console.log('server txt: ', body.textNum, 'client txt: ' ,txtNum[currentTxtNum])
+                    difference = body.textNum - txtNum[currentTxtNum]
+                    getSpecificText(difference)
+                }
+            })
+    }
+}
+async function getSpecificText(difference) {
     var stext = []
     var sperson = []
     var send2 = []
-    /*semi ajax to load user 
-    messages*/
-    const options = {
-        method: 'get',
+    for (i = 0; i < difference; i++) {
+        send1 = txtNum[currentTxtNum] + i
+        send2.push(send1)
+    }
+    data = {
+        required: send2,
+        chat: currentChat
+    }
+    const options = {//meta data for post
+        method: 'Post',
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify(data)
     };
-    fetch('/texts/' + currentChat,options)
-    .then(response=>response.json())
-    .then((body)=>{
-    //SECOND PART
-    if (body.redirect == 'true'){
-        location.replace('/login')
-    // if current text and recived texts dont match make post req
-    }else if (body.textNum != txtNum[currentTxtNum]){
-        dif = body.textNum - txtNum[currentTxtNum]
-        for (i = 0; i < dif;i++){
-            send1 = txtNum[currentTxtNum] + i
-            send2.push(send1)
-        }
-        data = {required: send2,
-                chat: currentChat }
-        const options = {//meta data for post
-            method: 'Post',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        };
-        fetch('/texts', options)//post data
-        .then(response=>response.json())// recives response
-        .then((body2)=>{
-        for (i = 0; i < body2.length; i++){
-            stext.push(body2[i].text)
-        }
-        for (i = 0; i < body2.length; i++){  
-        sperson.push(body2[i].sender)
-        }
-        txtNum[currentTxtNum] = body.textNum
-        sAjaxInputMessage(stext, sperson)
-    })
-    }
-})
-    }
+    fetch('/texts', options)//post data
+        .then(response => response.json())// recives response
+        .then((body) => {
+            for (i = 0; i < body.required.length; i++) {
+                stext.push(body.required[i].text)
+            }
+            for (i = 0; i < body.required.length; i++) {
+                sperson.push(body.required[i].sender)
+            }
+            txtNum[currentTxtNum] =  txtNum[currentTxtNum] + body.required.length
+            
+            addNewMessageToHtml(body.chat, stext, sperson)
+        })
 }
 //=======================================serverPutData
-async function serverPutData(info){
+async function putUserOutgoingTexts(info) {
     /*sends data to server
      and recives*/
+    txtNum[currentTxtNum] += 1
     info[0] = info[0].trim()//removes white space
     info = info[0]//removes array from string
     date = new Date();//sets a new time
@@ -155,16 +161,14 @@ async function serverPutData(info){
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    }; 
+    };
     const response = await fetch('/texts', options);
     const json = await response.json();
 };
 //=======================================serverGetDataOnLoad
-    async function serverGetDataOnLoad(){
-        /*sends epmty string to 
-        server and recives data*/
-        person = []
-        data = {required:'all'}
+async function getAllChatsAndTexts() {
+    person = []
+    data = { required: 'all' }
     const options = {//meta data for post
         method: 'Post',
         headers: {
@@ -174,28 +178,28 @@ async function serverPutData(info){
     };
     const response = await fetch('/texts', options);//post data
     const json = await response.json();// recives response
-//display chat
-userChats = json.collections
-json.collections.forEach((element,i, arr) => {
-displayChatOptions(element, i)
-});
-//
-json.collections.forEach((element1, i1 )=> { 
-    var SMSG2 = []
-    json.data[i1].forEach((element, i) =>{
-        SMSG2.push(json.data[i1][i].text)
+    //display chat
+    userChats = json.collections
+    json.collections.forEach((element, i, arr) => {
+        displayAllChatsInMenu(element, i)
+    });
+    //
+    json.collections.forEach((element1, i1) => {
+        var SMSG2 = []
+        json.data[i1].forEach((element, i) => {
+            SMSG2.push(json.data[i1][i].text)
+        })
+        json.data[i1].forEach((element, i) => {
+            person.push(json.data[i1][i].sender)
+        })
+        displayAllServerMessages(element1, SMSG2, person)
+        txtNum.push(SMSG2.length)
     })
-    json.data[i1].forEach((element, i) =>{  
-        person.push(json.data[i1][i].sender)
-    })   
-    displayServerMessage( element1, SMSG2, person)
-    txtNum.push( SMSG2.length) 
-})
-    
-settheme()
+
+    getSettings()
 }; 
 //=======================================displayChat
-function displayChat(current, index){
+function displayAChat(current, index){
     // displays chat pressed
     userChats.forEach((element)=>{
         document.getElementById(element + 'Anchor').style.display = "none";
@@ -204,16 +208,20 @@ function displayChat(current, index){
     document.getElementById('chatTitle').innerHTML = current
     currentChat =  current;
     currentTxtNum = index
+    document.getElementById('chatMenu').style.display = 'none'
+    document.getElementById('messageInputFeild').style.display = 'flex'
+    document.getElementById('tip1').style.display = 'none'
 }
-//=======================================displayChatOptions
-function displayChatOptions(chat, index){
+//=======================================displayAllChatsInMenu
+function displayAllChatsInMenu(chat, index){
     // displays all chats
-    var div = document.createElement("div");
-    div.innerHTML = '<div class="chatFuncButton" onclick="displayChat(\'' + chat + '\',' + index + ')">' + chat + '</div>'
+    var div = document.createElement('div');
+    div.setAttribute('class','chatFuncButton')
+    div.innerHTML = '<div onclick="displayAChat(\'' + chat + '\',' + index + ')">' + chat + '</div>'
     document.getElementById("topchat").appendChild(div);
 }
 //=======================================displayServerMessage
-function displayServerMessage(chat, text, sender){
+function displayAllServerMessages(chat, text, sender){
     /*displays message procesed
      by serverGetDataOnLoad()*/
      var parentDiv = document.createElement("div")
@@ -229,7 +237,7 @@ function displayServerMessage(chat, text, sender){
     })    
 };
 //=======================================sAjaxInputMessage
-function sAjaxInputMessage(chat, text, sender){
+function addNewMessageToHtml(chat, text, sender){
     //adds ajax messages
     console.log('sajax executed')
     messageSound.play()
@@ -237,12 +245,12 @@ function sAjaxInputMessage(chat, text, sender){
     var div = document.createElement("div")
     div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>'+ text[i];
     div.setAttribute('class', 'text')
-    document.getElementById(currentChat + 'Anchor').appendChild(div);   
+    document.getElementById(chat + 'Anchor').appendChild(div);   
     div.scrollIntoView();
     } 
 }
 //=======================================inputMessage
-function inputMessage(){
+function displayAndSendOutGoingMessage(){
     //adds messages in input
     var J = []
     let R = "";
@@ -252,11 +260,11 @@ function inputMessage(){
         let div = document.createElement("div")
         div.innerHTML = '<span style="color:#63caec; float:left;">'+ 'you- ' + '</span>' + inputValue;
         div.setAttribute('class', 'text')
-        document.getElementById("message").appendChild(div);
+        document.getElementById(currentChat + 'Anchor').appendChild(div);
         div.scrollIntoView();
         document.getElementById("input").value = "";
         J.push(inputValue);
-        serverPutData(J);
+        putUserOutgoingTexts(J);
         document.getElementById('input').focus();
     }
     else if (inputValue.includes("<") == true || inputValue.includes(">") == true ){
@@ -264,26 +272,26 @@ function inputMessage(){
     }
 };
 //=======================================_EnterKey
-function _EnterKey(event){
+function sendMessageWhenEnterKeyPressed(event){
     /* when "enter" key is pressed 
     make inputMessage() happen*/
     let X = event.keyCode;
     if (X == 13){
-        inputMessage();
+        displayAndSendOutGoingMessage();
         event.preventDefault();
     };
 };
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================setinterval functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-setInterval(sajax, 1500);
-setInterval(UserIdSend, 5000);
-UserIdSend()//sends id as soon as load instead of waiting 5s
+setInterval(getChatSize, 1500);
+setInterval(postUserToken, 5000);
+postUserToken()//sends id as soon as load instead of waiting 5s
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================style functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//=======================================controlSettings
-function controlSettings(arg){
+//=======================================openCloseSettingsMenu
+function openCloseSettingsMenu(arg){
     if (arg === 'open'){//opens settings
     document.getElementById('uiWrapper').style.display = "none";
     document.getElementById('all_settings').style.display = "block";
@@ -294,21 +302,22 @@ function controlSettings(arg){
     document.getElementById('chatMenu').style.display = "none";
     }
 }
-function controlChatMenu(arg){
+function openCloseChatMenu(arg){
     if (arg === 'open'){//opens settings
     document.getElementById('chatMenu').style.display = "block";
+    document.getElementById("chatMenu").focus()
     } else if (arg === 'close'){
     document.getElementById('chatMenu').style.display = "none";
     }
 }
-//=======================================passValOfTheme
-function passValOfTheme(){
+//=======================================selectAndPostValueOfTheme
+function selectAndPostValueOfTheme(){
     var themesetting =  document.getElementById('themesetting').value
-    themeselect(themesetting)
-    changeSettings(themesetting)
+    selectTheme(themesetting)
+    postChangedSettings(themesetting)
 }
-//=======================================themeselect
-function themeselect(themeint){
+//=======================================selectTheme
+function selectTheme(themeint){
     //selects from multiple themes
     ti = themeint.toString()
     let root = document.documentElement;

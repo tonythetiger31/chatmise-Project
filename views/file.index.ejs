@@ -25,13 +25,13 @@
 		<source src="audioping.mp3" type="audio/mp3"> </audio>
 </head>
 
-<body onload="serverGetDataOnLoad();">
+<body onload="getAllChatsAndTexts();">
 	<!--gif onload-->
 	<div id="loadimg"></div>
 	<div id="postloadwraper">
 		<!--Settings menu=========================-->
 		<div id='all_settings' class="all_settings">
-			<div class="Exit" onclick="controlSettings('close')"></div>
+			<div class="Exit" onclick="openCloseSettingsMenu('close')"></div>
 			<div class="title">Info</div>
 			<div class="peopleCount">active users<span id="Count">: 1</span></div>
 			<div class="subTitle">Loged in as
@@ -41,38 +41,41 @@
 			<div class="title">Settings</div>
 			<div class="subTitle">Theme</div>
 			<div class="div_Themesetting">
-				<select onchange="passValOfTheme()" class="themesetting" id="themesetting">
+				<select onchange="selectAndPostValueOfTheme()" class="themesetting" id="themesetting">
 					<option value="1">Dark Theme</option>
 					<option value="2">Gray Theme</option>
 					<option value="3">Light Theme</option>
 				</select>
 			</div>
 			<div class="logout">
-				<button onclick="logout()">Logout</button>
+				<button onclick="logoutUser()">Logout</button>
 			</div>
 		</div>
         <!--Settings menu=========================-->
         <!--Chats menu-->
-        <div id='chatMenu'>
-            <a type="button" class="exitChatButton" onclick="controlChatMenu('close')"></a>
-			<div>Chats</div>
+        <div id='chatMenu' tabindex="1" onblur="openCloseChatMenu('close')">
+			<div class="topOfChatMenu">
+				<a type="button" class="exitChatButton" onclick="openCloseChatMenu('close')"></a>
+				<div class="chatTitle">Chats</div>
+			</div>
 			<div id='topchat'></div>
         </div>
         <!--Chats menu-->
 		<div id='uiWrapper' class="uiWrapper">
 			<div class="topBar">
 				<!--topBar-->
-				<a type='button' class="chatButton" onclick="controlChatMenu('open')"></a>
-				<div id="chatTitle">pick a chat</div>
-				<a type='button' class="hamburger" onclick="controlSettings('open')"></a>
+				<a type='button' class="chatButton" onclick="openCloseChatMenu('open')"></a>
+				<div id="chatTitle">choose a chat</div>
+				<a type='button' class="hamburger" onclick="openCloseSettingsMenu('open')"></a>
 			</div>
+			<div id="tip1">Press the arrow on the top right of your screen to access your chats</div>
 			<div class="messages"><div id="message"></div>
 			<!--messages go bellow #message-->
 		</div>
 			<div class="scrollBottomButton">new messages</div>
-			<div class="messageInputFeild">
-				<textarea placeholder="type a message here" id="input" maxlength="170" onkeydown="_EnterKey(event)"></textarea>
-				<button onclick="inputMessage();">Enter</button>
+			<div id="messageInputFeild">
+				<textarea placeholder="type a message here" id="input" maxlength="170" onkeydown="sendMessageWhenEnterKeyPressed(event)"></textarea>
+				<button onclick="sendMessageWhenEnterKeyPressed()">Enter</button>
 			</div>
 		</div>
 	</div>
