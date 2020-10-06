@@ -25,7 +25,7 @@
 		<source src="audioping.mp3" type="audio/mp3"> </audio>
 </head>
 
-<body onload="getAllChatsAndTexts();">
+<body onload="getAllChatsUsernameAndTexts();">
 	<!--gif onload-->
 	<div id="loadimg"></div>
 	<div id="postloadwraper">
@@ -75,7 +75,7 @@
 			<div class="scrollBottomButton">new messages</div>
 			<div id="messageInputFeild">
 				<textarea placeholder="type a message here" id="input" maxlength="170" onkeydown="sendMessageWhenEnterKeyPressed(event)"></textarea>
-				<button onclick="sendMessageWhenEnterKeyPressed()">Enter</button>
+				<button onclick="displayAndSendOutGoingMessage()">Enter</button>
 			</div>
 		</div>
 	</div>
@@ -83,5 +83,4 @@
 	<script src="file.java.js"></script>
 	<!--====================================================================-->
 </body>
-
 </html>

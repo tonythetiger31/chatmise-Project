@@ -15,8 +15,8 @@ const theboys = userdb.theboys
 const usertoken = userdb.usertoken
 const methods = require('../methods')
 //===============================================================PUT
-exports.put = async function(request, response) {
-//var declaration
+exports.put = async function (request, response) {
+    //var declaration
     //if (request.body.text > 1000){}// protection against DDOS in progress
     console.log('just sent-- ', request.body.text)
     var sender = request.headers.cookie
@@ -25,32 +25,32 @@ exports.put = async function(request, response) {
     var text
     var chat
     var choose = false
-//sucurity phase 1
+    //sucurity phase 1
     if (sender == undefined || sender == null || sender == '') {
         console.log('texts PUT denial phase 1')
         response.status(401)
-        response.send({'redirect': 'true'})
+        response.send({ 'redirect': 'true' })
     } else {
-//sucurity phase 2
+        //sucurity phase 2
         sender = methods.cookieParse(sender, 'userId')
         if (sender == undefined || sender == null || sender == '') {
             console.log('texts PUT denial phase 2')
             response.status(401)
-            response.send({'redirect': 'true'})
+            response.send({ 'redirect': 'true' })
         } else {
-//sucurity phase 3
+            //sucurity phase 3
             cSender = sender
             usertoken.find({
-                    usertoken: sender
-                })
+                usertoken: sender
+            })
                 .then((data) => {
                     if (data == '') {
                         console.log('texts PUT denial phase 3')
                         response.status(403)
-                        response.send({'redirect': 'true'})
+                        response.send({ 'redirect': 'true' })
                     } else {
                         if (data[0].usertoken == cSender) {
-//response
+                            //response
                             sender = data[0].username
                             if (Object.keys(request.body).length !== 0) {
 
@@ -63,32 +63,32 @@ exports.put = async function(request, response) {
                                     time: time,
                                     sender: sender
                                 }
-                                switch(chat){
-                                    case('flores'):
+                                switch (chat) {
+                                    case ('flores'):
                                         choose = regulars
-                                    break;
-                                    case('theboys'):
+                                        break;
+                                    case ('theboys'):
                                         choose = theboys
-                                    break;
+                                        break;
                                     default:
                                         choose = false
                                         response.send(400)
                                         response.send('give me data')
                                 }
-                                if (choose != false){
-                                var newtexts = new choose(datadb);
-                                newtexts.save((error) => {
-                                    if (error) {
-                                        console.log('somthing happened witht the db -texts')
-                                    } else {
-                                        console.log('text saved')
-                                        response.status(200)
-                                        response.send({"status" : "text saved"})
-                                    }
-                                })
+                                if (choose != false) {
+                                    var newtexts = new choose(datadb);
+                                    newtexts.save((error) => {
+                                        if (error) {
+                                            console.log('somthing happened witht the db -texts')
+                                        } else {
+                                            console.log('text saved')
+                                            response.status(200)
+                                            response.send({ "status": "text saved" })
+                                        }
+                                    })
+                                }
                             }
-                            }
-//response end
+                            //response end
                         }
                     }
                 })
@@ -96,62 +96,60 @@ exports.put = async function(request, response) {
     }
 }
 //===============================================================GET
-exports.get = async function(request, response) {
-//var declaration
+exports.get = async function (request, response) {
+    //var declaration
     var sender = request.headers.cookie
     var choose
-//sucurity phase 1
+    //sucurity phase 1
     if (sender == undefined || sender == null || sender == '') {
         console.log('texts GET denial phase 1')
         response.status(401)
-        response.send({'redirect': 'true'})
+        response.send({ 'redirect': 'true' })
     } else {
-//sucurity phase 2
+        //sucurity phase 2
         sender = methods.cookieParse(sender, 'userId')
         if (sender == undefined || sender == null || sender == '') {
             console.log('texts GET denial phase 2')
             response.status(401)
-            response.send({'redirect': 'true'})
+            response.send({ 'redirect': 'true' })
         } else {
-//sucurity phase 3
+            //sucurity phase 3
             usertoken.find({
-                    usertoken: sender
-                })
+                usertoken: sender
+            })
                 .then((data) => {
                     if (data == '') {
                         console.log('texts GET denial phase 3')
                         response.status(403)
-                        response.send({'redirect': 'true'})
+                        response.send({ 'redirect': 'true' })
                     } else {
                         if (data[0].usertoken == sender) {
-//response
-switch(request.params.chat){
-    case('flores'):
-        choose = regulars
-    break;
-    case('theboys'):
-        choose = theboys
-    break;
-    default:
-        choose = false
-        response.send(400)
-        response.send('give me data')
-}
-if (choose != false){
-choose.countDocuments(function (err, count){
-    if (err){
-        console.log("there was a err at /text get")
-    } else {
-        response.status(200)
-        response.send({"textNum" : count});
-    }
-})
-}           
-                         
-                                 
-//response end
+                            //response
+                            switch (request.params.chat) {
+                                case ('flores'):
+                                    choose = regulars
+                                    break;
+                                case ('theboys'):
+                                    choose = theboys
+                                    break;
+                                default:
+                                    choose = false
+                                    response.send(400)
+                                    response.send('give me data')
+                            }
+                            if (choose != false) {
+                                choose.countDocuments(function (err, count) {
+                                    if (err) {
+                                        console.log("there was a err at /text get")
+                                    } else {
+                                        response.status(200)
+                                        response.send({ "textNum": count });
+                                    }
+                                })
+                            }
+                            //response end
                         }
-                    
+
                     }
                 })
         }
@@ -159,7 +157,7 @@ choose.countDocuments(function (err, count){
 }
 //===============================================================POST
 exports.post = async function(request, response) {
-    //var declaration
+//var declaration
     var send2 = []
     var required = request.body.required
     var sender = request.headers.cookie
@@ -167,7 +165,7 @@ exports.post = async function(request, response) {
     var send1
     var choose
     var chooseN
-    //sucurity phase 1
+//sucurity phase 1
     if (sender == undefined || sender == null || sender == '') {
         console.log('texts POST denial phase 1')
         response.status(401)
@@ -175,7 +173,7 @@ exports.post = async function(request, response) {
             'redirect': 'true'
         })
     } else {
-        //sucurity phase 2
+//sucurity phase 2
         sender = methods.cookieParse(sender, 'userId')
         if (sender == undefined || sender == null || sender == '') {
             console.log('texts POST denial phase 2')
@@ -184,11 +182,11 @@ exports.post = async function(request, response) {
                 'redirect': 'true'
             })
         } else {
-            //sucurity phase 3
+//sucurity phase 3
             cSender = sender
             usertoken.find({
-                    usertoken: sender
-                })
+                usertoken: sender
+            })
                 .then((data) => {
                     if (data == '') {
                         console.log('texts POST denial phase 3')
@@ -200,11 +198,12 @@ exports.post = async function(request, response) {
 
                         if (data[0].usertoken == cSender) {
 //response
+                            //if user wants all texts
                             if (required == 'all') {
                                 users.find({
-                                        username: data[0].username
-                                    })
-                                    .then( (data2) => {//for giving all data pretaining to specific user
+                                    username: data[0].username
+                                })
+                                    .then((data2) => {//for giving all data pretaining to specific user
                                         var checkerR = false
                                         var checkerT = false
                                         data2[0].chats.forEach((i) => {
@@ -217,22 +216,25 @@ exports.post = async function(request, response) {
                                                     break;
                                             }
                                         })
-
                                         if (checkerR == true && checkerT == false) {
                                             regulars.find({})
                                                 .then((data3) => {
                                                     response.status(200)
                                                     response.send({
-                                                        collections:['flores'], 
-                                                        data: [data3]});
+                                                        collections: ['flores'],
+                                                        data: [data3],
+                                                        username: data[0].username
+                                                    });
                                                 })
                                         } else if (checkerR == false && checkerT == true) {
                                             theboys.find({})
                                                 .then((data3) => {
                                                     response.status(200)
                                                     response.send({
-                                                        collections:["theboys"], 
-                                                        data: [data3]})
+                                                        collections: ["theboys"],
+                                                        data: [data3],
+                                                        username: data[0].username
+                                                    })
                                                 })
                                         } else if (checkerR == true && checkerT == true) {
                                             theboys.find({})
@@ -241,45 +243,49 @@ exports.post = async function(request, response) {
                                                         .then((data4) => {
                                                             response.status(200)
                                                             response.send({
-                                                                collections:["theboys","flores"], 
-                                                                data: [data3, data4]})
+                                                                collections: ["theboys", "flores"],
+                                                                data: [data3, data4],
+                                                                username: data[0].username
+                                                            })
                                                         })
                                                 })
                                         }
 
                                     })
-                            } else if (typeof(required) != "string") {
-                                switch(request.body.chat){
-                                    case('flores'):
+                            //if user wants specific text
+                            } else if (typeof (required) != "string") {
+                                switch (request.body.chat) {
+                                    case ('flores'):
                                         choose = regulars
                                         chooseN = 'flores'
-                                    break;
-                                    case('theboys'):
+                                        break;
+                                    case ('theboys'):
                                         choose = theboys
                                         chooseN = 'theboys'
-                                    break;
+                                        break;
                                     default:
                                         choose = false
                                         response.send(400)
                                         response.send('give me data')
                                 }
-                                if (choose != false){
-                                choose.find({})
-                                    .then((data2) => {
-                                        for (let i = 0; i < required.length; i++) {
-                                            if (data2[required[i]].sender != data[0].username) {
-                                                send1 = data2[required[i]]
-                                                send2.push(send1)
+                                if (choose != false) {
+                                    choose.find({})
+                                        .then((data2) => {
+                                            for (let i = 0; i < required.length; i++) {
+                                                if (data2[required[i]].sender != data[0].username) {
+                                                    send1 = data2[required[i]]
+                                                    send2.push(send1)
+                                                }
                                             }
-                                        }
-                                        response.status(200)
-                                        response.send({'required': send2, 'chat': chooseN});
-                                    })
+                                            response.status(200)
+                                            response.send({ 'required': send2, 'chat': chooseN });
+                                        })
+                                }
                             }
-                        }
-                            //response end
+//response end
                         }
                     }
                 })
         }
-    }}
+    }
+}

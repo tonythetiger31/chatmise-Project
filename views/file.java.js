@@ -10,10 +10,11 @@ document.addEventListener("DOMContentLoaded", loadstop);
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================Variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-var txtNum = []//number of texts currently loaded for all chats
-var currentTxtNum//index of current chat withing textNum
-var userChats
+var allChatsTextCount = []//number of texts currently loaded for all chats
+var currentTextIndex//index of current chat withing textNum
+var allCurrentUserChats
 var currentChat//current chat user is in
+var username
 var date = new Date();
 var messageSound =  document.getElementById("myAudio")
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -100,9 +101,9 @@ async function getChatSize() {
                 if (body.redirect == 'true') {
                     location.replace('/login')
                     // if current text and recived texts dont match make post req
-                } else if (body.textNum != txtNum[currentTxtNum]) {
-                    console.log('server txt: ', body.textNum, 'client txt: ' ,txtNum[currentTxtNum])
-                    difference = body.textNum - txtNum[currentTxtNum]
+                } else if (body.textNum != allChatsTextCount[currentTextIndex]) {
+                    console.log('server txt: ', body.textNum, 'client txt: ' ,allChatsTextCount[currentTextIndex])
+                    difference = body.textNum - allChatsTextCount[currentTextIndex]
                     getSpecificText(difference)
                 }
             })
@@ -113,7 +114,7 @@ async function getSpecificText(difference) {
     var sperson = []
     var send2 = []
     for (i = 0; i < difference; i++) {
-        send1 = txtNum[currentTxtNum] + i
+        send1 = allChatsTextCount[currentTextIndex] + i
         send2.push(send1)
     }
     data = {
@@ -136,7 +137,7 @@ async function getSpecificText(difference) {
             for (i = 0; i < body.required.length; i++) {
                 sperson.push(body.required[i].sender)
             }
-            txtNum[currentTxtNum] =  txtNum[currentTxtNum] + body.required.length
+            allChatsTextCount[currentTextIndex] =  allChatsTextCount[currentTextIndex] + body.required.length
             
             addNewMessageToHtml(body.chat, stext, sperson)
         })
@@ -145,7 +146,7 @@ async function getSpecificText(difference) {
 async function putUserOutgoingTexts(info) {
     /*sends data to server
      and recives*/
-    txtNum[currentTxtNum] += 1
+     allChatsTextCount[currentTextIndex] += 1
     info[0] = info[0].trim()//removes white space
     info = info[0]//removes array from string
     date = new Date();//sets a new time
@@ -166,7 +167,7 @@ async function putUserOutgoingTexts(info) {
     const json = await response.json();
 };
 //=======================================serverGetDataOnLoad
-async function getAllChatsAndTexts() {
+async function getAllChatsUsernameAndTexts() {
     person = []
     data = { required: 'all' }
     const options = {//meta data for post
@@ -179,10 +180,12 @@ async function getAllChatsAndTexts() {
     const response = await fetch('/texts', options);//post data
     const json = await response.json();// recives response
     //display chat
-    userChats = json.collections
+    allCurrentUserChats = json.collections
     json.collections.forEach((element, i, arr) => {
         displayAllChatsInMenu(element, i)
     });
+    //get username
+    username = json.username
     //
     json.collections.forEach((element1, i1) => {
         var SMSG2 = []
@@ -193,7 +196,7 @@ async function getAllChatsAndTexts() {
             person.push(json.data[i1][i].sender)
         })
         displayAllServerMessages(element1, SMSG2, person)
-        txtNum.push(SMSG2.length)
+        allChatsTextCount.push(SMSG2.length)
     })
 
     getSettings()
@@ -201,16 +204,17 @@ async function getAllChatsAndTexts() {
 //=======================================displayChat
 function displayAChat(current, index){
     // displays chat pressed
-    userChats.forEach((element)=>{
+    allCurrentUserChats.forEach((element)=>{
         document.getElementById(element + 'Anchor').style.display = "none";
     })
     document.getElementById(current + 'Anchor').style.display = "block";
     document.getElementById('chatTitle').innerHTML = current
     currentChat =  current;
-    currentTxtNum = index
+    currentTextIndex = index
     document.getElementById('chatMenu').style.display = 'none'
     document.getElementById('messageInputFeild').style.display = 'flex'
     document.getElementById('tip1').style.display = 'none'
+    document.getElementById(current + 'Anchor').lastChild.scrollIntoView()
 }
 //=======================================displayAllChatsInMenu
 function displayAllChatsInMenu(chat, index){
@@ -230,8 +234,13 @@ function displayAllServerMessages(chat, text, sender){
      document.getElementById("message").appendChild(parentDiv);
     text.forEach((element, i) =>{
         var div = document.createElement("div");
-        div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>'  + text[i];
-        div.setAttribute('class', 'text')
+        if (sender[i] == username){
+            div.innerHTML = '<span class="userSenderName"> you- ' + '</span>'+ text[i];
+            div.setAttribute('class', 'youText')    
+        }else{
+            div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>'  + text[i];
+            div.setAttribute('class', 'text')    
+        }
         document.getElementById(parentDiv.id).appendChild(div);
         div.scrollIntoView();
     })    
@@ -258,8 +267,8 @@ function displayAndSendOutGoingMessage(){
     if (inputValue !== "" && inputValue.trim().length !== 0 && inputValue.includes("<") !== true && inputValue.includes(">") !== true ){
         //inputValue = inputValue.replace(/<|>/g, " ");
         let div = document.createElement("div")
-        div.innerHTML = '<span style="color:#63caec; float:left;">'+ 'you- ' + '</span>' + inputValue;
-        div.setAttribute('class', 'text')
+        div.innerHTML = '<span class="userSenderName"; float:left;">'+ 'you- ' + '</span>' + inputValue;
+        div.setAttribute('class', 'youText')
         document.getElementById(currentChat + 'Anchor').appendChild(div);
         div.scrollIntoView();
         document.getElementById("input").value = "";
@@ -320,47 +329,50 @@ function selectAndPostValueOfTheme(){
 function selectTheme(themeint){
     //selects from multiple themes
     ti = themeint.toString()
-    let root = document.documentElement;
+    let root = document.documentElement.style;
     document.getElementById('themesetting').value = ti
     switch (ti){
         case '1':
             //black
-            root.style.setProperty('--bodyColor', "rgb(20, 20, 20)");
-            root.style.setProperty('--textColor', "white");
-            root.style.setProperty('--hamburgerColor', "brightness(100%)");
-            root.style.setProperty('--textareaColor', "rgb(20, 20, 20)");
-            root.style.setProperty('--buttonColor', "rgb(20, 20, 20)");
-            root.style.setProperty('--textareaAbuttonTextColor', "white");
-            root.style.setProperty('--yellowColor', "rgb(238, 241, 35);");
-            root.style.setProperty('--lineColor', "white");
-            root.style.setProperty('--greenColor', "#52fb9e");
-            root.style.setProperty('--topBarColor', 'rgb(30,30,30)')
+            root.setProperty('--bodyColor', "rgb(20, 20, 20)");
+            root.setProperty('--textColor', "white");
+            root.setProperty('--hamburgerColor', "brightness(100%)");
+            root.setProperty('--textareaColor', "rgb(20, 20, 20)");
+            root.setProperty('--buttonColor', "rgb(20, 20, 20)");
+            root.setProperty('--textareaAbuttonTextColor', "white");
+            root.setProperty('--yellowColor', "rgb(238, 241, 35);");
+            root.setProperty('--lineColor', "white");
+            root.setProperty('--greenColor', "#52fb9e");
+            root.setProperty('--topBarColor', 'rgb(30,30,30)')
+            root.setProperty('--blueColor', '#63caec')
             break;
         case '2':
             //gray
-            root.style.setProperty('--bodyColor', "rgb(56, 56, 56)");
-            root.style.setProperty('--textColor', "white");
-            root.style.setProperty('--hamburgerColor', "brightness(100%)");
-            root.style.setProperty('--textareaColor', "rgb(56, 56, 56)");
-            root.style.setProperty('--buttonColor', "rgb(56, 56, 56)");
-            root.style.setProperty('--textareaAbuttonTextColor', "white");
-            root.style.setProperty('--yellowColor', "rgb(238, 241, 35);");
-            root.style.setProperty('--lineColor', "white");
-            root.style.setProperty('--greenColor', "#52fb9e");
-            root.style.setProperty('--topBarColor', 'rgb(70,70,70)')
+            root.setProperty('--bodyColor', "rgb(56, 56, 56)");
+            root.setProperty('--textColor', "white");
+            root.setProperty('--hamburgerColor', "brightness(100%)");
+            root.setProperty('--textareaColor', "rgb(56, 56, 56)");
+            root.setProperty('--buttonColor', "rgb(56, 56, 56)");
+            root.setProperty('--textareaAbuttonTextColor', "white");
+            root.setProperty('--yellowColor', "rgb(238, 241, 35);");
+            root.setProperty('--lineColor', "white");
+            root.setProperty('--greenColor', "#52fb9e");
+            root.setProperty('--topBarColor', 'rgb(70,70,70)')
+            root.setProperty('--blueColor', '#63caec')
         break;
         case '3':
             //white
-            root.style.setProperty('--bodyColor', "white");
-            root.style.setProperty('--textColor', "rgb(56, 56, 56)");
-            root.style.setProperty('--hamburgerColor', "brightness(30%)");
-            root.style.setProperty('--textareaColor', "white");
-            root.style.setProperty('--buttonColor', "white");
-            root.style.setProperty('--textareaAbuttonTextColor', "rgb(56, 56, 56)");
-            root.style.setProperty('--yellowColor', "rgb(196, 199, 0);");
-            root.style.setProperty('--lineColor', "black");
-            root.style.setProperty('--greenColor', "#0bdc12");
-            root.style.setProperty('--topBarColor', 'rgb(200,200,200)')
+            root.setProperty('--bodyColor', "white");
+            root.setProperty('--textColor', "rgb(56, 56, 56)");
+            root.setProperty('--hamburgerColor', "brightness(30%)");
+            root.setProperty('--textareaColor', "white");
+            root.setProperty('--buttonColor', "white");
+            root.setProperty('--textareaAbuttonTextColor', "rgb(56, 56, 56)");
+            root.setProperty('--yellowColor', "rgb(196, 199, 0);");
+            root.setProperty('--lineColor', "black");
+            root.setProperty('--greenColor', "#0bdc12");
+            root.setProperty('--topBarColor', 'rgb(200,200,200)')
+            root.setProperty('--blueColor', '#0095ff')
     }
 }
 function loadstop(){
