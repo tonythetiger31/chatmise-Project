@@ -69,7 +69,7 @@ function uChange(){
     F = undefined
     F = S.filter((item, i, ar) => ar.indexOf(item) === i);//removes duplicates
     F = F.length 
-    console.log(F, 'users')
+    console.log(F, 'active users')
     U = F
     U = U.toString()
     S = []

@@ -149,11 +149,13 @@ html,body{
     -webkit-tap-highlight-color: transparent;
     font-size: 30px;
     outline: none;
-    margin: 0 0 5px 0;
-    padding: 5px 0 0 0;
+    padding: 5px 0 5px 0;
     cursor: pointer;
     display: block;
-    border-radius: 170px;
+    transition-duration: 0.3s;
+}
+.chatFuncButton:hover{
+    background-color: var(--bodyColor) ;
 }
 .chatFuncButton div{
     -webkit-tap-highlight-color: transparent;
@@ -196,6 +198,7 @@ html,body{
     display: inline-block;
 }
 .hamburger{
+    -webkit-tap-highlight-color: transparent;
     content:url('https://docs.google.com/drawings/d/e/2PACX-1vS3e1kzM75xEe-MQROzoY9dl6JZgR_0FPQbnOo0PRbmrx-e2E12xdXpu-4vynWbAbPaofckWS0MZeky/pub?w=396&h=291');
     height:50px;
     right: 0;
@@ -206,9 +209,13 @@ html,body{
     transition: all .5s;
     cursor: pointer;
     z-index: +2;
+    transition: all 0.22s ease 0s;
 }
 .hamburger:hover{
-    transition: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    -webkit-tap-highlight-color: transparent;
+    transform: translate(-8px, 7px);
+
+
 }
 #tip1{
     display: block;
@@ -385,6 +392,7 @@ html,body{
     .hamburger{
         height: 100%;
     }
+
     .messages{
         font-size: 5vw;
     }

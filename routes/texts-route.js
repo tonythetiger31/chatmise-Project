@@ -53,7 +53,10 @@ exports.put = async function (request, response) {
                             //response
                             sender = data[0].username
                             if (Object.keys(request.body).length !== 0) {
-
+                                /*things to sanatise are
+                                any < > tags, any $ symbols, and other ones,
+                                */ 
+                               
                                 text = request.body.text
                                 time = request.body.time
                                 chat = request.body.chat
@@ -278,6 +281,7 @@ exports.post = async function(request, response) {
                                                 }
                                             }
                                             response.status(200)
+                                            
                                             response.send({ 'required': send2, 'chat': chooseN });
                                         })
                                 }

@@ -15,3 +15,6 @@ exports.cookieParse = function cookieParse(cookie, key){
         return(null)
     }
 }
+exports.sanitizer = function sanitizer(input){
+        
+}
