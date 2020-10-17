@@ -24,7 +24,7 @@ require('dotenv').config()
 const uriuserdata = process.env.uriuserdata
 const urichatrooms = process.env.urichatrooms
 //project files
-const textsDir = require('./routes/texts-route')
+const textsDir = require('./routes/texts/texts-route')
 const userdb = require('./db_config/db_userdata')
 // const chatroomdb = require('./db_config/db_chatrooms')
 const themeDir = require('./routes/theme-route')

@@ -5,12 +5,13 @@ WARNING
 -only different users on separate devices will be able to communicate
 */
 "use strict"
-const { users } = require('../db_config/db_userdata')
-const userdb = require('../db_config/db_userdata')
+const { users } = require('../../db_config/db_userdata')
+const userdb = require('../../db_config/db_userdata')
 const regulars = userdb.regulars
 const theboys = userdb.theboys
 const usertoken = userdb.usertoken
-const methods = require('../methods')
+const methods = require('../../methods')
+// const textMethods = require('texts-route')
 //===============================================================PUT
 exports.put = async function (request, response) {
     //var declaration
@@ -146,54 +147,72 @@ exports.post = async function (request, response) {
                                 username: data[0].username
                             })
                                 .then((data2) => {//for giving all data pretaining to specific user
-                                    var checkerR = false
-                                    var checkerT = false
-                                    data2[0].chats.forEach((i) => {
-                                        switch (i) {
-                                            case ("regulars"):
-                                                checkerR = true
-                                                break;
-                                            case ("theboys"):
-                                                checkerT = true
-                                                break;
-                                        }
+                                    let collections = []
+                                    let allTextsForThisUser = []
+                                    return new Promise((resolve) => {
+                                        data2[0].chats.forEach((element) => {
+                                            eval(element).find({}).then((data) => {
+                                                collections.push(element)
+                                                allTextsForThisUser.push(data2)
+                                            })
+                                        })
+                                        resolve(collections)
                                     })
-                                    if (checkerR == true && checkerT == false) {
-                                        regulars.find({})
-                                            .then((data3) => {
-                                                response.status(200)
-                                                response.send({
-                                                    collections: ['flores'],
-                                                    data: [data3],
-                                                    username: data[0].username
-                                                });
-                                            })
-                                    } else if (checkerR == false && checkerT == true) {
-                                        theboys.find({})
-                                            .then((data3) => {
-                                                response.status(200)
-                                                response.send({
-                                                    collections: ["theboys"],
-                                                    data: [data3],
-                                                    username: data[0].username
-                                                })
-                                            })
-                                    } else if (checkerR == true && checkerT == true) {
-                                        theboys.find({})
-                                            .then((data3) => {
-                                                regulars.find({})
-                                                    .then((data4) => {
-                                                        response.status(200)
-                                                        response.send({
-                                                            collections: ["theboys", "flores"],
-                                                            data: [data3, data4],
-                                                            username: data[0].username
-                                                        })
-                                                    })
-                                            })
-                                    }
-
+                                }).then((resolvedData) => {
+                                    console.log('end of func', resolvedData)
+                                    response.status(200)
+                                    response.send({
+                                        collections: resolvedData.collections,
+                                        data: resolvedData.allTextsForThisUser,
+                                        username: data[0].username
+                                    })
                                 })
+
+                                    // var checkerR = false
+                                    // var checkerT = false
+                                    // data2[0].chats.forEach((i) => {
+                                    //     switch (i) {
+                                    //         case ("regulars"):
+                                    //             checkerR = true
+                                    //             break;
+                                    //         case ("theboys"):
+                                    //             checkerT = true
+                                    //             break;
+                                    //     }
+                                    // })
+                                    // if (checkerR == true && checkerT == false) {
+                                    //     regulars.find({})
+                                    //         .then((data3) => {
+                                    //             response.status(200)
+                                    //             response.send({
+                                    //                 collections: ['flores'],
+                                    //                 data: [data3],
+                                    //                 username: data[0].username
+                                    //             });
+                                    //         })
+                                    // } else if (checkerR == false && checkerT == true) {
+                                    //     theboys.find({})
+                                    //         .then((data3) => {
+                                    //             response.status(200)
+                                    //             response.send({
+                                    //                 collections: ["theboys"],
+                                    //                 data: [data3],
+                                    //                 username: data[0].username
+                                    //             })
+                                    //         })
+                                    // } else if (checkerR == true && checkerT == true) {
+                                    //     theboys.find({})
+                                    //         .then((data3) => {
+                                    //             regulars.find({})
+                                    //                 .then((data4) => {
+                                    //                     v
+                                    //                 })
+                                    //         })
+                                    // }
+
+                                
+
+
                             //if user wants specific text
                         } else if (typeof (required) != "string") {
                             switch (request.body.chat) {
