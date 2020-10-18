@@ -25,5 +25,5 @@ const DataSchema = new mongoose.Schema({
 const users = mongoose.model('users', DataSchema);
 const usertoken = mongoose.model('usertoken', DataSchema)
 const theboys = mongoose.model('chat.theboys', DataSchema);
-const regulars = mongoose.model('chat.regulars', DataSchema);
-module.exports = {main, users, usertoken, theboys, regulars}
+const flores = mongoose.model('chat.flores', DataSchema);
+module.exports = {main, users, usertoken, theboys, flores}

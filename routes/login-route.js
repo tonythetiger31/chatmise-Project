@@ -38,9 +38,8 @@ exports.get = function(request, response) {
 //===============================================================POST
 exports.post = function(request, response) { 
 //var decleration
-    var username = request.body.username
-    var password = request.body.password
-    console.log(request.body)
+    var username = request.body.username,
+        password = request.body.password;
 //login phase 1
     if (request.body.username.length > 25
         || request.body.password.length > 25){
@@ -74,7 +73,7 @@ exports.post = function(request, response) {
                             response.status(202)
                             response.cookie('userId',userId, { maxAge: 302400000, httpOnly: true })
                             response.send('You are now logedin')
-                            console.log('user loged in ', userId)
+                            console.log(request.body.username, 'loged in')
                         }
                     })
                 } else {

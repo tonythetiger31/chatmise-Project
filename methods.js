@@ -2,7 +2,8 @@
 const { response } = require('express');
 const userdb = require('./db_config/db_userdata')
 const usertoken = userdb.usertoken
-//funcitons
+module.exports = { cookieParse, sucurityPhase1, sucurityPhase2, sucurityPhase3 }
+//functions
 function cookieParse(cookie, key) {
     try {
         str = cookie.replace(/\s+/g, "")
@@ -60,4 +61,3 @@ async function sucurityPhase3(sender, typeOfHTTPMethod) {
             })
     })
 }
-module.exports = { cookieParse, sucurityPhase1, sucurityPhase2, sucurityPhase3 }

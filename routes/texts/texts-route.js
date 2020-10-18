@@ -5,23 +5,25 @@ WARNING
 -only different users on separate devices will be able to communicate
 */
 "use strict"
-const { users } = require('../../db_config/db_userdata')
-const userdb = require('../../db_config/db_userdata')
-const regulars = userdb.regulars
-const theboys = userdb.theboys
-const usertoken = userdb.usertoken
-const methods = require('../../methods')
+const
+    userdb = require('../../db_config/db_userdata'),
+    flores = userdb.flores,
+    theboys = userdb.theboys,
+    usertoken = userdb.usertoken,
+    users = userdb.users,
+    methods = require('../../methods'),
+    textsMethods = require('./texts-methods');
 // const textMethods = require('texts-route')
 //===============================================================PUT
-exports.put = async function (request, response) {
+async function put(request, response) {
     //var declaration
     //if (request.body.text > 1000){}// protection against DDOS in progress
     console.log('just sent-- ', request.body.text)
-    var sender = request.headers.cookie
-    var time
-    var text
-    var chat
-    var choose = false
+    var sender = request.headers.cookie,
+        time,
+        text,
+        chat,
+        choose = false;
     //sucurity phase 1
     if (methods.sucurityPhase1(sender, 'PUT')) {
         //sucurity phase 2    
@@ -39,7 +41,7 @@ exports.put = async function (request, response) {
                             text = request.body.text
                             time = request.body.time
                             chat = request.body.chat
-                            console.log('new transmiton----', sender, request.body, '----')
+                            console.log('new transmiton', sender, request.body)
                             var datadb = {
                                 text: text,
                                 time: time,
@@ -47,7 +49,7 @@ exports.put = async function (request, response) {
                             }
                             switch (chat) {
                                 case ('flores'):
-                                    choose = regulars
+                                    choose = flores
                                     break
                                 case ('theboys'):
                                     choose = theboys
@@ -66,22 +68,22 @@ exports.put = async function (request, response) {
                                         console.log('text saved')
                                         response.status(200)
                                         response.send({ "status": "text saved" })
-                                    }
-                                })
-                            }
-                        }
+                                    };
+                                });
+                            };
+                        };
                         //response end
-                    }
-                }
-            })
-        }
-    }
-}
+                    };
+                };
+            });
+        };
+    };
+};
 //===============================================================GET
-exports.get = async function (request, response) {
+async function get(request, response) {
     //var declaration
-    var sender = request.headers.cookie
-    var choose
+    var sender = request.headers.cookie,
+        choose;
     //sucurity phase 1
     if (methods.sucurityPhase1(sender, 'GET')) {
         //sucurity phase 2
@@ -94,14 +96,14 @@ exports.get = async function (request, response) {
                         //response
                         switch (request.params.chat) {
                             case ('flores'):
-                                choose = regulars
+                                choose = flores
                                 break;
                             case ('theboys'):
                                 choose = theboys
                                 break;
                             default:
                                 choose = false
-                                response.send(400)
+                                response.status(400)
                                 response.send('give me data')
                         }
                         if (choose != false) {
@@ -111,26 +113,28 @@ exports.get = async function (request, response) {
                                 } else {
                                     response.status(200)
                                     response.send({ "textNum": count });
-                                }
-                            })
-                        }
+                                };
+                            });
+                        };
                         //response end
-                    }
+                    };
 
-                }
-            })
-        }
-    }
-}
+                };
+            });
+        };
+    };
+};
 //===============================================================POST
-exports.post = async function (request, response) {
+async function post(request, response) {
     //var declaration
-    var send2 = []
-    var required = request.body.required
-    var sender = request.headers.cookie
-    var send1
-    var choose
-    var chooseN
+    var send2 = [],
+        required = request.body.required,
+        sender = request.headers.cookie,
+        send1,
+        choose,
+        chooseN,
+        collections = [],
+        allTextsForThisUser = [];
     //sucurity phase 1
     if (methods.sucurityPhase1(sender, 'POST')) {
         //sucurity phase 2
@@ -145,79 +149,27 @@ exports.post = async function (request, response) {
                         if (required == 'all') {
                             users.find({
                                 username: data[0].username
-                            })
-                                .then((data2) => {//for giving all data pretaining to specific user
-                                    let collections = []
-                                    let allTextsForThisUser = []
-                                    return new Promise((resolve) => {
-                                        data2[0].chats.forEach((element) => {
-                                            eval(element).find({}).then((data) => {
-                                                collections.push(element)
-                                                allTextsForThisUser.push(data2)
-                                            })
-                                        })
-                                        resolve(collections)
-                                    })
-                                }).then((resolvedData) => {
-                                    console.log('end of func', resolvedData)
+                            }).then((data2) => {//for giving all data pretaining to specific user 
+                                textsMethods.grabAllUserInfo(data2)
+                                .then((thisUserData)=>{
+                                    //console.log('end of func', thisUserData.allTextsForThisUser)
                                     response.status(200)
                                     response.send({
-                                        collections: resolvedData.collections,
-                                        data: resolvedData.allTextsForThisUser,
+                                        collections: thisUserData.collections,
+                                        data: thisUserData.allTextsForThisUser,
                                         username: data[0].username
                                     })
                                 })
-
-                                    // var checkerR = false
-                                    // var checkerT = false
-                                    // data2[0].chats.forEach((i) => {
-                                    //     switch (i) {
-                                    //         case ("regulars"):
-                                    //             checkerR = true
-                                    //             break;
-                                    //         case ("theboys"):
-                                    //             checkerT = true
-                                    //             break;
-                                    //     }
-                                    // })
-                                    // if (checkerR == true && checkerT == false) {
-                                    //     regulars.find({})
-                                    //         .then((data3) => {
-                                    //             response.status(200)
-                                    //             response.send({
-                                    //                 collections: ['flores'],
-                                    //                 data: [data3],
-                                    //                 username: data[0].username
-                                    //             });
-                                    //         })
-                                    // } else if (checkerR == false && checkerT == true) {
-                                    //     theboys.find({})
-                                    //         .then((data3) => {
-                                    //             response.status(200)
-                                    //             response.send({
-                                    //                 collections: ["theboys"],
-                                    //                 data: [data3],
-                                    //                 username: data[0].username
-                                    //             })
-                                    //         })
-                                    // } else if (checkerR == true && checkerT == true) {
-                                    //     theboys.find({})
-                                    //         .then((data3) => {
-                                    //             regulars.find({})
-                                    //                 .then((data4) => {
-                                    //                     v
-                                    //                 })
-                                    //         })
-                                    // }
+                                 
 
                                 
 
-
+                            })
                             //if user wants specific text
                         } else if (typeof (required) != "string") {
                             switch (request.body.chat) {
                                 case ('flores'):
-                                    choose = regulars
+                                    choose = flores
                                     chooseN = 'flores'
                                     break;
                                 case ('theboys'):
@@ -241,13 +193,14 @@ exports.post = async function (request, response) {
                                         response.status(200)
 
                                         response.send({ 'required': send2, 'chat': chooseN });
-                                    })
-                            }
-                        }
+                                    });
+                            };
+                        };
                         //response end
-                    }
-                }
-            })
-        }
-    }
-}
+                    };
+                };
+            });
+        };
+    };
+};
+module.exports = { post, get, put }
