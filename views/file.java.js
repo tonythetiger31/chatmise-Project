@@ -97,7 +97,10 @@ async function getChatSize() {
                 'Content-Type': 'application/json'
             }
         };
-        fetch('/texts/' + currentChat, options).then(response=>response.json()).catch(error=>internetWarning()).then((body)=>{
+        fetch('/texts/' + currentChat, options)
+        .then(response=>response.json())
+        .catch(error=>internetWarning(true))
+        .then((body)=>{
             //SECOND PART
             if (body.redirect == 'true') {
                 location.replace('/login')
@@ -107,6 +110,7 @@ async function getChatSize() {
                 difference = body.textNum - allChatsTextCount[currentTextIndex]
                 getSpecificText(difference)
             }
+            internetWarning(false)
         }
         )
     }
@@ -326,8 +330,15 @@ function sendMessageWhenEnterKeyPressed(event) {
     }
     ))
 }
-function internetWarning() {
-    alert('internet error, please check your internet')
+function internetWarning(argument) {
+    if(argument === true){
+        
+    console.log('internet warining ran')
+        document.getElementById('internetWaring').style.display = "block";
+    }else{
+        console.log('DENIED')
+        document.getElementById('internetWaring').style.display = "none";
+    }
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================setinterval functions
