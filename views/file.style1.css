@@ -45,8 +45,6 @@ html,body{
     border: solid var(--lineColor);
     border-width: 1px;
     border-radius: 15px;
-    height: 10vh;
-    width: 30vw;
     text-align: center;
     color: var(--textColor);
     font-family: Arial, Helvetica, sans-serif;
@@ -55,7 +53,7 @@ html,body{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 7vh 0 0 0;
+    padding: 20px;
 }
 /*==================all settings========================*/
 .all_settings{
@@ -358,6 +356,12 @@ html,body{
     .Exit{
         height: 10vw;
         width: 13vw;
+    }
+    #internetWaring{
+        font-size: 5vw;
+        padding: 20px;
+        height: unset;
+        width: unset;
     }
     .all_settings .title{
     font-size: 7vw;

@@ -24,60 +24,53 @@ async function put(request, response) {
         text,
         chat,
         choose = false;
-    //sucurity phase 1
-    if (methods.sucurityPhase1(sender, 'PUT')) {
-        //sucurity phase 2    
-        sender = methods.cookieParse(sender, 'userId')
-        if (methods.sucurityPhase2(sender, 'PUT')) {
-            //sucurity phase 3
-            methods.sucurityPhase3(sender, 'PUT').then((data) => {
-                if (data !== false) {
-                    if (data[0].usertoken == sender) {
-                        //response
-                        sender = data[0].username
-                        if (Object.keys(request.body).length !== 0) {
-                            /*things to sanatise are
-                            any < > tags, any $ symbols, and other ones, */
-                            text = request.body.text
-                            time = request.body.time
-                            chat = request.body.chat
-                            console.log('new transmiton', sender, request.body)
-                            var datadb = {
-                                text: text,
-                                time: time,
-                                sender: sender
-                            }
-                            switch (chat) {
-                                case ('flores'):
-                                    choose = flores
-                                    break
-                                case ('theboys'):
-                                    choose = theboys
-                                    break
-                                default:
-                                    choose = false
-                                    response.send(400)
-                                    response.send('give me data')
-                            }
-                            if (choose != false) {
-                                var newtexts = new choose(datadb)
-                                newtexts.save((error) => {
-                                    if (error) {
-                                        console.log('somthing happened witht the db -texts')
-                                    } else {
-                                        console.log('text saved')
-                                        response.status(200)
-                                        response.send({ "status": "text saved" })
-                                    };
-                                });
+    //sucurity phases
+    methods.sucurityCheck3Phase(sender, 'PUT').then((data) => {
+        if (data !== false) {
+            if (data.userInfo[0].usertoken == data.sender) {
+                //response
+                sender = data.userInfo[0].username
+                if (Object.keys(request.body).length !== 0) {
+                    /*things to sanatise are
+                    any < > tags, any $ symbols, and other ones, */
+                    text = request.body.text
+                    time = request.body.time
+                    chat = request.body.chat
+                    console.log('new transmiton', sender, request.body)
+                    var datadb = {
+                        text: text,
+                        time: time,
+                        sender: sender
+                    }
+                    switch (chat) {
+                        case ('flores'):
+                            choose = flores
+                            break
+                        case ('theboys'):
+                            choose = theboys
+                            break
+                        default:
+                            choose = false
+                            response.send(400)
+                            response.send('give me data')
+                    }
+                    if (choose != false) {
+                        var newtexts = new choose(datadb)
+                        newtexts.save((error) => {
+                            if (error) {
+                                console.log('somthing happened witht the db -texts')
+                            } else {
+                                console.log('text saved')
+                                response.status(200)
+                                response.send({ "status": "text saved" })
                             };
-                        };
-                        //response end
+                        });
                     };
                 };
-            });
+                //response end
+            };
         };
-    };
+    });
 };
 //===============================================================GET
 async function get(request, response) {
@@ -85,44 +78,37 @@ async function get(request, response) {
     var sender = request.headers.cookie,
         choose;
     //sucurity phase 1
-    if (methods.sucurityPhase1(sender, 'GET')) {
-        //sucurity phase 2
-        sender = methods.cookieParse(sender, 'userId')
-        if (methods.sucurityPhase2(sender, 'GET')) {
-            //sucurity phase 3
-            methods.sucurityPhase3(sender, 'GET').then((data) => {
-                if (data !== false) {
-                    if (data[0].usertoken == sender) {
-                        //response
-                        switch (request.params.chat) {
-                            case ('flores'):
-                                choose = flores
-                                break;
-                            case ('theboys'):
-                                choose = theboys
-                                break;
-                            default:
-                                choose = false
-                                response.status(400)
-                                response.send('give me data')
-                        }
-                        if (choose != false) {
-                            choose.countDocuments(function (err, count) {
-                                if (err) {
-                                    console.log("there was a err at /text get")
-                                } else {
-                                    response.status(200)
-                                    response.send({ "textNum": count });
-                                };
-                            });
+    methods.sucurityCheck3Phase(sender, 'GET').then((data) => {
+        if (data !== false) {
+            if (data.userInfo[0].usertoken == data.sender) {
+                //response
+                switch (request.params.chat) {
+                    case ('flores'):
+                        choose = flores
+                        break;
+                    case ('theboys'):
+                        choose = theboys
+                        break;
+                    default:
+                        choose = false
+                        response.status(400)
+                        response.send('give me data')
+                }
+                if (choose != false) {
+                    choose.countDocuments(function (err, count) {
+                        if (err) {
+                            console.log("there was a err at /text get")
+                        } else {
+                            response.status(200)
+                            response.send({ "textNum": count });
                         };
-                        //response end
-                    };
-
+                    });
                 };
-            });
+                //response end
+            };
+
         };
-    };
+    });
 };
 //===============================================================POST
 async function post(request, response) {
@@ -132,75 +118,63 @@ async function post(request, response) {
         sender = request.headers.cookie,
         send1,
         choose,
-        chooseN,
-        collections = [],
-        allTextsForThisUser = [];
+        chooseN
     //sucurity phase 1
-    if (methods.sucurityPhase1(sender, 'POST')) {
-        //sucurity phase 2
-        sender = methods.cookieParse(sender, 'userId')
-        if (methods.sucurityPhase2(sender, 'POST')) {
-            //sucurity phase 3
-            methods.sucurityPhase3(sender, 'POST').then((data) => {
-                if (data !== false) {
-                    if (data[0].usertoken == sender) {
-                        //response
-                        //if user wants all texts
-                        if (required == 'all') {
-                            users.find({
-                                username: data[0].username
-                            }).then((data2) => {//for giving all data pretaining to specific user 
-                                textsMethods.grabAllUserInfo(data2)
-                                .then((thisUserData)=>{
-                                    //console.log('end of func', thisUserData.allTextsForThisUser)
-                                    response.status(200)
-                                    response.send({
-                                        collections: thisUserData.collections,
-                                        data: thisUserData.allTextsForThisUser,
-                                        username: data[0].username
-                                    })
+    methods.sucurityCheck3Phase(sender, 'GET').then((data) => {
+        if (data !== false) {
+            if (data.userInfo[0].usertoken == data.sender) {
+                //response
+                //if user wants all texts
+                if (required == 'all') {
+                    users.find({
+                        username: data.userInfo[0].username
+                    }).then((data2) => {//for giving all data pretaining to specific user 
+                        textsMethods.grabAllUserInfo(data2)
+                            .then((thisUserData) => {
+                                //console.log('end of func', thisUserData.allTextsForThisUser)
+                                response.status(200)
+                                response.send({
+                                    collections: thisUserData.collections,
+                                    data: thisUserData.allTextsForThisUser,
+                                    username: data.userInfo[0].username
                                 })
-                                 
-
-                                
-
                             })
-                            //if user wants specific text
-                        } else if (typeof (required) != "string") {
-                            switch (request.body.chat) {
-                                case ('flores'):
-                                    choose = flores
-                                    chooseN = 'flores'
-                                    break;
-                                case ('theboys'):
-                                    choose = theboys
-                                    chooseN = 'theboys'
-                                    break;
-                                default:
-                                    choose = false
-                                    response.send(400)
-                                    response.send('give me data')
-                            }
-                            if (choose != false) {
-                                choose.find({})
-                                    .then((data2) => {
-                                        for (let i = 0; i < required.length; i++) {
-                                            if (data2[required[i]].sender != data[0].username) {
-                                                send1 = data2[required[i]]
-                                                send2.push(send1)
-                                            }
-                                        }
-                                        response.status(200)
+                    })
 
-                                        response.send({ 'required': send2, 'chat': chooseN });
-                                    });
-                            };
-                        };
-                        //response end
+                    //if user wants specific text
+                } else if (typeof (required) != "string") {
+                    switch (request.body.chat) {
+                        case ('flores'):
+                            choose = flores
+                            chooseN = 'flores'
+                            break;
+                        case ('theboys'):
+                            choose = theboys
+                            chooseN = 'theboys'
+                            break;
+                        default:
+                            choose = false
+                            response.send(400)
+                            response.send('give me data')
+                    }
+                    if (choose != false) {
+                        choose.find({})
+                            .then((data2) => {
+                                for (let i = 0; i < required.length; i++) {
+                                    if (data2[required[i]].sender != data.userInfo[0].username) {
+                                        send1 = data2[required[i]]
+                                        send2.push(send1)
+                                    }
+                                }
+                                response.status(200)
+
+                                response.send({ 'required': send2, 'chat': chooseN });
+                            });
                     };
                 };
-            });
+                //response end
+            };
         };
-    };
+    });
 };
 module.exports = { post, get, put }

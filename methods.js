@@ -2,7 +2,7 @@
 const { response } = require('express');
 const userdb = require('./db_config/db_userdata')
 const usertoken = userdb.usertoken
-module.exports = { cookieParse, sucurityPhase1, sucurityPhase2, sucurityPhase3 }
+module.exports = { sucurityCheck3Phase, cookieParse, sucurityPhase1, sucurityPhase2, sucurityPhase3 }
 //functions
 function cookieParse(cookie, key) {
     try {
@@ -60,4 +60,25 @@ async function sucurityPhase3(sender, typeOfHTTPMethod) {
                 }
             })
     })
+}
+
+function sucurityCheck3Phase(sender, typeOfHTTPMethod) {
+    return new Promise((resolve) => {
+    //sucurity phase 1    
+    if (sucurityPhase1(sender, typeOfHTTPMethod)) {
+        //sucurity phase 2    
+             sender = cookieParse(sender, 'userId')
+        if (sucurityPhase2(sender, typeOfHTTPMethod)) {
+            //sucurity phase 3
+            sucurityPhase3(sender, typeOfHTTPMethod).then((data)=>{
+                
+                resolve({ userInfo: data, sender: sender})
+            })
+        } else {
+            resolve (false)
+        }
+    } else {
+        resolve (false)
+    }
+})
 }

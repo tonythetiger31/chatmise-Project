@@ -57,24 +57,24 @@ app.use(require('express-status-monitor')());
 //_______________________________________________________|
 //________________________________________|var decleration
 //_______________________________________________________|
-var S = []
-var U = '1';
-var F
+var S = [],
+    U = '1',
+    F
 //_______________________________________________________|
 //___________________________________|function decleration
 //_______________________________________________________|
-function uChange(){
+function uChange() {
     //counts number of active users
-    try{
-    F = undefined
-    F = S.filter((item, i, ar) => ar.indexOf(item) === i);//removes duplicates
-    F = F.length 
-    console.log(F, 'active users')
-    U = F
-    U = U.toString()
-    S = []
+    try {
+        F = undefined
+        F = S.filter((item, i, ar) => ar.indexOf(item) === i);//removes duplicates
+        F = F.length
+        console.log(F, 'active users')
+        U = F
+        U = U.toString()
+        S = []
     }
-    catch(err){
+    catch (err) {
         S = []
         F = undefined
     }

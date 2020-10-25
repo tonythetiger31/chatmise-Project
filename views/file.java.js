@@ -80,13 +80,17 @@ async function postUserToken() {
             'Content-Type': 'application/json'
         }
     };
-    const response = await fetch('/Ucount', options);
-    const json = await response.json();
-    if (json == 1) {
-        document.getElementById("Count").innerHTML = ': only you';
-    } else {
-        document.getElementById("Count").innerHTML = ": " + json;
-    }
+    fetch('/Ucount', options)
+        .then(response => response.json())
+        .catch(error => internetWarning(true))
+        .then((body) => {
+            if (body == 1) {
+                document.getElementById("Count").innerHTML = ': only you';
+            } else {
+                document.getElementById("Count").innerHTML = ": " + body;
+            }
+            internetWarning(false)
+        })
 }
 //=======================================sajax
 async function getChatSize() {
@@ -336,7 +340,7 @@ function internetWarning(argument) {
     console.log('internet warining ran')
         document.getElementById('internetWaring').style.display = "block";
     }else{
-        console.log('DENIED')
+        console.log('its OK')
         document.getElementById('internetWaring').style.display = "none";
     }
 }

@@ -6,7 +6,7 @@ const { users } = require('../../db_config/db_userdata'),
     theboys = userdb.theboys,
     usertoken = userdb.usertoken,
     methods = require('../../methods');
-module.exports = { grabAllUserInfo }
+module.exports = { chat, grabAllUserInfo }
 //funtions
 function grabAllUserInfo(data) {
     var collections = [],
@@ -30,4 +30,17 @@ function grabAllUserInfo(data) {
             })
         })
     })
+}
+var chat = {
+    documentCount: null,
+    countDocumentsInterval: function () {
+        choose.countDocuments(function (err, count) {
+            if (err) {
+                console.log("there was a err at texts-methods/ chat.countDocument")
+            } else {
+                this.documentCount = count
+            }
+        })
+    }
+    
 }
