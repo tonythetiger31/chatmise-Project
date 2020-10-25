@@ -24,10 +24,7 @@ function cookieParse(cookie, key) {
 function sucurityPhase1(sender, typeOfHTTPMethod) {
     if (sender == undefined || sender == null || sender == '') {
         console.log('texts ', typeOfHTTPMethod, ' denial phase 1')
-        response.status(401)
-        response.send({ 'redirect': 'true' })
         return (false)
-
     } else {
         return (true)
     }
@@ -35,8 +32,6 @@ function sucurityPhase1(sender, typeOfHTTPMethod) {
 function sucurityPhase2(sender, typeOfHTTPMethod) {
     if (sender == undefined || sender == null || sender == '') {
         console.log('texts ', typeOfHTTPMethod, ' denial phase 2')
-        response.status(401)
-        response.send({ 'redirect': 'true' })
         return (false)
     } else {
         return (true)
@@ -51,8 +46,6 @@ async function sucurityPhase3(sender, typeOfHTTPMethod) {
             .then((data) => {
                 if (data == '') {
                     console.log('texts ', typeOfHTTPMethod, ' denial phase 3')
-                    response.status(403)
-                    response.send({ 'redirect': 'true' })
                     resolve(false)
                 } else {
                     resolve(data)

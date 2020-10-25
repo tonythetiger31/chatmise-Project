@@ -26,7 +26,10 @@ async function put(request, response) {
         choose = false;
     //sucurity phases
     methods.sucurityCheck3Phase(sender, 'PUT').then((data) => {
-        if (data !== false) {
+        if (data == false) {
+            response.status(400)
+            response.send({ 'redirect': 'true' })
+        } else {
             if (data.userInfo[0].usertoken == data.sender) {
                 //response
                 sender = data.userInfo[0].username
@@ -79,7 +82,10 @@ async function get(request, response) {
         choose;
     //sucurity phase 1
     methods.sucurityCheck3Phase(sender, 'GET').then((data) => {
-        if (data !== false) {
+        if (data == false) {
+            response.status(400)
+            response.send({ 'redirect': 'true' })
+        } else {
             if (data.userInfo[0].usertoken == data.sender) {
                 //response
                 switch (request.params.chat) {
@@ -121,7 +127,10 @@ async function post(request, response) {
         chooseN
     //sucurity phase 1
     methods.sucurityCheck3Phase(sender, 'GET').then((data) => {
-        if (data !== false) {
+        if (data == false) {
+            response.status(400)
+            response.send({ 'redirect': 'true' })
+        } else {
             if (data.userInfo[0].usertoken == data.sender) {
                 //response
                 //if user wants all texts
