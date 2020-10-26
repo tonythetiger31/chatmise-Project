@@ -54,7 +54,6 @@ async function sucurityPhase3(sender, typeOfHTTPMethod) {
             })
     })
 }
-
 function sucurityCheck3Phase(sender, typeOfHTTPMethod) {
     return new Promise((resolve) => {
     //sucurity phase 1    

@@ -71,7 +71,7 @@ exports.post = function(request, response) {
                             response.send('problem loging you in')
                         } else {
                             response.status(202)
-                            response.cookie('userId',userId, { maxAge: 302400000, httpOnly: true })
+                            response.cookie('userId',userId, { maxAge: 302400000, httpOnly: true})
                             response.send('You are now logedin')
                             console.log(request.body.username, 'loged in')
                         }

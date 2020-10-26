@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="file.style2.css" rel="stylesheet">
     <title>Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="form">
         <div class="title">chatmise.com</div>
         <form id="theform" method="POST" action="/login">
-            <input autocomplete="username" name="username" maxlength="30" class="Username" type="text" placeholder="Username" required><br>
-            <input autocomplete="current-password" name="password" maxlength="30" class="Password" type="password" placeholder="Password" required><br>
+            <input autocomplete="username" name="username" maxlength="30" class="Username" type="text"
+                placeholder="Username" required><br>
+            <input autocomplete="current-password" name="password" maxlength="30" class="Password" type="password"
+                placeholder="Password" required><br>
             <button class="LoginButton">login</button>
         </form>
         <!--
@@ -24,26 +28,26 @@
         -->
     </div>
     <script>
-             //function declaration
+        //function declaration
 
- //===================
- document.forms['theform'].addEventListener('submit', (event) => {
-     event.preventDefault();
-     fetch('/login', {
-         method: 'POST',
-         body: new URLSearchParams(new FormData(theform))
-
-     }).then((resp) => {
-         return resp.text(); // or resp.text() or whatever the server sends
-     }).then((body) => {
-         console.log(body)
-         if (body != 'Wrong password or Username') {
-            location.replace("/")
-         } else if (body == 'Wrong password or Username'){
-            alert(body)
-         }
-     })
- });
+        //===================
+        document.forms['theform'].addEventListener('submit', (event) => {
+            event.preventDefault();
+            fetch('/login', {
+                method: 'POST',
+                body: new URLSearchParams(new FormData(theform))
+            }).then((resp) => {
+                return resp.text(); // or resp.text() or whatever the server sends
+            }).then((body) => {
+                console.log(body)
+                if (body != 'Wrong password or Username') {
+                    location.replace("/")
+                } else if (body == 'Wrong password or Username') {
+                    alert(body)
+                }
+            })
+        });
     </script>
 </body>
+
 </html>
