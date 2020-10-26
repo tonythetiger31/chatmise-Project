@@ -25,7 +25,7 @@ exports.post = (request, response) => {
                 response.send('somthing when wrong while updating your prefrences')
             }
             response.status(200)
-            response.send('theme options updated')
+            response.send({ response: 'theme options updated'})
         });
     })
 }

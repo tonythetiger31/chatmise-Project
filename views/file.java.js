@@ -20,6 +20,7 @@ var currentChat
 var username
 var date = new Date();
 var messageSound = document.getElementById("myAudio")
+messageSound.volume = 0.15;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -33,7 +34,7 @@ function parseCookie(cookie, key) {
 }
 //=======================================themePost
 async function postChangedSettings(settingval) {
-    data = {
+    var data = {
         val: settingval
     }
     const options = {
@@ -45,7 +46,6 @@ async function postChangedSettings(settingval) {
     };
     const response = await fetch('/theme', options);
     const json = await response.json();
-    console.log(json)
 }
 //=======================================themeGet
 function getSettings() {
@@ -112,7 +112,7 @@ async function getChatSize() {
                     // if current text and recived texts dont match make post req
                 } else if (body.textNum != allChatsTextCount[currentTextIndex]) {
                     console.log('server txt: ', body.textNum, 'client txt: ', allChatsTextCount[currentTextIndex])
-                    difference = body.textNum - allChatsTextCount[currentTextIndex]
+                    var difference = body.textNum - allChatsTextCount[currentTextIndex]
                     getSpecificText(difference)
                 }
                 internetWarning(false)
@@ -124,11 +124,11 @@ async function getSpecificText(difference) {
     var stext = []
     var sperson = []
     var send2 = []
-    for (i = 0; i < difference; i++) {
-        send1 = allChatsTextCount[currentTextIndex] + i
+    for (var i = 0; i < difference; i++) {
+       var send1 = allChatsTextCount[currentTextIndex] + i
         send2.push(send1)
     }
-    data = {
+    var data = {
         required: send2,
         chat: currentChat
     }
@@ -165,8 +165,8 @@ async function putUserOutgoingTexts(info) {
     //removes array from string
     date = new Date();
     //sets a new time
-    CTime = date.getTime()
-    data = {
+    var CTime = date.getTime()
+    var data = {
         text: info,
         time: CTime,
         chat: currentChat
@@ -275,8 +275,10 @@ function displayAllServerMessages(chat, text, sender) {
 function addNewMessageToHtml(chat, text, sender) {
     //adds ajax messages
     console.log('sajax executed')
+    if (document.visibilityState !== 'visible'){
     messageSound.play()
-    for (i = 0; i < text.length; i++) {
+    }
+    for (var i = 0; i < text.length; i++) {
         var div = document.createElement("div")
         div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>' + sanitize(text[i]);
         div.setAttribute('class', 'text')
