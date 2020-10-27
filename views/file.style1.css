@@ -65,12 +65,23 @@ html,body{
     width: 100vw;
 }
 .Exit{
-    content:url('exit.png');
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
     height: 50px;
     position: fixed;
     top:.5vw;
     right: 0;
     cursor: pointer;
+}
+.Exit a{
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    content:url('exit.png');
+    height: 50px;
+    transition: all .3s ease-out;
+}
+.Exit:hover > a{
+    transform: rotateZ(90deg);
 }
 .title{
     letter-spacing: .1em;
@@ -126,7 +137,7 @@ html,body{
 /*=======================chatMenu=========================*/
 #chatMenu{
     outline: none;
-    display: none;
+    display: block;
     position: fixed;
     height: 100vh;
     min-width: 400px;
@@ -153,15 +164,25 @@ html,body{
 .exitChatButton{
     -webkit-tap-highlight-color: transparent;
     outline: none;
-    content:url('exit.png');
     display: inline-block;
-    top:1px;
-    left:0;
-    height: 50px;
     position: static;
     float: left;
+    top:0;
+    left: 0;
     cursor: pointer;
-    z-index: +2;
+    
+    height: 50px;
+}
+.exitChatButton a{
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    height: 50px;
+    content:url('exit.png');
+    transition: all .3s ease-out;
+    z-index: 1;
+}
+.exitChatButton:hover > a{
+    transform: rotateZ(90deg);
 }
 .chatFuncButton{
     -webkit-tap-highlight-color: transparent;
@@ -200,16 +221,25 @@ html,body{
 }
 .chatButton{
     -webkit-tap-highlight-color: transparent;
-    content:url('back.png');
-    height: 50px;
+    outline: none;
+    cursor: pointer;
     left: 0;
-    filter: var(--hamburgerColor);
     display: inline-block;
     float: left;
     position: static;
-    transition: all .5s;
-    cursor: pointer;
-    z-index: +2;
+    height: 50px;
+}
+.chatButton a{
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    content:url('back.png');
+    filter: var(--hamburgerColor);
+    transition: all .3s ease-out;
+    height: 50px;
+    z-index: 2;
+}
+.chatButton:hover  > a{
+    transform: rotateY(180deg);
 }
 .topBar div{
     font-size: 40px;
@@ -354,8 +384,12 @@ html,body{
     margin: 0 0 0 0;
     } 
     .Exit{
-        height: 10vw;
-        width: 13vw;
+        height: 9vw;
+        width: 11.7vw;
+    }
+    .Exit a{
+        height: 9vw;
+        width: 11.7vw;
     }
     #internetWaring{
         font-size: 5vw;
@@ -407,11 +441,17 @@ html,body{
     .chatButton{
         height: 100%;
     }
+    .chatButton a{
+        height: 100%;
+    }
     .chatFuncButton{
         font-size: 6vw;
     }
     .exitChatButton{
         height: 100%;
+    }
+    .exitChatButton a{
+        height: 100%
     }
     .hamburger{
         height: 100%;

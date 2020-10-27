@@ -369,6 +369,10 @@ function openCloseSettingsMenu(arg) {
         document.getElementById('all_settings').style.display = "none";
         document.getElementById('chatMenu').style.display = "none";
     }
+    if (currentChat !== undefined){
+        var currentChatId = document.getElementById(currentChat + 'Anchor').lastChild
+        currentChatId.scrollIntoView();
+    }
 }
 function openCloseChatMenu(arg) {
     if (arg === 'open') {

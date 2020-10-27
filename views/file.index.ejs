@@ -33,7 +33,9 @@
 		<div id="internetWaring">Connection error, please check your internet</div>
 		<!--Settings menu=========================-->
 		<div id='all_settings' class="all_settings">
-			<div class="Exit" onclick="openCloseSettingsMenu('close')"></div>
+			<div class="Exit" >
+			<a type='button' onclick="openCloseSettingsMenu('close')" ></a>
+		</div>
 			<div class="title">Info</div>
 			<div class="peopleCount">active users<span id="Count">: 1</span></div>
 			<div class="subTitle">Loged in as
@@ -57,7 +59,9 @@
         <!--Chats menu-->
         <div id='chatMenu' tabindex="1" onblur="openCloseChatMenu('close')">
 			<div class="topOfChatMenu">
-				<a type="button" class="exitChatButton" onclick="openCloseChatMenu('close')"></a>
+				<div class="exitChatButton">
+				<a type="button"  onclick="openCloseChatMenu('close')"></a>
+			</div>
 				<div class="chatTitle">Chats</div>
 			</div>
 			<div id='topchat'></div>
@@ -66,11 +70,13 @@
 		<div id='uiWrapper' class="uiWrapper">
 			<div class="topBar">
 				<!--topBar-->
-				<a type='button' class="chatButton" onclick="openCloseChatMenu('open')"></a>
+				<div class="chatButton">
+				<a type='button'  onclick="openCloseChatMenu('open')"></a>
+			</div>
 				<div id="chatTitle">choose a chat</div>
 				<a type='button' class="hamburger" onclick="openCloseSettingsMenu('open')"></a>
 			</div>
-			<div id="tip1">Press the arrow on the top left of your screen to access your chats</div>
+			<div id="tip1">choose one of the chats to the left of your screen</div>
 			<div class="messages"><div id="message"></div>
 			<!--messages go bellow #message-->
 		</div>
