@@ -18,7 +18,6 @@ var allCurrentUserChats
 var currentChat
 //current chat user is in
 var username
-var date = new Date();
 var messageSound = document.getElementById("myAudio")
 messageSound.volume = 0.15;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -124,6 +123,7 @@ async function getSpecificText(difference) {
     var stext = []
     var sperson = []
     var send2 = []
+    var time = []
     for (var i = 0; i < difference; i++) {
        var send1 = allChatsTextCount[currentTextIndex] + i
         send2.push(send1)
@@ -149,13 +149,16 @@ async function getSpecificText(difference) {
             for (i = 0; i < body.required.length; i++) {
                 sperson.push(body.required[i].sender)
             }
+            for (i = 0; i < body.required.length; i++) {
+                time.push(body.required[i].time)
+            }
             allChatsTextCount[currentTextIndex] = allChatsTextCount[currentTextIndex] + body.required.length
-            addNewMessageToHtml(body.chat, stext, sperson)
+            addNewMessageToHtml(body.chat, stext, sperson, time)
         }
         )
 }
 //=======================================serverPutData
-async function putUserOutgoingTexts(info) {
+async function putUserOutgoingTexts(info, date) {
     /*sends data to server
      and recives*/
     allChatsTextCount[currentTextIndex] += 1
@@ -163,9 +166,7 @@ async function putUserOutgoingTexts(info) {
     //removes white space
     info = info[0]
     //removes array from string
-    date = new Date();
-    //sets a new time
-    var CTime = date.getTime()
+    var CTime = date
     var data = {
         text: info,
         time: CTime,
@@ -184,6 +185,7 @@ async function putUserOutgoingTexts(info) {
 ;//=======================================serverGetDataOnLoad
 async function getAllChatsUsernameAndTexts() {
     var person = []
+    var thisTextTime
     var data = {
         required: 'all'
     }
@@ -211,6 +213,7 @@ async function getAllChatsUsernameAndTexts() {
     json.collections.forEach((element1, i1) => {
         var SMSG2 = []
             person = []
+            thisTextTime = []
         json.data[i1].forEach((element, i) => {
             SMSG2.push(json.data[i1][i].text)
         }
@@ -219,7 +222,10 @@ async function getAllChatsUsernameAndTexts() {
             person.push(json.data[i1][i].sender)
         }
         )
-        displayAllServerMessages(element1, SMSG2, person)
+        json.data[i1].forEach((element, i) => {
+            thisTextTime.push(json.data[i1][i].time)
+        })
+        displayAllServerMessages(element1, SMSG2, person, thisTextTime)
         allChatsTextCount.push(SMSG2.length)
     }
     )
@@ -250,7 +256,7 @@ function displayAllChatsInMenu(chat, index) {
     document.getElementById("topchat").appendChild(div);
 }
 //=======================================displayServerMessage
-function displayAllServerMessages(chat, text, sender) {
+function displayAllServerMessages(chat, text, sender, time) {
     /*displays message procesed
      by getAllChatsUsernameAndTexts()*/
     var parentDiv = document.createElement("div")
@@ -260,10 +266,10 @@ function displayAllServerMessages(chat, text, sender) {
     text.forEach((element, i) => {
         var div = document.createElement("div");
         if (sender[i] == username) {
-            div.innerHTML = '<span class="userSenderName"> you- ' + '</span>' + sanitize(text[i]);
+            div.innerHTML = '<span class="userSenderName"> you - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span><br>' + sanitize(text[i]);
             div.setAttribute('class', 'youText')
         } else {
-            div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>' + sanitize(text[i]);
+            div.innerHTML = '<span class="textSenderName">' + sender[i] + ' - ' + '</span><span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span><br>' + sanitize(text[i]);
             div.setAttribute('class', 'text')
         }
         document.getElementById(parentDiv.id).appendChild(div);
@@ -272,7 +278,7 @@ function displayAllServerMessages(chat, text, sender) {
     )
 }
 ;//=======================================sAjaxInputMessage
-function addNewMessageToHtml(chat, text, sender) {
+function addNewMessageToHtml(chat, text, sender, time) {
     //adds ajax messages
     console.log('sajax executed')
     if (document.visibilityState !== 'visible'){
@@ -280,7 +286,7 @@ function addNewMessageToHtml(chat, text, sender) {
     }
     for (var i = 0; i < text.length; i++) {
         var div = document.createElement("div")
-        div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span>' + sanitize(text[i]);
+        div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span><span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span><br>' + sanitize(text[i]);
         div.setAttribute('class', 'text')
         document.getElementById(chat + 'Anchor').appendChild(div);
         div.scrollIntoView();
@@ -289,18 +295,19 @@ function addNewMessageToHtml(chat, text, sender) {
 //=======================================inputMessage
 function displayAndSendOutGoingMessage() {
     //adds messages in input
+    var thisTime = new Date().getTime()
     var J = []
     let R = "";
     let inputValue = document.getElementById("input").value;
     if (inputValue !== "" && inputValue.trim().length !== 0) {
         let div = document.createElement("div")
-        div.innerHTML = '<span class="userSenderName"; float:left;">' + 'you- ' + '</span>' + sanitize(inputValue);
+        div.innerHTML = '<span class="userSenderName"; float:left;">' + 'you- ' + '</span><span class="textsTime">' + getNormalTimeFromUTC(thisTime) +'</span><br>' + sanitize(inputValue);
         div.setAttribute('class', 'youText')
         document.getElementById(currentChat + 'Anchor').appendChild(div);
         div.scrollIntoView();
         document.getElementById("input").value = "";
         J.push(inputValue);
-        putUserOutgoingTexts(J);
+        putUserOutgoingTexts(J, thisTime);
         document.getElementById('input').focus();
     }
 }
@@ -346,6 +353,31 @@ function internetWarning(argument) {
     } else {
         document.getElementById('internetWaring').style.display = "none";
     }
+}
+function getNormalTimeFromUTC(thisDate){
+    var pmOrAm
+    var hoursNon24
+    var minutesWithOrWithoutZero
+    thisDate = new Date(thisDate)
+    if(thisDate.getHours() > 12){
+        pmOrAm = 'PM'
+        hoursNon24 = thisDate.getHours()-12
+    }else{
+        pmOrAm = 'AM'
+        hoursNon24 = thisDate.getHours()
+    }
+    if(thisDate.getMinutes() <= 9){
+        minutesWithOrWithoutZero = '0'
+    }else{
+        minutesWithOrWithoutZero = ''
+    }
+    var output =(thisDate.getMonth()
+     + 1 + '/' + thisDate.getDate())
+    + '/' + thisDate.getFullYear()
+    +' '+ hoursNon24
+    +':'+ minutesWithOrWithoutZero + thisDate.getMinutes()
+    +' '+ pmOrAm;
+    return(output)
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================setinterval functions
