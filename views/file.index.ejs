@@ -5,13 +5,13 @@
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-176266475-4"></script>
 	<script>
-	window.dataLayer = window.dataLayer || [];
+		window.dataLayer = window.dataLayer || [];
 
-	function gtag() {
-		dataLayer.push(arguments);
-	}
-	gtag('js', new Date());
-	gtag('config', 'UA-176266475-4');
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+		gtag('config', 'UA-176266475-4');
 	</script>
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -33,15 +33,14 @@
 		<div id="internetWaring">Connection error, please check your internet</div>
 		<!--Settings menu=========================-->
 		<div id='all_settings' class="all_settings">
-			<div class="Exit" >
-			<a type='button' onclick="openCloseSettingsMenu('close')" ></a>
-		</div>
-			<div class="title">Info</div>
-			<div class="peopleCount">active users<span id="Count">: 1</span></div>
+			<div class="Exit">
+				<a type='button' onclick="openCloseSettingsMenu('close')"></a>
+			</div>
+			<div class="title"></div>
 			<div class="subTitle">Loged in as
 				<%= username %>
 			</div>
-			<div class="tips"><a href="https://tipsandbugreport.netlify.app/">Tips/Report Bugs</a></div>
+			<div class="tips"><a href="https://tipsandbugreport.netlify.app/" type="button">Report a bug</a></div>
 			<div class="title">Settings</div>
 			<div class="subTitle">Theme</div>
 			<div class="div_Themesetting">
@@ -55,34 +54,37 @@
 				<button onclick="logoutUser()">Logout</button>
 			</div>
 		</div>
-        <!--Settings menu=========================-->
-        <!--Chats menu-->
-        <div id='chatMenu' tabindex="1" onblur="openCloseChatMenu('close')">
+		<!--Settings menu=========================-->
+		<!--Chats menu-->
+		<div id='chatMenu' tabindex="1" onblur="openCloseChatMenu('close')">
 			<div class="topOfChatMenu">
 				<div class="exitChatButton">
-				<a type="button"  onclick="openCloseChatMenu('close')"></a>
-			</div>
+					<a type="button" onclick="openCloseChatMenu('close')"></a>
+				</div>
 				<div class="chatTitle">Chats</div>
 			</div>
 			<div id='topchat'></div>
-        </div>
-        <!--Chats menu-->
+		</div>
+		<!--Chats menu-->
 		<div id='uiWrapper' class="uiWrapper">
 			<div class="topBar">
 				<!--topBar-->
 				<div class="chatButton">
-				<a type='button'  onclick="openCloseChatMenu('open')"></a>
-			</div>
+					<a type='button' onclick="openCloseChatMenu('open')"></a>
+				</div>
 				<div id="chatTitle">choose a chat</div>
+				<div class="peopleCount" id="Count">1</div>
 				<a type='button' class="hamburger" onclick="openCloseSettingsMenu('open')"></a>
 			</div>
 			<div id="tip1">choose one of the chats to the left of your screen</div>
-			<div class="messages"><div id="message"></div>
-			<!--messages go bellow #message-->
-		</div>
+			<div class="messages">
+				<div id="message"></div>
+				<!--messages go bellow #message-->
+			</div>
 			<div class="scrollBottomButton">new messages</div>
 			<div id="messageInputFeild">
-				<textarea placeholder="type a message here" id="input" maxlength="170" onkeydown="sendMessageWhenEnterKeyPressed(event)"></textarea>
+				<textarea placeholder="type a message here" id="input" maxlength="170"
+					onkeydown="sendMessageWhenEnterKeyPressed(event)"></textarea>
 				<button onclick="displayAndSendOutGoingMessage()">Enter</button>
 			</div>
 		</div>
@@ -91,4 +93,5 @@
 	<script src="file.java.js"></script>
 	<!--====================================================================-->
 </body>
+
 </html>

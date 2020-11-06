@@ -84,11 +84,12 @@ async function postUserToken() {
         .then(response => response.json())
         .catch(error => internetWarning(true))
         .then((body) => {
-            if (body == 1) {
-                document.getElementById("Count").innerHTML = ': only you';
-            } else {
-                document.getElementById("Count").innerHTML = ": " + body;
-            }
+            document.getElementById("Count").innerHTML = body
+            // if (body == 1) {
+            //     document.getElementById("Count").innerHTML = ': only you';
+            // } else {
+            //     document.getElementById("Count").innerHTML = ": " + body;
+            // }
             internetWarning(false)
         })
 }
@@ -266,10 +267,10 @@ function displayAllServerMessages(chat, text, sender, time) {
     text.forEach((element, i) => {
         var div = document.createElement("div");
         if (sender[i] == username) {
-            div.innerHTML = '<span class="userSenderName"> you - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span><br>' + sanitize(text[i]);
+            div.innerHTML = '<div class="textInfo"><span class="userSenderName"> you -' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span></div><div>'+sanitize(text[i])+'</div>' ;
             div.setAttribute('class', 'youText')
         } else {
-            div.innerHTML = '<span class="textSenderName">' + sender[i] + ' - ' + '</span><span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span><br>' + sanitize(text[i]);
+            div.innerHTML = '<div class="textInfo"><span class="textSenderName">' + sender[i] + ' -' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span></div><div>'+sanitize(text[i])+'</div>';
             div.setAttribute('class', 'text')
         }
         document.getElementById(parentDiv.id).appendChild(div);
@@ -286,7 +287,7 @@ function addNewMessageToHtml(chat, text, sender, time) {
     }
     for (var i = 0; i < text.length; i++) {
         var div = document.createElement("div")
-        div.innerHTML = '<span class="textSenderName">' + sender[i] + '- ' + '</span><span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span><br>' + sanitize(text[i]);
+        div.innerHTML = '<span class="textSenderName">' + sender[i] + ' - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span><div>' + sanitize(text[i])+'</div>';
         div.setAttribute('class', 'text')
         document.getElementById(chat + 'Anchor').appendChild(div);
         div.scrollIntoView();
@@ -301,7 +302,7 @@ function displayAndSendOutGoingMessage() {
     let inputValue = document.getElementById("input").value;
     if (inputValue !== "" && inputValue.trim().length !== 0) {
         let div = document.createElement("div")
-        div.innerHTML = '<span class="userSenderName"; float:left;">' + 'you- ' + '</span><span class="textsTime">' + getNormalTimeFromUTC(thisTime) +'</span><br>' + sanitize(inputValue);
+        div.innerHTML = '<span class="userSenderName"; float:left;">' + 'you - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(thisTime) +'</span><div>' + sanitize(inputValue)+'</div>';
         div.setAttribute('class', 'youText')
         document.getElementById(currentChat + 'Anchor').appendChild(div);
         div.scrollIntoView();

@@ -91,17 +91,6 @@ html,body{
     font-size: 40px;
     font-family: Arial, Helvetica, sans-serif;
 }
-.peopleCount{
-    text-align: center;
-    top:0;
-    position: sticky;
-    padding: 5px;
-    border-color: black !important;
-    margin: 0;
-    font-size: 30px;
-    color: var(--yellowColor);
-    font-family: Arial, Helvetica, sans-serif;
-}
 .subTitle{
     margin:.5vw 0 0 0;
     color: var(--yellowColor);
@@ -112,11 +101,18 @@ html,body{
 .tips{
     text-align: center;
     font-size: 30px;
-    margin-top: .5vw;
+    margin-top: 2vw;
+
 }
 .tips a{
-    color:yellowgreen;
+    text-decoration: none;
+    display: inline-block;
+    border:none ;
+    background-color: var(--greenColor);
+    color: black;
     font-family: Arial, Helvetica, sans-serif;
+    border-radius: 5px;
+    padding: 2px;
 }
 .div_Themesetting{
     text-align: center;
@@ -131,8 +127,19 @@ html,body{
     text-align: center;
 }
 .logout button{
+    outline: none;
     font-size: 30px;
     cursor: pointer;
+    transition-duration: .1s;
+    border:none;
+    border-radius: 5px;
+    padding: 3px 5px 3px 5px;
+    background-color: var(--greenColor);
+}
+.logout button:hover {
+    background-color: #36a568;
+    padding: 15px;
+    color:white;
 }
 /*=======================chatMenu=========================*/
 #chatMenu{
@@ -211,13 +218,30 @@ html,body{
 .topBar{
     display: block;
     position: sticky;
+    text-align: center;
     background-color: var(--topBarColor);
     top:0;
     height: 50px;
-    text-align: center;
     color: var(--textColor);
     font-family: Arial, Helvetica, sans-serif;
     padding: 0px 0px 0px 0px;
+}
+#chatTitle{
+
+}
+.peopleCount{
+    display: inline-block;
+    position: static;
+    top:0;
+    left: 200px;
+    font-size: 30px;
+    color: var(--yellowColor);
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+    border: solid 1px var(--lineColor);
+    border-radius: 3px;
+    margin: 0 0 0 10px;
+    padding: 0 3px 0 3px ;
 }
 .chatButton{
     -webkit-tap-highlight-color: transparent;
@@ -248,15 +272,13 @@ html,body{
 .hamburger{
     -webkit-tap-highlight-color: transparent;
     content:url('https://docs.google.com/drawings/d/e/2PACX-1vS3e1kzM75xEe-MQROzoY9dl6JZgR_0FPQbnOo0PRbmrx-e2E12xdXpu-4vynWbAbPaofckWS0MZeky/pub?w=396&h=291');
-    height:50px;
-    right: 0;
     filter: var(--hamburgerColor);
     display: inline-block;
-    float: right;
-    position: static;
-    transition: all .5s;
+    position: absolute;
     cursor: pointer;
-    z-index: +2;
+    height:50px;
+    right: 0;
+    transition: all .5s;
     transition: all 0.22s ease 0s;
 }
 .hamburger:hover{
@@ -288,9 +310,9 @@ html,body{
 .text{
     z-index: 1;
     position: static;
-    text-align: center;
+    text-align: left;
     word-wrap: break-word;
-    padding: 20px 40px 20px 40px ;
+    padding: 15px 40px 15px 40px ;
     border:solid;
     border-width: 0 0 1px 0;
     border-radius: 8px;
@@ -301,11 +323,12 @@ html,body{
     font-family: Arial, Helvetica, sans-serif;
 }
 .youText{
+    position: static;
     z-index: 1;
     position: static;
-    text-align: center;
+    text-align: left;
     word-wrap: break-word;
-    padding: 20px 40px 20px 40px ;
+    padding: 15px 40px 15px 40px ;
     border:solid;
     border-width: 0 0 1px 0;
     border-radius: 8px;
@@ -315,19 +338,26 @@ html,body{
     color: var(--blueColor);
     font-family: Arial, Helvetica, sans-serif;
 }
+.textInfo{
+    display: block;
+    line-height: 30px;
+}
 .textSenderName{
+    display: inline-block;
+    font-size: 20px;
     color: var(--greenColor);
-    float: left;
 }
 .userSenderName{
+    display: inline-block;
+    font-size: 20px;
     color: var(--blueColor);
-    float: left;
 }
 .textsTime{
+    line-height: 25px;
+    display: inline-block;
     color: var(--textColor);
-    float: left;
-    font-size: 20px;
-    padding: 10px 0 0 0;
+    font-size: 15px;
+    vertical-align: bottom;
 }
 .scrollBottomButton{
     bottom: 3em;
@@ -366,10 +396,12 @@ html,body{
     position: static;
     font-size: 30px;
     resize: none;
-    padding:10px 2px 0 15px;
-    line-height:1em;
+    padding:0px 2px 0px 15px;
     font-family: Arial, Helvetica, sans-serif;
     border:none;
+}
+#messageInputFeild textarea::placeholder{
+    padding: 10px 0 0 0;
 }
 #messageInputFeild button{
     outline: none;
@@ -407,19 +439,19 @@ html,body{
     font-size: 7vw;
     }
     .peopleCount{ 
-        font-size: 5vw;
+        font-size: 6vw;
     }
     .themesetting{
-        font-size: 5vw;
+        font-size: 6vw;
     }
     .subTitle{
-        font-size: 5vw;
+        font-size: 6vw;
     }
     .tips a{
-        font-size: 5vw;
+        font-size: 6vw;
     }
     .logout button{
-        font-size: 5vw;
+        font-size: 6vw;
     }
     .topBar {
         height: 9vw;
@@ -462,35 +494,24 @@ html,body{
     .hamburger{
         height: 100%;
     }
-
-    .messages{
-        font-size: 5vw;
-    }
     .text{
-        font-size: 5vw;
-        padding: 20px 20px 20px 10px;
+        font-size: 20px;
+        padding: 10px 20px 10px 10px;
     }
     .youText{
-        font-size: 5vw;
-        padding: 20px 20px 20px 10px;
-    }
-    .textsTime{
-        font-size: 13px;
-        padding: 5px 0 0 0;
+        font-size: 20px;
+        padding: 10px 20px 10px 10px;
     }
     .scrollBottomButton{
         font-size: 5vw;
         bottom: 3em;
     }
-    #messageInputFeild{
-        font-size: 5vw;
-    }
     #messageInputFeild button{
-        font-size: 5vw;
+        font-size: 25px;
         width: 20%;
     }
     #messageInputFeild textarea{
-       font-size: 5vw;
+       font-size: 25px;
        width: 80%;
     }
 }
