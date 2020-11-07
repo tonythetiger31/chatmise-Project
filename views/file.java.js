@@ -20,6 +20,7 @@ var currentChat
 var username
 var messageSound = document.getElementById("myAudio")
 messageSound.volume = 0.15;
+var userCountTipBoolean = true
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -84,13 +85,12 @@ async function postUserToken() {
         .then(response => response.json())
         .catch(error => internetWarning(true))
         .then((body) => {
-            document.getElementById("Count").innerHTML = body
-            // if (body == 1) {
-            //     document.getElementById("Count").innerHTML = ': only you';
-            // } else {
-            //     document.getElementById("Count").innerHTML = ": " + body;
-            // }
-            internetWarning(false)
+            if (body !== undefined) {
+                document.getElementById("Count").innerHTML = body;
+                internetWarning(false)
+            } else {
+                document.getElementById("Count").innerHTML = '-';
+            }
         })
 }
 //=======================================sajax
@@ -126,7 +126,7 @@ async function getSpecificText(difference) {
     var send2 = []
     var time = []
     for (var i = 0; i < difference; i++) {
-       var send1 = allChatsTextCount[currentTextIndex] + i
+        var send1 = allChatsTextCount[currentTextIndex] + i
         send2.push(send1)
     }
     var data = {
@@ -213,8 +213,8 @@ async function getAllChatsUsernameAndTexts() {
     //
     json.collections.forEach((element1, i1) => {
         var SMSG2 = []
-            person = []
-            thisTextTime = []
+        person = []
+        thisTextTime = []
         json.data[i1].forEach((element, i) => {
             SMSG2.push(json.data[i1][i].text)
         }
@@ -267,10 +267,10 @@ function displayAllServerMessages(chat, text, sender, time) {
     text.forEach((element, i) => {
         var div = document.createElement("div");
         if (sender[i] == username) {
-            div.innerHTML = '<div class="textInfo"><span class="userSenderName"> you -' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span></div><div>'+sanitize(text[i])+'</div>' ;
+            div.innerHTML = '<div class="textInfo"><span class="userSenderName"> you -' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) + '</span></div><div>' + sanitize(text[i]) + '</div>';
             div.setAttribute('class', 'youText')
         } else {
-            div.innerHTML = '<div class="textInfo"><span class="textSenderName">' + sender[i] + ' -' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span></div><div>'+sanitize(text[i])+'</div>';
+            div.innerHTML = '<div class="textInfo"><span class="textSenderName">' + sender[i] + ' -' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) + '</span></div><div>' + sanitize(text[i]) + '</div>';
             div.setAttribute('class', 'text')
         }
         document.getElementById(parentDiv.id).appendChild(div);
@@ -282,12 +282,12 @@ function displayAllServerMessages(chat, text, sender, time) {
 function addNewMessageToHtml(chat, text, sender, time) {
     //adds ajax messages
     console.log('sajax executed')
-    if (document.visibilityState !== 'visible'){
-    messageSound.play()
+    if (document.visibilityState !== 'visible') {
+        messageSound.play()
     }
     for (var i = 0; i < text.length; i++) {
         var div = document.createElement("div")
-        div.innerHTML = '<span class="textSenderName">' + sender[i] + ' - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) +'</span><div>' + sanitize(text[i])+'</div>';
+        div.innerHTML = '<span class="textSenderName">' + sender[i] + ' - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) + '</span><div>' + sanitize(text[i]) + '</div>';
         div.setAttribute('class', 'text')
         document.getElementById(chat + 'Anchor').appendChild(div);
         div.scrollIntoView();
@@ -302,7 +302,7 @@ function displayAndSendOutGoingMessage() {
     let inputValue = document.getElementById("input").value;
     if (inputValue !== "" && inputValue.trim().length !== 0) {
         let div = document.createElement("div")
-        div.innerHTML = '<span class="userSenderName"; float:left;">' + 'you - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(thisTime) +'</span><div>' + sanitize(inputValue)+'</div>';
+        div.innerHTML = '<span class="userSenderName"; float:left;">' + 'you - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(thisTime) + '</span><div>' + sanitize(inputValue) + '</div>';
         div.setAttribute('class', 'youText')
         document.getElementById(currentChat + 'Anchor').appendChild(div);
         div.scrollIntoView();
@@ -324,7 +324,7 @@ function sendMessageWhenEnterKeyPressed(event) {
 }
 ; function sanitize(str) {
     return (str.replace(/[></&"',\]\[{}\\():;]/g, x => {
-       var htmlEscaped = {
+        var htmlEscaped = {
             '<': '&#60;',
             '>': '&#62;',
             '/': '&#47;',
@@ -346,39 +346,30 @@ function sendMessageWhenEnterKeyPressed(event) {
     }
     ))
 }
-function internetWarning(argument) {
-    if (argument === true) {
-
-        console.log('internet warining ran')
-        document.getElementById('internetWaring').style.display = "block";
-    } else {
-        document.getElementById('internetWaring').style.display = "none";
-    }
-}
-function getNormalTimeFromUTC(thisDate){
+function getNormalTimeFromUTC(thisDate) {
     var pmOrAm
     var hoursNon24
     var minutesWithOrWithoutZero
     thisDate = new Date(thisDate)
-    if(thisDate.getHours() > 12){
+    if (thisDate.getHours() > 12) {
         pmOrAm = 'PM'
-        hoursNon24 = thisDate.getHours()-12
-    }else{
+        hoursNon24 = thisDate.getHours() - 12
+    } else {
         pmOrAm = 'AM'
         hoursNon24 = thisDate.getHours()
     }
-    if(thisDate.getMinutes() <= 9){
+    if (thisDate.getMinutes() <= 9) {
         minutesWithOrWithoutZero = '0'
-    }else{
+    } else {
         minutesWithOrWithoutZero = ''
     }
-    var output =(thisDate.getMonth()
-     + 1 + '/' + thisDate.getDate())
-    + '/' + thisDate.getFullYear()
-    +' '+ hoursNon24
-    +':'+ minutesWithOrWithoutZero + thisDate.getMinutes()
-    +' '+ pmOrAm;
-    return(output)
+    var output = (thisDate.getMonth()
+        + 1 + '/' + thisDate.getDate())
+        + '/' + thisDate.getFullYear()
+        + ' ' + hoursNon24
+        + ':' + minutesWithOrWithoutZero + thisDate.getMinutes()
+        + ' ' + pmOrAm;
+    return (output)
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================setinterval functions
@@ -391,20 +382,47 @@ postUserToken()
 //=============================================================================style functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=======================================openCloseSettingsMenu
-function openCloseSettingsMenu(arg) {
+function openCloseUserCountTip(){
+    if (userCountTipBoolean === true) {
+        document.getElementById('userCountTip').style.display = "block";
+        userCountTipBoolean = false
+    } else {
+        document.getElementById('userCountTip').style.display = "none";
+        userCountTipBoolean = true
+    }
+}
+function internetWarning(arg) {
+    if (arg === true) {
+        document.getElementById('internetWaring').style.display = "block";
+    } else {
+        document.getElementById('internetWaring').style.display = "none";
+    }
+}
+function openCloseHamburgerMenu(arg) {
     if (arg === 'open') {
         //opens settings
         document.getElementById('uiWrapper').style.display = "none";
-        document.getElementById('all_settings').style.display = "block";
+        document.getElementById('hamburgerMenuWrapper').style.display = "block";
         document.getElementById('chatMenu').style.display = "none";
+        document.getElementById('userCountTip').style.display = "none";
     } else if (arg === 'close') {
         document.getElementById('uiWrapper').style.display = "block";
-        document.getElementById('all_settings').style.display = "none";
+        document.getElementById('hamburgerMenuWrapper').style.display = "none";
         document.getElementById('chatMenu').style.display = "none";
     }
-    if (currentChat !== undefined){
+    if (currentChat !== undefined) {
         var currentChatId = document.getElementById(currentChat + 'Anchor').lastChild
         currentChatId.scrollIntoView();
+    }
+}
+function openCloseSettingsMenu(arg){
+    if (arg === 'open') {
+        //opens settings
+        document.getElementById('settingsContainer').style.display = "block";
+        document.getElementById('hamburgerMenuContainer').style.display = "none";
+    } else if (arg === 'close') {
+        document.getElementById('settingsContainer').style.display = "none";
+        document.getElementById('hamburgerMenuContainer').style.display = "block";
     }
 }
 function openCloseChatMenu(arg) {

@@ -29,43 +29,47 @@
 	<!--gif onload-->
 	<div id="loadimg"></div>
 	<div id="postloadwraper">
+
+		<!--UserCountTip-->
+		<div id='userCountTip'>Current active users: <span id="Count">1</span></div>
 		<!--Internet warining-->
 		<div id="internetWaring">Connection error, please check your internet</div>
-		<!--Settings menu=========================-->
-		<div id='all_settings' class="all_settings">
-			<div class="Exit">
-				<a type='button' onclick="openCloseSettingsMenu('close')"></a>
+		<!--Hamburger menu=========================-->
+		<div id='hamburgerMenuWrapper' class="hamburgerMenuWrapper">
+			<div id='hamburgerMenuContainer'>
+				<div class="exitButton"><a type='button' onclick="openCloseHamburgerMenu('close')"></a></div>
+				<div class="youAreLoggedInAs">Logged in as <%= username %></div>
+				<button class="hamburgerMenuButtons"><a href="https://tipsandbugreport.netlify.app/">Report a bug</a></button><br>
+				<button class="hamburgerMenuButtons" onclick="openCloseSettingsMenu('open')">Settings</button><br>
+				<button class="hamburgerMenuButtons" onclick="logoutUser()">Logout</button>
 			</div>
-			<div class="title"></div>
-			<div class="subTitle">Loged in as
-				<%= username %>
-			</div>
-			<div class="tips"><a href="https://tipsandbugreport.netlify.app/" type="button">Report a bug</a></div>
-			<div class="title">Settings</div>
-			<div class="subTitle">Theme</div>
-			<div class="div_Themesetting">
+			<!--Settings-->
+			<div id="settingsContainer">
+				<div class="exitButton"><a type='button' onclick="openCloseSettingsMenu('close')"></a></div>
+				<div class="settingsTitle">Settings</div>
+				<div class="settingsSubTitle">Theme</div>
 				<select onchange="selectAndPostValueOfTheme()" class="themesetting" id="themesetting">
 					<option value="1">Dark Theme</option>
 					<option value="2">Gray Theme</option>
 					<option value="3">Light Theme</option>
 				</select>
 			</div>
-			<div class="logout">
-				<button onclick="logoutUser()">Logout</button>
-			</div>
+			<!--Settings-->
+		
 		</div>
-		<!--Settings menu=========================-->
+		<!--Hamburger menu=========================-->
+
 		<!--Chats menu-->
 		<div id='chatMenu' tabindex="1" onblur="openCloseChatMenu('close')">
 			<div class="topOfChatMenu">
-				<div class="exitChatButton">
-					<a type="button" onclick="openCloseChatMenu('close')"></a>
-				</div>
+				<div class="exitButton"><a onclick="openCloseChatMenu('close')"></a></div>
 				<div class="chatTitle">Chats</div>
 			</div>
+
 			<div id='topchat'></div>
 		</div>
 		<!--Chats menu-->
+
 		<div id='uiWrapper' class="uiWrapper">
 			<div class="topBar">
 				<!--topBar-->
@@ -73,8 +77,8 @@
 					<a type='button' onclick="openCloseChatMenu('open')"></a>
 				</div>
 				<div id="chatTitle">choose a chat</div>
-				<div class="peopleCount" id="Count">1</div>
-				<a type='button' class="hamburger" onclick="openCloseSettingsMenu('open')"></a>
+				<div class='peopleCount' id="Count" onclick="openCloseUserCountTip()">1</div>
+				<a type='button' class="hamburger" onclick="openCloseHamburgerMenu('open')"></a>
 			</div>
 			<div id="tip1">choose one of the chats to the left of your screen</div>
 			<div class="messages">
