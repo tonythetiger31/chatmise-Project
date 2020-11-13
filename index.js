@@ -1,9 +1,9 @@
 /*contents
--package decelaration
+-package declaration
 -database
 -server info/ start server
--var decleration
--function decleration
+-var declaration
+-function declaration
 -page directorys rendered
 -page directorys un-rendered
 -setinterval functions
@@ -25,8 +25,7 @@ const uriuserdata = process.env.uriuserdata
 const urichatrooms = process.env.urichatrooms
 //project files
 const textsDir = require('./routes/texts/texts-route')
-const userdb = require('./db_config/db_userdata')
-// const chatroomdb = require('./db_config/db_chatrooms')
+const userdb = require('./database/db_userdata')
 const themeDir = require('./routes/theme-route')
 const methods = require('./methods')
 const mainDir = require('./routes/main-route')
@@ -49,8 +48,7 @@ var texts = userdb.texts
 //______________________________|server info/ start server
 //_______________________________________________________|
 const PORT = process.env.PORT || 80; 
-app.listen(PORT, () => console.log('server started on port ' + PORT));
-//app.use(express.static('views'))
+app.listen(PORT, () => console.log('--server started on port ' + PORT));
 app.use(express.static('views'))
 app.use(express.json())
 app.use(require('express-status-monitor')());

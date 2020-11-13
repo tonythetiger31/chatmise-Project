@@ -1,6 +1,6 @@
-const userdb = require('../db_config/db_userdata')
-const usertoken = userdb.usertoken
-const users = userdb.users
+const userdb = require('../database/db_userdata')
+const usertoken = userdb.secure.usertoken
+const users = userdb.secure.users
 const methods = require('../methods')
 //===============================================================GET
 exports.get = function(request, response) {

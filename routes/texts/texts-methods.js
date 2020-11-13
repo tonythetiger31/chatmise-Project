@@ -1,30 +1,27 @@
 "use strict"
 //module decleration
-const { users } = require('../../db_config/db_userdata'),
-    userdb = require('../../db_config/db_userdata'),
-    flores = userdb.flores,
-    theboys = userdb.theboys,
-    usertoken = userdb.usertoken,
+const { users } = require('../../database/db_userdata'),
+    userdb = require('../../database/db_userdata'),
     methods = require('../../methods');
-module.exports = { chat, grabAllUserInfo }
+module.exports = { chat, grabAllThisUserChats }
 //funtions
-function grabAllUserInfo(data) {
-    var collections = [],
-        allTextsForThisUser = [];
+function grabAllThisUserChats(data) {//grabs all chat names and texts within those chats pertaining to the user.
+    var collections = [],//names of the chats that user is in
+        allTextsWithinThisChat = [];//all texts within those chats
     return new Promise((resolve) => {
-        data[0].chats.forEach((element) => {
-            eval(element).find({}).then((data2) => {
+        data[0].chats.forEach((element) => {//runs through the chats that that user is in
+            userdb.chat[element].find({}).then((data2) => {
                 collections.push(element)
-                allTextsForThisUser.push(data2)
+                allTextsWithinThisChat.push(data2)
                 return ({
                     collections: collections,
-                    allTextsForThisUser: allTextsForThisUser
+                    allTextsWithinThisChat: allTextsWithinThisChat
                 })
             }).then(() => {
                 if (collections.length === data[0].chats.length) {
                     resolve({
                         collections: collections,
-                        allTextsForThisUser: allTextsForThisUser
+                        allTextsWithinThisChat: allTextsWithinThisChat
                     });
                 }
             })

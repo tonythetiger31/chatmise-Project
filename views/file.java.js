@@ -87,6 +87,7 @@ async function postUserToken() {
         .then((body) => {
             if (body !== undefined) {
                 document.getElementById("Count").innerHTML = body;
+                document.getElementById("Count2").innerHTML = body;
                 internetWarning(false)
             } else {
                 document.getElementById("Count").innerHTML = '-';
