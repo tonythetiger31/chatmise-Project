@@ -86,7 +86,6 @@ async function get(request, response) {
                 };
                 //response end
             };
-
         };
     });
 };

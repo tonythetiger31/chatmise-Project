@@ -10,7 +10,7 @@ exports.main = function(request, response) {
         response.redirect('/login');
     } else {
 //sucurity phase 2
-        if (cookie.length > 400) {
+        if (cookie.length > 500) {
             response.status(413)
             response.redirect('/login');
          } else {

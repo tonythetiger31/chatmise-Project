@@ -31,7 +31,7 @@ const DataSchema = new mongoose.Schema({
     chats: Array,
     sender: String,
     text: String,
-    usertoken: Number,
+    usertoken: String,
     time: Number,
     settings: Number
 })

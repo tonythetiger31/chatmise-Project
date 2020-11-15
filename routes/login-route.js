@@ -2,6 +2,7 @@ const userdb = require('../database/db_userdata')
 const usertoken = userdb.secure.usertoken
 const users = userdb.secure.users
 const methods = require('../methods')
+const cryptoRandomString = require('crypto-random-string')
 //===============================================================GET
 exports.get = function(request, response) {
 //var declaration
@@ -58,7 +59,7 @@ exports.post = function(request, response) {
             } else {
                 if (data[0].password === password) {
 //token assignment
-                    let userId = Math.random()
+                    let userId = cryptoRandomString({length: 20,type: 'alphanumeric'});
                     var datadb = {
                         usertoken: userId,
                         username: username
@@ -71,7 +72,7 @@ exports.post = function(request, response) {
                             response.send('problem loging you in')
                         } else {
                             response.status(202)
-                            response.cookie('userId',userId, { maxAge: 302400000, httpOnly: true})
+                            response.cookie('userId',userId, { maxAge: 302400000, httpOnly: true, sameSite: 'Strict'})
                             response.send('You are now logedin')
                             console.log(request.body.username, 'loged in')
                         }
