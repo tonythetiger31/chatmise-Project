@@ -1,5 +1,4 @@
 /*contents
--authentication
 -variable declerations
 -functions
 -setinterval functions
@@ -10,21 +9,24 @@ document.addEventListener("DOMContentLoaded", loadstop);
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================Variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-var allChatsTextCount = []
+var allChatsTextCount = [],
 //number of texts currently loaded for all chats
-var currentTextIndex
+currentTextIndex,
 //index of current chat withing textNum
-var allCurrentUserChats
-var currentChat
+allCurrentUserChats,
+currentChat,
 //current chat user is in
-var username
-var messageSound = document.getElementById("myAudio")
-messageSound.volume = 0.15;
-var userCountTipBoolean = true
+username,
+    userCountTipBoolean = true,
+allTextsBool = true,
+messageSound = document.getElementById("myAudio")
+messageSound.volume = 0.15
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//=======================================cookiepareser
+//=======================================socket.io connection
+var socket = io()  
+//=======================================cookieParser
 function parseCookie(cookie, key) {
     cA = cookie.split(/[;=]+/);
     cB = cA.indexOf(key) + 1
@@ -94,71 +96,10 @@ async function postUserToken() {
             }
         })
 }
-//=======================================sajax
-async function getChatSize() {
-    if (currentChat != undefined) {
-        const options = {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-        fetch('/texts/' + currentChat, options)
-            .then(response => response.json())
-            .catch(error => internetWarning(true))
-            .then((body) => {
-                //SECOND PART
-                if (body.redirect == 'true') {
-                    location.replace('/login')
-                    // if current text and recived texts dont match make post req
-                } else if (body.textNum != allChatsTextCount[currentTextIndex]) {
-                    console.log('server txt: ', body.textNum, 'client txt: ', allChatsTextCount[currentTextIndex])
-                    var difference = body.textNum - allChatsTextCount[currentTextIndex]
-                    getSpecificText(difference)
-                }
-                internetWarning(false)
-            }
-            )
-    }
-}
-async function getSpecificText(difference) {
-    var stext = []
-    var sperson = []
-    var send2 = []
-    var time = []
-    for (var i = 0; i < difference; i++) {
-        var send1 = allChatsTextCount[currentTextIndex] + i
-        send2.push(send1)
-    }
-    var data = {
-        required: send2,
-        chat: currentChat
-    }
-    const options = {
-        //meta data for post
-        method: 'Post',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    };
-    fetch('/texts', options)//post data
-        .then(response => response.json())// recives response
-        .then((body) => {
-            for (i = 0; i < body.required.length; i++) {
-                stext.push(body.required[i].text)
-            }
-            for (i = 0; i < body.required.length; i++) {
-                sperson.push(body.required[i].sender)
-            }
-            for (i = 0; i < body.required.length; i++) {
-                time.push(body.required[i].time)
-            }
-            allChatsTextCount[currentTextIndex] = allChatsTextCount[currentTextIndex] + body.required.length
-            addNewMessageToHtml(body.chat, stext, sperson, time)
-        }
-        )
-}
+//=======================================fetch
+socket.on('text', (body) => { 
+            addNewMessageToHtml(body.chat, body.text, body.sender, body.time)
+})
 //=======================================serverPutData
 async function putUserOutgoingTexts(info, date) {
     /*sends data to server
@@ -169,71 +110,49 @@ async function putUserOutgoingTexts(info, date) {
     info = info[0]
     //removes array from string
     var CTime = date
-    var data = {
+    socket.emit('texts', {
         text: info,
         time: CTime,
-        chat: currentChat
-    };
-    const options = {
-        method: 'put',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    };
-    const response = await fetch('/texts', options);
-    const json = await response.json();
+        chat: currentChat})
 }
 ;//=======================================serverGetDataOnLoad
-async function getAllChatsUsernameAndTexts() {
-    var person = []
-    var thisTextTime
-    var data = {
-        required: 'all'
-    }
-    const options = {
-        //meta data for post
-        method: 'Post',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    };
-    const response = await fetch('/texts', options);
-    //post data
-    const json = await response.json();
-    // recives response
-    //display chat
-    allCurrentUserChats = json.collections
-    json.collections.forEach((element, i, arr) => {
-        displayAllChatsInMenu(element, i)
-    }
-    );
-    //get username
-    username = json.username
-    //
-    json.collections.forEach((element1, i1) => {
-        var SMSG2 = []
-        person = []
-        thisTextTime = []
-        json.data[i1].forEach((element, i) => {
-            SMSG2.push(json.data[i1][i].text)
+socket.on('allTexts', (data) => {
+    if (allTextsBool == true) {
+        var person = []
+        var thisTextTime
+        //display chat
+        allCurrentUserChats = data.collections
+        data.collections.forEach((element, i, arr) => {
+            displayAllChatsInMenu(element, i)
+        }
+        );
+        //get username
+        username = data.username
+        //
+        data.collections.forEach((element1, i1) => {
+            var SMSG2 = []
+            person = []
+            thisTextTime = []
+            data.data[i1].forEach((element, i) => {
+                SMSG2.push(data.data[i1][i].text)
+            }
+            )
+            data.data[i1].forEach((element, i) => {
+                person.push(data.data[i1][i].sender)
+            }
+            )
+            data.data[i1].forEach((element, i) => {
+                thisTextTime.push(data.data[i1][i].time)
+            })
+            displayAllServerMessages(element1, SMSG2, person, thisTextTime)
+            allChatsTextCount.push(SMSG2.length)
         }
         )
-        json.data[i1].forEach((element, i) => {
-            person.push(json.data[i1][i].sender)
-        }
-        )
-        json.data[i1].forEach((element, i) => {
-            thisTextTime.push(json.data[i1][i].time)
-        })
-        displayAllServerMessages(element1, SMSG2, person, thisTextTime)
-        allChatsTextCount.push(SMSG2.length)
+        getSettings()
+        allTextsBool = false
     }
-    )
-    getSettings()
-}
-;//=======================================displayChat
+})
+//=======================================displayChat
 function displayAChat(current, index) {
     // displays chat pressed
     allCurrentUserChats.forEach((element) => {
@@ -286,13 +205,11 @@ function addNewMessageToHtml(chat, text, sender, time) {
     if (document.visibilityState !== 'visible') {
         messageSound.play()
     }
-    for (var i = 0; i < text.length; i++) {
         var div = document.createElement("div")
-        div.innerHTML = '<span class="textSenderName">' + sender[i] + ' - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time[i]) + '</span><div>' + sanitize(text[i]) + '</div>';
+        div.innerHTML = '<span class="textSenderName">' + sender + ' - ' + '</span> <span class="textsTime">' + getNormalTimeFromUTC(time) + '</span><div>' + sanitize(text) + '</div>';
         div.setAttribute('class', 'text')
         document.getElementById(chat + 'Anchor').appendChild(div);
         div.scrollIntoView();
-    }
 }
 //=======================================inputMessage
 function displayAndSendOutGoingMessage() {
@@ -375,7 +292,6 @@ function getNormalTimeFromUTC(thisDate) {
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================setinterval functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-setInterval(getChatSize, 1500);
 setInterval(postUserToken, 5000);
 postUserToken()
 //sends id as soon as load instead of waiting 5s

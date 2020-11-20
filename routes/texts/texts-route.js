@@ -12,134 +12,104 @@ const
     methods = require('../../methods'),
     textsMethods = require('./texts-methods');
 // const textMethods = require('texts-route')
-//===============================================================PUT
-async function put(request, response) {
-    //var declaration
-    //if (request.body.text > 1000){}// protection against DDOS in progress
-    console.log('just sent-- ', request.body.text)
-    var sender = request.headers.cookie,
-        time,
-        text,
-        chat,
-        choose = false;
-    //sucurity phases
-    methods.sucurityCheck3Phase(sender, 'PUT').then((data) => {
-        if (data == false) {
-            response.status(400)
-            response.send({ 'redirect': 'true' })
-        } else {
-            if (data.userInfo[0].usertoken == data.sender) {
-                //response
-                sender = data.userInfo[0].username
-                if (Object.keys(request.body).length !== 0) {
-                    /*things to sanatise are
-                    any < > tags, any $ symbols, and other ones, */
-                    text = request.body.text
-                    time = request.body.time
-                    chat = request.body.chat
-                    console.log('new transmiton', sender, request.body)
-                    var datadb = {
-                        text: text,
-                        time: time,
-                        sender: sender
-                    }
-                    if (chat != ''||chat !=undefined||chat !=null) {
-                        var newtexts = new userdb.chat[chat](datadb)
-                        newtexts.save((error) => {
-                            if (error) {
-                                console.log('somthing happened witht the db -texts')
-                            } else {
-                                console.log('text saved')
-                                response.status(200)
-                                response.send({ "status": "text saved" })
-                            };
-                        });
-                    };
-                };
-                //response end
-            };
-        };
-    });
-};
-//===============================================================GET
-async function get(request, response) {
-    //var declaration
-    var sender = request.headers.cookie,
-        chat = request.params.chat;
-    //sucurity phase 1
-    methods.sucurityCheck3Phase(sender, 'GET').then((data) => {
-        if (data == false) {
-            response.status(400)
-            response.send({ 'redirect': 'true' })
-        } else {
-            if (data.userInfo[0].usertoken == data.sender) {
-                //response
-                if (chat != ''||chat !=undefined||chat !=null) {
-                    userdb.chat[chat].countDocuments(function (err, count) {
-                        if (err) {
-                            console.log("there was a err at /text get")
-                        } else {
-                            response.status(200)
-                            response.send({ "textNum": count });
-                        };
-                    });
-                };
-                //response end
-            };
-        };
-    });
-};
-//===============================================================POST
-async function post(request, response) {
-    //var declaration
-    var send2 = [],
-        required = request.body.required,
-        sender = request.headers.cookie,
-        send1,
-        chat = request.body.chat
-    //sucurity phase 1
-    methods.sucurityCheck3Phase(sender, 'GET').then((data) => {
-        if (data == false) {
-            response.status(400)
-            response.send({ 'redirect': 'true' })
-        } else {
-            if (data.userInfo[0].usertoken == data.sender) {
-                //response
-                //if user wants all texts
-                if (required == 'all') {
-                    users.find({
-                        username: data.userInfo[0].username
-                    }).then((data2) => {//for giving all data pertaining to specific user eg. chats
-                        textsMethods.grabAllThisUserChats(data2)
-                            .then((thisUserData) => {
-                                response.status(200)
-                                response.send({
-                                    collections: thisUserData.collections,
-                                    data: thisUserData.allTextsWithinThisChat,
-                                    username: data.userInfo[0].username
-                                })
-                            })
-                    })
 
-                    //if user wants specific text
-                } else if (typeof (required) != "string") {
-                    if (chat != ''||chat !=undefined||chat !=null) {
-                        userdb.chat[chat].find({})
-                            .then((data2) => {
-                                for (let i = 0; i < required.length; i++) {
-                                    if (data2[required[i]].sender != data.userInfo[0].username) {
-                                        send1 = data2[required[i]]
-                                        send2.push(send1)
-                                    }
-                                }   
-                                       response.status(200)
-                                       response.send({ 'required': send2, 'chat': request.body.chat });
-                                    })
-                    };
+module.exports = {sockets}
+
+//===============================================================SOCKETS
+function sockets(socket) {
+    var sender
+    //===================ON CONNECTION 
+    console.log('made socket connection')
+    var tokenSecurity = (() => {
+        //checks that token is valid
+        return new Promise((resolve) => {
+            var cookie = socket.handshake.headers.cookie;
+            methods.sucurityCheck3Phase(cookie, 'GET').then((data) => {
+                if (data == false) {
+                    socket.emit("allTexts", 'invalid credentials');
+                    socket.disconnect(true)
+                    resolve(null)
+                } else if (data.userInfo[0].usertoken == data.sender) {
+                    sender = data.userInfo[0].username
+                    resolve(data)
                 };
-                //response end
-            };
-        };
+            });
+        })
+    })()
+        .then(data => {
+            //get user chat and text info
+            return new Promise((resolve) => {
+                users.find({
+                    username: data.userInfo[0].username
+                }).then((data2) => {
+                    textsMethods.grabAllThisUserChats(data2)
+                        .then(data3 => {
+                            resolve({
+                                texts: data3,
+                                user: data
+                            });
+                        });
+                });
+            });
+        })
+        .then(data => {
+            //send data to user
+            return new Promise((resolve) => {
+                socket.emit("allTexts", {
+                    collections: data.texts.collections,
+                    data: data.texts.allTextsWithinThisChat,
+                    username: data.user.userInfo[0].username //FIX THIS!!!!!!
+                });
+                resolve(data);
+            });
+        })
+        .then(data => {
+            //join socket rooms
+            data.texts.collections.forEach(element => {
+                socket.join(element);
+            });
+            console.log('oof')
+        });
+    //===================SOCKET EVENTS
+    socket.on('texts', (body) => {
+        if (Object.keys(body).length !== 0) {
+            var chat = body.chat
+            console.log('new transmiton', sender, body)
+            if (chat != '' || chat != undefined || chat != null) {
+                 let wsRooms =  Array.from(socket.adapter.rooms)  
+                 wsRooms.forEach((element, i) => {
+                    if (wsRooms[i].includes(chat)) {
+                        let specificWsRoom = Array.from(wsRooms[i][1])
+                        if (specificWsRoom.includes(socket.id)) {
+                            //start
+                            var datadb = {
+                                text: body.text,
+                                time: body.time,
+                                sender: sender
+                            },
+                            socketSend = {
+                                text: body.text,
+                                time: body.time,
+                                sender: sender,
+                                chat: chat
+                            }
+                            socket.to(chat).emit('text', socketSend);
+                            var newtexts = new userdb.chat[chat](datadb)
+
+                            newtexts.save((error) => {
+                                if (error) {
+                                    console.log('somthing happened witht the db -texts')
+                                } else {
+                                    console.log('text saved')
+                                };
+                            });
+                            //end
+                        }
+                    }
+                })
+                
+            }
+        }
     });
+
 };
-module.exports = { post, get, put }

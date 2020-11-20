@@ -4,25 +4,22 @@
 -server info/ start server
 -var declaration
 -function declaration
--page directorys rendered
--page directorys un-rendered
--setinterval functions
+-page directories rendered
+-page directories un-rendered
+-setInterval functions
 */
 //_______________________________________________________|
-//____________________________________|package decleration
+//____________________________________|package declaration
 //_______________________________________________________|
-//npm
 "use strict"
-const express = require('express');
-const mongoose = require('mongoose');
-//const bcrypt = require('bcrypt')
-const ejs = require('ejs')
-const { request, response, json, Router } = require('express');
-const app = express();
+//dependencies
+const express = require('express')
+const app = express()
+const server = require('http').createServer(app)
+const io = require('socket.io')(server)
+//env variables
 require('dotenv').config()
-//eviorment variables
 const uriuserdata = process.env.uriuserdata
-const urichatrooms = process.env.urichatrooms
 //project files
 const textsDir = require('./routes/texts/texts-route')
 const userdb = require('./database/db_userdata')
@@ -41,17 +38,13 @@ app.disable('x-powered-by');
 //_______________________________________________|database
 //_______________________________________________________|
 userdb.main(uriuserdata)
-var users = userdb.users
-var usertoken = userdb.usertoken
-var texts = userdb.texts
 //_______________________________________________________|
 //______________________________|server info/ start server
 //_______________________________________________________|
 const PORT = process.env.PORT || 80; 
-app.listen(PORT, () => console.log('--server started on port ' + PORT));
+server.listen(PORT, () => console.log('--server started on port ' + PORT));
 app.use(express.static('views'))
 app.use(express.json())
-app.use(require('express-status-monitor')());
 //_______________________________________________________|
 //________________________________________|var decleration
 //_______________________________________________________|
@@ -78,7 +71,7 @@ function uChange() {
     }
 }
 //_______________________________________________________|
-//_______________________________|page directorys rendered
+//_______________________________|page directories rendered
 //_______________________________________________________|
 app.get('/', mainDir.main)
 app.get('/login', loginDir.get)
@@ -86,12 +79,10 @@ app.get('/login', loginDir.get)
     response.render('register.ejs')
 });*/
 //_______________________________________________________|
-//____________________________|page directorys un-rendered
+//____________________________|page directories un-rendered
 //_______________________________________________________|
-//=========================================/TEXTS
-app.put('/texts', textsDir.put)
-app.get('/texts/:chat', textsDir.get)
-app.post('/texts', textsDir.post)
+//=========================================/sockets
+io.on('connection', textsDir.sockets)
 //=========================================/USERCOUNT
 app.post('/Ucount', (request, response) =>{
     S.push(methods.cookieParse(request.headers.cookie, "userId"));
@@ -106,7 +97,7 @@ app.delete('/logout', logoutDir.main)
 app.post('/theme', themeDir.post)
 app.get('/theme', themeDir.get)
 //_______________________________________________________|
-//__________________________________|setinterval functions
+//__________________________________|setInterval functions
 //_______________________________________________________|
 setInterval(uChange, 5000);
 //==========notes
