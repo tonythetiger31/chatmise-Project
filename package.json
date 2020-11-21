@@ -1,9 +1,9 @@
 {
   "name": "nodejsproject",
   "version": "1.0.0",
-  "engines": { 
-    "node": "12.16.3" 
- },
+  "engines": {
+    "node": "12.16.3"
+  },
   "description": "first time using express",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,7 @@
   "author": "Tony Flores",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "crypto-random-string": "^3.3.0",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
