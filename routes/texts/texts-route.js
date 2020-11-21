@@ -13,7 +13,7 @@ const
     textsMethods = require('./texts-methods');
 // const textMethods = require('texts-route')
 
-module.exports = {sockets}
+module.exports = { sockets }
 
 //===============================================================SOCKETS
 function sockets(socket) {
@@ -68,7 +68,6 @@ function sockets(socket) {
             data.texts.collections.forEach(element => {
                 socket.join(element);
             });
-            console.log('oof')
         });
     //===================SOCKET EVENTS
     socket.on('texts', (body) => {
@@ -76,8 +75,8 @@ function sockets(socket) {
             var chat = body.chat
             console.log('new transmiton', sender, body)
             if (chat != '' || chat != undefined || chat != null) {
-                 let wsRooms =  Array.from(socket.adapter.rooms)  
-                 wsRooms.forEach((element, i) => {
+                let wsRooms = Array.from(socket.adapter.rooms)
+                wsRooms.forEach((element, i) => {
                     if (wsRooms[i].includes(chat)) {
                         let specificWsRoom = Array.from(wsRooms[i][1])
                         if (specificWsRoom.includes(socket.id)) {
@@ -87,12 +86,12 @@ function sockets(socket) {
                                 time: body.time,
                                 sender: sender
                             },
-                            socketSend = {
-                                text: body.text,
-                                time: body.time,
-                                sender: sender,
-                                chat: chat
-                            }
+                                socketSend = {
+                                    text: body.text,
+                                    time: body.time,
+                                    sender: sender,
+                                    chat: chat
+                                }
                             socket.to(chat).emit('text', socketSend);
                             var newtexts = new userdb.chat[chat](datadb)
 
@@ -107,7 +106,7 @@ function sockets(socket) {
                         }
                     }
                 })
-                
+
             }
         }
     });

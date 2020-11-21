@@ -2,7 +2,8 @@
 const { response } = require('express');
 const userdb = require('./database/db_userdata')
 const usertoken = userdb.secure.usertoken
-module.exports = { sucurityCheck3Phase, cookieParse, sucurityPhase1, sucurityPhase2, sucurityPhase3 }
+const bcrypt = require('bcrypt')
+module.exports = {hashComparison, sucurityCheck3Phase, cookieParse, sucurityPhase1, sucurityPhase2, sucurityPhase3 }
 //functions
 function cookieParse(cookie, key) {
     try {
@@ -73,4 +74,10 @@ function sucurityCheck3Phase(sender, typeOfHTTPMethod) {
         resolve (false)
     }
 })
+}
+function hashComparison(normpw, dbpw) {
+    return new Promise((resolve) => {
+        bcrypt.compare(normpw, dbpw, (err, result) => { resolve (result)
+        })
+    })
 }

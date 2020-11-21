@@ -16,14 +16,13 @@ exports.main = function(request, response){
                 response.send({'response':'success'})
             } else {
 //check 3
-                cookie = Number(cookie)
-                usertoken.findOneAndRemove({usertoken: cookie}, function (err, ){
+                usertoken.deleteOne({usertoken: cookie}, (err, result)=>{
                     if(err){
                         console.log('error removing user token')  
                         response.status(200)
                         response.send({'response':'success'})
                     }
-                    else{
+                    else {
                         response.cookie('userId','', { maxAge: 0, httpOnly: true })
                         response.status(200)
                         response.send({'response':'success'})
