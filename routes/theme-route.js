@@ -1,19 +1,17 @@
-const userdb = require('../database/db_userdata')
-const users = userdb.secure.users
-const usertoken = userdb.secure.usertoken
+const userDb = require('../database/user-data')
 const methods = require('../methods')
 //===============================================================POST
 exports.post = (request, response) => {
-//variable decleration
+//variable declaration
     var val = request.body.val
     var user = methods.cookieParse(request.headers.cookie, 'userId')
 //find user by token   
-    usertoken.find({
-        usertoken: user
+userDb.userToken.find({
+        token: user
     }).then((data) => {
 //update user data
         user = data[0].username
-        users.findOneAndUpdate({
+        userDb.users.findOneAndUpdate({
             username: user
         }, {
             settings: val
@@ -22,7 +20,7 @@ exports.post = (request, response) => {
             if (err) {
                 console.log("Something wrong when updating theme data!");
                 response.status(500)
-                response.send('somthing when wrong while updating your prefrences')
+                response.send('something when wrong while updating your preferences')
             }
             response.status(200)
             response.send({ response: 'theme options updated'})
@@ -31,16 +29,16 @@ exports.post = (request, response) => {
 }
 //===============================================================GET
 exports.get = (request, response) => {
-//varibale decleration
+//variable declaration
     var val = request.body.val
     var user = methods.cookieParse(request.headers.cookie, 'userId')
 //find user by token
-    usertoken.find({
-        usertoken: user
+userDb.userToken.find({
+        token: user
     }).then((data) => {
 //find users theme setting
         user = data[0].username
-        users.find({
+        userDb.users.find({
                 username: user
             })
             .then((data) => {

@@ -19,25 +19,20 @@ const server = require('http').createServer(app)
 const io = require('socket.io')(server)
 //env variables
 require('dotenv').config()
-const uriuserdata = process.env.uriuserdata
 //project files
-const textsDir = require('./routes/texts/texts-route')
-const userdb = require('./database/db_userdata')
-const themeDir = require('./routes/theme-route')
-const methods = require('./methods')
-const mainDir = require('./routes/main-route')
-const loginDir = require('./routes/login-route')
-const logoutDir = require('./routes/logout-route')
+const
+textsDir = require('./routes/texts/texts-route'),
+themeDir = require('./routes/theme-route'),
+methods = require('./methods'),
+mainDir = require('./routes/main-route'),
+loginDir = require('./routes/login-route'),
+logoutDir = require('./routes/logout-route')
 //
 app.use(express.urlencoded({
     extended: true
   })) 
 //header_options
 app.disable('x-powered-by');  
-//_______________________________________________________|
-//_______________________________________________|database
-//_______________________________________________________|
-userdb.main(uriuserdata)
 //_______________________________________________________|
 //______________________________|server info/ start server
 //_______________________________________________________|
@@ -46,13 +41,13 @@ server.listen(PORT, () => console.log('--server started on port ' + PORT));
 app.use(express.static('views'))
 app.use(express.json())
 //_______________________________________________________|
-//________________________________________|var decleration
+//________________________________________|var declaration
 //_______________________________________________________|
 var S = [],
     U = '1',
     F
 //_______________________________________________________|
-//___________________________________|function decleration
+//___________________________________|function declaration
 //_______________________________________________________|
 function uChange() {
     //counts number of active users
@@ -83,7 +78,7 @@ app.get('/login', loginDir.get)
 //_______________________________________________________|
 //=========================================/sockets
 io.on('connection', textsDir.sockets)
-//=========================================/USERCOUNT
+//=========================================/USER COUNT
 app.post('/Ucount', (request, response) =>{
     S.push(methods.cookieParse(request.headers.cookie, "userId"));
     response.status(200)

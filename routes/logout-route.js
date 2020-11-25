@@ -1,8 +1,7 @@
-const userdb = require('../database/db_userdata')
-const usertoken = userdb.secure.usertoken
+const userDb = require('../database/user-data')
 const methods = require('../methods')
 exports.main = function(request, response){
-//variable decleration
+//variable declaration
     var cookie = request.headers.cookie
 //check 1
     if (cookie === undefined || cookie === null || cookie === '') {
@@ -16,7 +15,7 @@ exports.main = function(request, response){
                 response.send({'response':'success'})
             } else {
 //check 3
-                usertoken.deleteOne({usertoken: cookie}, (err, result)=>{
+userDb.userToken.deleteOne({token: cookie}, (err, result)=>{
                     if(err){
                         console.log('error removing user token')  
                         response.status(200)

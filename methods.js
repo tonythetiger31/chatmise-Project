@@ -1,9 +1,8 @@
-//module decleration
+//module declaration
 const { response } = require('express');
-const userdb = require('./database/db_userdata')
-const usertoken = userdb.secure.usertoken
+const userDb = require('./database/user-data')
 const bcrypt = require('bcryptjs')
-module.exports = {hashComparison, sucurityCheck3Phase, cookieParse, sucurityPhase1, sucurityPhase2, sucurityPhase3 }
+module.exports = {hashComparison, securityCheck3Phase, cookieParse, securityPhase1, securityPhase2, securityPhase3 }
 //functions
 function cookieParse(cookie, key) {
     try {
@@ -22,7 +21,7 @@ function cookieParse(cookie, key) {
         return (null)
     }
 }
-function sucurityPhase1(sender, typeOfHTTPMethod) {
+function securityPhase1(sender, typeOfHTTPMethod) {
     if (sender == undefined || sender == null || sender == '') {
         console.log('texts ', typeOfHTTPMethod, ' denial phase 1')
         return (false)
@@ -30,7 +29,7 @@ function sucurityPhase1(sender, typeOfHTTPMethod) {
         return (true)
     }
 }
-function sucurityPhase2(sender, typeOfHTTPMethod) {
+function securityPhase2(sender, typeOfHTTPMethod) {
     if (sender == undefined || sender == null || sender == '') {
         console.log('texts ', typeOfHTTPMethod, ' denial phase 2')
         return (false)
@@ -38,11 +37,11 @@ function sucurityPhase2(sender, typeOfHTTPMethod) {
         return (true)
     }
 }
-async function sucurityPhase3(sender, typeOfHTTPMethod) {
+async function securityPhase3(sender, typeOfHTTPMethod) {
     return new Promise((resolve) => {
         cSender = sender
-        usertoken.find({
-            usertoken: sender
+        userDb.userToken.find({
+            token: sender
         })
             .then((data) => {
                 if (data == '') {
@@ -55,15 +54,15 @@ async function sucurityPhase3(sender, typeOfHTTPMethod) {
             })
     })
 }
-function sucurityCheck3Phase(sender, typeOfHTTPMethod) {
+function securityCheck3Phase(sender, typeOfHTTPMethod) {
     return new Promise((resolve) => {
-    //sucurity phase 1    
-    if (sucurityPhase1(sender, typeOfHTTPMethod)) {
-        //sucurity phase 2    
+    //security phase 1    
+    if (securityPhase1(sender, typeOfHTTPMethod)) {
+        //security phase 2    
              sender = cookieParse(sender, 'userId')
-        if (sucurityPhase2(sender, typeOfHTTPMethod)) {
-            //sucurity phase 3
-            sucurityPhase3(sender, typeOfHTTPMethod).then((data)=>{
+        if (securityPhase2(sender, typeOfHTTPMethod)) {
+            //security phase 3
+            securityPhase3(sender, typeOfHTTPMethod).then((data)=>{
                 
                 resolve({ userInfo: data, sender: sender})
             })
@@ -75,8 +74,8 @@ function sucurityCheck3Phase(sender, typeOfHTTPMethod) {
     }
 })
 }
-function hashComparison(normpw, dbpw) {
+function hashComparison(normPw, dbPw) {
     return new Promise((resolve) => {
-         bcrypt.compare(normpw, dbpw, (err, result) => { resolve (result)})
+         bcrypt.compare(normPw, dbPw, (err, result) => { resolve (result)})
     })
 }

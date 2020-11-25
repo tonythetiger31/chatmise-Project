@@ -1,6 +1,5 @@
-const userdb = require('../database/db_userdata')
-const usertoken = userdb.secure.usertoken
-const users = userdb.secure.users
+const userDb = require('../database/user-data')
+const users = userDb.users
 const methods = require('../methods')
 const cryptoRandomString = require('crypto-random-string')
 //===============================================================GET
@@ -21,13 +20,13 @@ exports.get = function(request, response) {
                 response.render('file.Login.ejs')
             } else {
 //redirect phase 4
-                usertoken.find({
-                        usertoken: cookie
+userDb.userToken.find({
+                        token: cookie
                     })
                     .then((data) => {
                         if (data == '') {
                             response.render('file.Login.ejs')
-                        } else if (data[0].usertoken == cookie) {
+                        } else if (data[0].token == cookie) {
                             response.status(307)
                             response.redirect('/')
                         }
@@ -38,7 +37,7 @@ exports.get = function(request, response) {
 }
 //===============================================================POST
 exports.post = function(request, response) { 
-//var decleration
+//var declaration
     var username = request.body.username,
         password = request.body.password;
 //login phase 1
@@ -61,21 +60,21 @@ exports.post = function(request, response) {
                 if (data2 === true) {
                     //token assignment 
                     let userId = cryptoRandomString({ length: 20, type: 'alphanumeric' });
-                    var datadb = {
-                        usertoken: userId,
+                    var dataDb = {
+                        token: userId,
                         username: username
                     }
-                    var newusertoken = new usertoken(datadb);
-                    newusertoken.save((error) => {
+                    var newToken = new userDb.userToken(dataDb);
+                    newToken.save((error) => {
                         if (error) {
-                            console.log('somthing happened witht the db')
+                            console.log('something happened with the db')
                             response.status(500)
-                            response.send('problem loging you in')
+                            response.send('problem logging you in')
                         } else {
                             response.status(202)
                             response.cookie('userId', userId, { maxAge: 302400000, httpOnly: true, sameSite: 'Strict' })
-                            response.send('You are now logedin')
-                            console.log(request.body.username, 'loged in')
+                            response.send('You are now loggedIn')
+                            console.log(request.body.username, 'logged in')
                         }
                     })
                 } else {

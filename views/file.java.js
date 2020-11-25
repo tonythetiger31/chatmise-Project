@@ -1,7 +1,7 @@
 /*contents
--variable declerations
+-variable declarations
 -functions
--setinterval functions
+-setInterval functions
 -style functions
 */
 "use strict"
@@ -35,9 +35,9 @@ function parseCookie(cookie, key) {
     return (cB)
 }
 //=======================================themePost
-async function postChangedSettings(settingval) {
+async function postChangedSettings(settingVal) {
     var data = {
-        val: settingval
+        val: settingVal
     }
     const options = {
         method: 'Post',

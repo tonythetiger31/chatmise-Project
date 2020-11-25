@@ -6,9 +6,8 @@ WARNING
 */
 "use strict"
 const
-    userdb = require('../../database/db_userdata'),
-    usertoken = userdb.secure.usertoken,
-    users = userdb.secure.users,
+    chatDb = require('../../database/chat-data'),
+    userDb = require('../../database/user-data'),
     methods = require('../../methods'),
     textsMethods = require('./texts-methods');
 // const textMethods = require('texts-route')
@@ -24,12 +23,12 @@ function sockets(socket) {
         //checks that token is valid
         return new Promise((resolve) => {
             var cookie = socket.handshake.headers.cookie;
-            methods.sucurityCheck3Phase(cookie, 'GET').then((data) => {
+            methods.securityCheck3Phase(cookie, 'GET').then((data) => {
                 if (data == false) {
                     socket.emit("allTexts", 'invalid credentials');
                     socket.disconnect(true)
                     resolve(null)
-                } else if (data.userInfo[0].usertoken == data.sender) {
+                } else if (data.userInfo[0].token == data.sender) {
                     sender = data.userInfo[0].username
                     resolve(data)
                 };
@@ -39,7 +38,7 @@ function sockets(socket) {
         .then(data => {
             //get user chat and text info
             return new Promise((resolve) => {
-                users.find({
+                userDb.users.find({
                     username: data.userInfo[0].username
                 }).then((data2) => {
                     textsMethods.grabAllThisUserChats(data2)
@@ -73,7 +72,7 @@ function sockets(socket) {
     socket.on('texts', (body) => {
         if (Object.keys(body).length !== 0) {
             var chat = body.chat
-            console.log('new transmiton', sender, body)
+            console.log('new transmission', sender, body)
             if (chat != '' || chat != undefined || chat != null) {
                 let wsRooms = Array.from(socket.adapter.rooms)
                 wsRooms.forEach((element, i) => {
@@ -81,7 +80,7 @@ function sockets(socket) {
                         let specificWsRoom = Array.from(wsRooms[i][1])
                         if (specificWsRoom.includes(socket.id)) {
                             //start
-                            var datadb = {
+                            var dataDb = {
                                 text: body.text,
                                 time: body.time,
                                 sender: sender
@@ -93,11 +92,11 @@ function sockets(socket) {
                                     chat: chat
                                 }
                             socket.to(chat).emit('text', socketSend);
-                            var newtexts = new userdb.chat[chat](datadb)
+                            var newText = new chatDb.chat[chat](dataDb)
 
-                            newtexts.save((error) => {
+                            newText.save((error) => {
                                 if (error) {
-                                    console.log('somthing happened witht the db -texts')
+                                    console.log('something happened with the db -texts')
                                 } else {
                                     console.log('text saved')
                                 };
