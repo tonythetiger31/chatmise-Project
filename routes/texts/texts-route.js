@@ -92,15 +92,16 @@ function sockets(socket) {
                                     chat: chat
                                 }
                             socket.to(chat).emit('text', socketSend);
-                            var newText = new chatDb.chat[chat](dataDb)
-
-                            newText.save((error) => {
-                                if (error) {
-                                    console.log('something happened with the db -texts')
-                                } else {
-                                    console.log('text saved')
-                                };
-                            });
+                      chatDb.chats.updateOne({
+                            chatName:chat
+                      }, {$push: { messages: dataDb }},(err) =>{
+                                    if (err) {
+                                        console.log('something happened with the db -texts');
+                                    } else {
+                                        console.log('text saved')
+                                    }
+                                        
+                                })
                             //end
                         }
                     }

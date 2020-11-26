@@ -15,7 +15,7 @@ userDb.userToken.find({
             username: user
         }, {
             settings: val
-        }, function(err, doc) {
+        }, (err)=> {
 //response
             if (err) {
                 console.log("Something wrong when updating theme data!");

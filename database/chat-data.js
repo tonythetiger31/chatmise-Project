@@ -1,29 +1,32 @@
 //dependencies
 const mongoose = require('mongoose');
 //variable declaration
-var chat = {}
 var conn
 const main = (()=>{
 //db options
 conn = mongoose.createConnection(process.env.uriChatData, {
     useNewUrlParser:true,
     useUnifiedTopology:true,
-    poolSize: 20,
+    poolSize: 20
 })
 })()
 //connection test + create chat models
 conn.on('connected', () => {
     console.log('--mongodb successfully connected to chatData')
-    conn.db.listCollections().toArray(function (err, names) {
-        names.forEach((element,i)=>{
-                chat[element.name] = conn.model(element.name, schema);
-        })
-    })
 })
+
 //schema
-const schema = new mongoose.Schema({
-    sender: String,
-    text: String,
-    time: Number,
+const messagesSchema = new mongoose.Schema({
+    
 })
-module.exports = {chat}
+const schema = new mongoose.Schema({
+    chatName: String,
+    chatId: String,
+    messages: {
+        type: [
+          "Mixed"
+        ]
+      }
+})
+const chats = conn.model('chats', schema) 
+module.exports = {chats}

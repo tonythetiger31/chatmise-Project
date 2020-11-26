@@ -9,9 +9,9 @@ function grabAllThisUserChats(data) {//grabs all chat names and texts within tho
         allTextsWithinThisChat = [];//all texts within those chats
     return new Promise((resolve) => {
         data[0].chats.forEach((element) => {//runs through the chats that that user is in
-            chatDb.chat[element].find({}).then((data2) => {
+            chatDb.chats.find({ chatName: element }).then((data2) => {
                 collections.push(element)
-                allTextsWithinThisChat.push(data2)
+                allTextsWithinThisChat.push(data2[0].messages)
                 return ({
                     collections: collections,
                     allTextsWithinThisChat: allTextsWithinThisChat

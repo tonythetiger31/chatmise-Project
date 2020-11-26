@@ -8,6 +8,7 @@ conn = mongoose.createConnection(process.env.uriUserData, {
     useNewUrlParser:true,
     useUnifiedTopology:true,
     poolSize: 20,
+    useFindAndModify: false 
 })
 })()
 //connection
