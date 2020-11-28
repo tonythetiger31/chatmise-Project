@@ -13,16 +13,16 @@
 		gtag('js', new Date());
 		gtag('config', 'UA-176266475-4');
 	</script>
-	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-	<link rel="manifest" href="/site.webmanifest">
-	<link rel="stylesheet" type="text/css" href="file.style1.css">
+	<link rel="apple-touch-icon" sizes="180x180" href="/resources/icons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/resources/icons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/resources/icons/favicon-16x16.png">
+	<link rel="manifest" href="site.webmanifest">
+	<link rel="stylesheet" type="text/css" href="/resources/app/style.css">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 	<title>chatmise</title>
 	<audio id="myAudio">
-		<source src="audioping.mp3" type="audio/mp3"> </audio>
+		<source src="/resources/audio/audioping.mp3" type="audio/mp3"> </audio>
 </head>
 	<!--gif onload-->
 	<div id="loadimg"></div>
@@ -40,6 +40,7 @@
 				<button class="hamburgerMenuButtons"><a href="https://tipsandbugreport.netlify.app/">Report a bug</a></button><br>
 				<button class="hamburgerMenuButtons" onclick="openCloseSettingsMenu('open')">Settings</button><br>
 				<button class="hamburgerMenuButtons" onclick="logoutUser()">Logout</button>
+				<a class="homeLink" href="/home">Home page</a>
 			</div>
 			<!--Settings-->
 			<div id="settingsContainer">
@@ -93,7 +94,7 @@
 	</div>
 	<!--====================================================================-->
 	<script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
-	<script src="file.java.js"></script>
+	<script src="/resources/app/client.js"></script>
 	<!--====================================================================-->
 </body>
 

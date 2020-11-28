@@ -1,0 +1,66 @@
+html,body{
+    background-color:#383838 ;
+    margin: 0 0 0 0;
+}
+.mainText{
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 70px;
+    margin: 14vw 12vw 0 8vw;
+}
+.subText{
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 50px;
+    margin: 5vw 12vw 0 8vw;
+}
+.loginButton{
+    color: white;
+    background-color: grey;
+    border: solid white 1px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 50px;
+    margin: 30px 0 0 8vw;
+    padding: .2vw .7vw;
+    transition: color .3s;
+}
+.loginButton:hover{
+    background-color: white;
+    color: gray;
+}
+.signUpButton{
+    border:none;
+    background-color: #52fb9e;
+    border-radius: 4px;
+    color: grey;
+    display: inline-block;
+    font-family: 'Roboto', sans-serif;
+    font-size: 50px;
+    margin: 30px 0 0 1vw;
+    padding: .2vw .7vw;
+    text-decoration: none;
+    transition: color .2s;
+}
+.signUpButton:hover{
+    color: #52fb9e;
+    background-color: grey;
+}
+.twitterLink{
+    position: fixed;
+    height: 100px; 
+    top: 0;
+    right: 0;
+}
+@media only screen and (max-width: 1000px){
+    .mainText{margin-top: 23vw;
+        font-size: 40px;
+    }
+    .subText{font-size: 20px;
+    }
+    .loginButton{font-size: 30px
+    }
+    .signUpButton{font-size: 30px
+    }
+    .twitterLink{height: 70px;
+    }
+}

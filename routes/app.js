@@ -1,24 +1,25 @@
 const userDb = require('../database/user-data')
 const methods = require('../methods')
+var path = require('path');
 exports.main = function(request, response) {
 //var declaration
     var cookie = request.headers.cookie
 //security phase 1
     if (cookie === undefined || cookie === null || cookie === '') {
         response.status(403)
-        response.redirect('/login');
+        response.sendFile(path.join(__dirname + '/../views/home/index.html'));
     } else {
 //security phase 2
         if (cookie.length > 500) {
             response.status(413)
-            response.redirect('/login');
+            response.sendFile(path.join(__dirname + '/../views/home/index.html'));
          } else {
 //security phase 3
             var cookie = methods.cookieParse(request.headers.cookie, 'userId')
             if (cookie === undefined || cookie === null || cookie === '') {
                 console.log('denied1')
                 response.status(403)
-                response.redirect('/login');
+                response.sendFile(path.join(__dirname + '/../views/home/index.html'));
             } else {
 //security phase 4
 userDb.userToken.find({
@@ -33,7 +34,7 @@ userDb.userToken.find({
 //response
                             username = data[0].username
                             response.status(200)
-                            response.render('file.index.ejs', {username: username})                           
+                            response.render(__dirname + '/../views/resources/app/index.ejs', {username: username})                           
                         }
                     })
             }

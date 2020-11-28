@@ -12,7 +12,7 @@ body{
     background-color: #1c1a20;
     margin: 10vh 0 0 0;
     display: inline-block;
-    padding: 1vw 2vw 2vw 2vw;
+    padding: 1vw 2vw 1.6vw 2vw;
     border:none;
     border-radius: 8px;
 }
@@ -61,10 +61,11 @@ body{
     cursor: pointer;
 }
 .form a{
+    color: white;
     font-family: Arial, Helvetica, sans-serif;
     display: inline-block;
-    font-size: 1vw;
-    margin: 1vw 0 0 0;
+    font-size: .8vw;
+    margin: 2vw 0 0 0;
 }
 @media only screen and (max-width: 1000px){
     .title{

@@ -17,16 +17,18 @@ const express = require('express')
 const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server)
+var path = require('path')
 //env variables
 require('dotenv').config()
 //project files
 const
-textsDir = require('./routes/texts/texts-route'),
-themeDir = require('./routes/theme-route'),
+textsDir = require('./routes/texts/texts'),
+themeDir = require('./routes/theme'),
 methods = require('./methods'),
-mainDir = require('./routes/main-route'),
-loginDir = require('./routes/login-route'),
-logoutDir = require('./routes/logout-route')
+mainDir = require('./routes/app'),
+loginDir = require('./routes/login'),
+logoutDir = require('./routes/logout'),
+signupDir = require('./routes/signup')
 //
 app.use(express.urlencoded({
     extended: true
@@ -70,9 +72,7 @@ function uChange() {
 //_______________________________________________________|
 app.get('/', mainDir.main)
 app.get('/login', loginDir.get)
-/*app.get('/register',(request, response) =>{
-    response.render('register.ejs')
-});*/
+app.get('/signup',signupDir.get);
 //_______________________________________________________|
 //____________________________|page directories un-rendered
 //_______________________________________________________|

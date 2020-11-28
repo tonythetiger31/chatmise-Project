@@ -1,0 +1,93 @@
+body{
+    text-align: center;
+    background-color: #383838;
+}
+.title{
+    font-size: 2vw;
+    font-family: 'Montserrat', sans-serif;
+    color:#ebebdf;
+    letter-spacing: .04em;
+}
+.form{
+    background-color: #1c1a20;
+    margin: 10vh 0 0 0;
+    display: inline-block;
+    padding: 1vw 2vw 1.6vw 2vw;
+    border:none;
+    border-radius: 8px;
+}
+.Username{
+    font-size: 1.7vw;
+    margin: 2vh 0 0 0;
+    background-color: #212732;
+    font-family: 'Roboto', sans-serif;
+    color: #73ffb2;
+    padding-left: 8px;
+    border-radius: 2px;
+    border:none;
+}
+.Username::placeholder{
+    color: #ebebdf;
+}
+.Password{
+    font-size: 1.7vw;
+    margin: 2vh 0 2vh 0;
+    background-color: #212732;
+    font-family: 'Roboto', sans-serif;
+    color: #73ffb2;
+    padding-left: 8px;
+    border-radius: 2px;
+    border:none;
+}
+.Password::placeholder{
+    color: #ebebdf;
+}
+.LoginButton{
+    color: #EBEBDF;
+    outline: none;
+    border-radius: 3px;
+    padding: 0 15px 0 15px;
+    background-color: #7c887c;
+    border:none;
+    font-size: 2vw;
+    font-family: 'Roboto', sans-serif;
+    transition: all 0.30s ease 0s;
+}
+.LoginButton:hover{
+    letter-spacing: .04em;
+    color:#7c887c;
+    background-color: #73ffb2;
+    box-shadow:#73ffb228 2px 3px 10px 4px;
+    cursor: pointer;
+}
+.form a{
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    display: inline-block;
+    font-size: .8vw;
+    margin: 2vw 0 0 0;
+}
+@media only screen and (max-width: 1000px){
+    .title{
+        font-size: 8vw;
+    }
+    .form{
+        margin: 15vh 0 0 0;
+        padding: 3vw 4vw 4vw 4vw;
+    }
+    .Username{
+        font-size: 6vw;
+        margin: 3vh 0 0 0;
+    }
+    .Password{
+        font-size: 6vw;
+        margin: 3vh 0 3vh 0;
+    }
+    .LoginButton{
+        font-size: 7vw;
+    }
+    .form a{
+        font-size: 5vw;
+        margin: 3vw 0 0 0;
+    }
+}

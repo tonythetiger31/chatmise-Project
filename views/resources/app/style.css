@@ -20,7 +20,7 @@ html,body{
 }
 /*loadimg*/
 #loadimg{
-    background-image:url('load.gif');
+    background-image:url('/resources/images/load.gif');
     background-position:center;
     background-attachment: fixed;
     background-repeat: no-repeat;
@@ -50,7 +50,7 @@ html,body{
 .exitButton a{
     -webkit-tap-highlight-color: transparent;
     outline: none;
-    content:url('exit.png');
+    content:url('/resources/images/exit.png');
     height: 50px;
     transition: all .3s ease-out;
 }
@@ -141,6 +141,14 @@ html,body{
 }
 .hamburgerMenuButtons a:hover{
     color: white;
+}
+.homeLink{
+    text-align: center;
+    display: block;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    margin: 20px 0 0 0;
 }
 /*=settings=*/
 #settingsContainer{
@@ -263,7 +271,7 @@ html,body{
 .chatButton a{
     -webkit-tap-highlight-color: transparent;
     outline: none;
-    content:url('back.png');
+    content:url('/resources/images/back.png');
     filter: var(--hamburgerColor);
     transition: all .3s ease-out;
     height: 50px;

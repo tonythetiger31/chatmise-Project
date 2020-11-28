@@ -9,7 +9,7 @@ const
     chatDb = require('../../database/chat-data'),
     userDb = require('../../database/user-data'),
     methods = require('../../methods'),
-    textsMethods = require('./texts-methods');
+    textsMethods = require('./methods');
 // const textMethods = require('texts-route')
 
 module.exports = { sockets }

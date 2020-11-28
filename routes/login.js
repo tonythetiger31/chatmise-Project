@@ -8,16 +8,16 @@ exports.get = function(request, response) {
     var cookie = request.headers.cookie
 //redirect phase 1
     if (cookie === undefined || cookie === null || cookie === '') {
-        response.render('file.Login.ejs')
+        response.render(__dirname + '/../views/resources/login/client.ejs')
     } else {
 //redirect phase 2
         if (cookie.length > 400) {
-            response.render('file.Login.ejs')
+            response.render(__dirname + '/../views/resources/login/client.ejs')
         } else {
 //redirect phase 3
             var cookie = methods.cookieParse(request.headers.cookie, 'userId')
             if (cookie === undefined || cookie === null || cookie === '') {
-                response.render('file.Login.ejs')
+                response.render(__dirname + '/../views/resources/login/client.ejs')
             } else {
 //redirect phase 4
 userDb.userToken.find({
@@ -25,7 +25,7 @@ userDb.userToken.find({
                     })
                     .then((data) => {
                         if (data == '') {
-                            response.render('file.Login.ejs')
+                            response.render(__dirname + '/../views/resources/login/client.ejs')
                         } else if (data[0].token == cookie) {
                             response.status(307)
                             response.redirect('/')
