@@ -2,7 +2,7 @@
   "name": "chatmise-project",
   "version": "1.0.0",
   "engines": {
-    "node": "12.18.0"
+    "node": "12.13.0"
   },
   "description": "chatmise.com",
   "main": "index.js",
