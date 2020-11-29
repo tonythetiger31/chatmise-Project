@@ -72,7 +72,8 @@ function uChange() {
 //_______________________________________________________|
 app.get('/', mainDir.main)
 app.get('/login', loginDir.get)
-app.get('/signup',signupDir.get);
+app.get('/signup', signupDir.get);
+app.get('/admin',signupDir.get);
 //_______________________________________________________|
 //____________________________|page directories un-rendered
 //_______________________________________________________|
