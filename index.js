@@ -7,7 +7,7 @@
 -page directories rendered
 -page directories un-rendered
 -setInterval functions
-*/
+*/                                                                                                                                                                                                                                                                                                             
 //_______________________________________________________|
 //____________________________________|package declaration
 //_______________________________________________________|
@@ -96,6 +96,3 @@ app.get('/theme', themeDir.get)
 //__________________________________|setInterval functions
 //_______________________________________________________|
 setInterval(uChange, 5000);
-//==========notes
-//node index.js
-//localhost/status
