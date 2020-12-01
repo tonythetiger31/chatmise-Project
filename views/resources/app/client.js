@@ -1,7 +1,6 @@
 /*contents
 -variable declarations
 -functions
--setInterval functions
 -style functions
 */
 "use strict"
@@ -9,23 +8,26 @@ document.addEventListener("DOMContentLoaded", loadstop);
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================Variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-var allChatsTextCount = [],
-//number of texts currently loaded for all chats
-currentTextIndex,
-//index of current chat withing textNum
-allCurrentUserChats,
+var allCurrentUserChats,
 currentChat,
 //current chat user is in
 username,
     userCountTipBoolean = true,
-allTextsBool = true,
+    allTextsBool = true,
+    allChatsUserCount,
+    internetBool,
 messageSound = document.getElementById("myAudio")
 messageSound.volume = 0.15
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=======================================socket.io connection
-var socket = io()  
+var socket = io.connect('/', {   
+})  
+socket.on('disconnect', () => { 
+    internetWarning(true)
+})
 //=======================================cookieParser
 function parseCookie(cookie, key) {
     cA = cookie.split(/[;=]+/);
@@ -73,38 +75,25 @@ async function logoutUser() {
     const json = await response.json();
     location.replace("/login")
 }
-//=======================================postUserToken
-async function postUserToken() {
-    /*send user id to see how
-     many users there are*/
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-    fetch('/Ucount', options)
-        .then(response => response.json())
-        .catch(error => internetWarning(true))
-        .then((body) => {
-            if (body !== undefined) {
-                document.getElementById("Count").innerHTML = body;
-                document.getElementById("Count2").innerHTML = body;
-                internetWarning(false)
-            } else {
-                document.getElementById("Count").innerHTML = '-';
-            }
-        })
-}
-//=======================================fetch
+//=======================================socket events
 socket.on('text', (body) => { 
             addNewMessageToHtml(body.chat, body.text, body.sender, body.time)
+})
+socket.on('userCount', (body) => {
+    allChatsUserCount.forEach((element,i) => {
+        if (body.chat == allChatsUserCount[i].chat) {
+            allChatsUserCount[i].count = body.userCount
+        } 
+    })
+    if (currentChat == body.chat) {
+        document.getElementById("Count").innerHTML = body.userCount;
+        document.getElementById("Count2").innerHTML = body.userCount;
+    }
 })
 //=======================================serverPutData
 async function putUserOutgoingTexts(info, date) {
     /*sends data to server
      and recives*/
-    allChatsTextCount[currentTextIndex] += 1
     info[0] = info[0].trim()
     //removes white space
     info = info[0]
@@ -121,7 +110,8 @@ socket.on('allTexts', (data) => {
         var person = []
         var thisTextTime
         //display chat
-        allCurrentUserChats = data.collections
+        allChatsUserCount = data.userCount
+        allCurrentUserChats  = data.collections
         data.collections.forEach((element, i, arr) => {
             displayAllChatsInMenu(element, i)
         }
@@ -145,7 +135,6 @@ socket.on('allTexts', (data) => {
                 thisTextTime.push(data.data[i1][i].time)
             })
             displayAllServerMessages(element1, SMSG2, person, thisTextTime)
-            allChatsTextCount.push(SMSG2.length)
         }
         )
         getSettings()
@@ -157,12 +146,19 @@ function displayAChat(current, index) {
     // displays chat pressed
     allCurrentUserChats.forEach((element) => {
         document.getElementById(element + 'Anchor').style.display = "none";
-    }
-    )
+    })
     document.getElementById(current + 'Anchor').style.display = "block";
     document.getElementById('chatTitle').innerHTML = current
+    
     currentChat = current;
-    currentTextIndex = index
+
+    allChatsUserCount.forEach((element, i) => {
+        if (allChatsUserCount[i].chat == currentChat) {
+            let theCount = allChatsUserCount[i].count
+            document.getElementById("Count").innerHTML = theCount;
+            document.getElementById("Count2").innerHTML = theCount;
+            }
+        })
     document.getElementById('chatMenu').style.display = 'none'
     document.getElementById('messageInputFeild').style.display = 'flex'
     document.getElementById('tip1').style.display = 'none'
@@ -248,13 +244,13 @@ function sendMessageWhenEnterKeyPressed(event) {
             '/': '&#47;',
             '&': '&#38;',
             '"': '&#34;',
-            '\'': '&#39;',
+            '\'':'&#39;',
             ',': '&#44;',
             '[': '&#91;',
             ']': '&#94;',
-            '{': '&#123;',
-            '}': '&#125;',
-            '\\': '&#92;',
+            '{':'&#123;',
+            '}':'&#125;',
+            '\\':'&#92;',
             '(': '&#40;',
             ')': '&#41;',
             ':': '&#58;',
@@ -290,12 +286,6 @@ function getNormalTimeFromUTC(thisDate) {
     return (output)
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//=============================================================================setinterval functions
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-setInterval(postUserToken, 5000);
-postUserToken()
-//sends id as soon as load instead of waiting 5s
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=============================================================================style functions
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //=======================================openCloseSettingsMenu
@@ -311,9 +301,8 @@ function openCloseUserCountTip(){
 function internetWarning(arg) {
     if (arg === true) {
         document.getElementById('internetWaring').style.display = "block";
-    } else {
-        document.getElementById('internetWaring').style.display = "none";
-    }
+        location.reload();
+    } 
 }
 function openCloseHamburgerMenu(arg) {
     if (arg === 'open') {

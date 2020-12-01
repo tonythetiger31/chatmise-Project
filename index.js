@@ -43,31 +43,6 @@ server.listen(PORT, () => console.log('--server started on port ' + PORT));
 app.use(express.static('views'))
 app.use(express.json())
 //_______________________________________________________|
-//________________________________________|var declaration
-//_______________________________________________________|
-var S = [],
-    U = '1',
-    F
-//_______________________________________________________|
-//___________________________________|function declaration
-//_______________________________________________________|
-function uChange() {
-    //counts number of active users
-    try {
-        F = undefined
-        F = S.filter((item, i, ar) => ar.indexOf(item) === i);//removes duplicates
-        F = F.length
-        console.log(F, 'active users')
-        U = F
-        U = U.toString()
-        S = []
-    }
-    catch (err) {
-        S = []
-        F = undefined
-    }
-}
-//_______________________________________________________|
 //_______________________________|page directories rendered
 //_______________________________________________________|
 app.get('/', mainDir.main)
@@ -79,12 +54,6 @@ app.get('/admin',signupDir.get);
 //_______________________________________________________|
 //=========================================/sockets
 io.on('connection', textsDir.sockets)
-//=========================================/USER COUNT
-app.post('/Ucount', (request, response) =>{
-    S.push(methods.cookieParse(request.headers.cookie, "userId"));
-    response.status(200)
-    response.send(U);
-});
 //=========================================/loginPost
 app.post('/login', loginDir.post)
 //=========================================/LOGOUT
@@ -92,7 +61,3 @@ app.delete('/logout', logoutDir.main)
 //=========================================/theme
 app.post('/theme', themeDir.post)
 app.get('/theme', themeDir.get)
-//_______________________________________________________|
-//__________________________________|setInterval functions
-//_______________________________________________________|
-setInterval(uChange, 5000);

@@ -52,23 +52,60 @@ function sockets(socket) {
             });
         })
         .then(data => {
-            //send data to user
+            
+            //join socket rooms
             return new Promise((resolve) => {
-                socket.emit("allTexts", {
-                    collections: data.texts.collections,
-                    data: data.texts.allTextsWithinThisChat,
-                    username: data.user.userInfo[0].username //FIX THIS!!!!!!
+                data.texts.collections.forEach(element => {
+                    socket.join(element);
+    
+                    let allRooms = Array.from(socket.adapter.rooms)
+                    allRooms.forEach((element1, i) => {
+                        let allRooms = Array.from(socket.adapter.rooms)
+                        if (allRooms[i].includes(element)) {
+                            console.log(allRooms[i][1].size)
+                            socket.to(element).emit('userCount', {
+                                chat: element,
+                                userCount: allRooms[i][1].size
+                            });
+                        }
+                    })
                 });
                 resolve(data);
             });
         })
         .then(data => {
-            //join socket rooms
+            //send data to user
+            var userCount = []
             data.texts.collections.forEach(element => {
-                socket.join(element);
+                let allRooms = Array.from(socket.adapter.rooms)
+                allRooms.forEach((element1, i) => {
+                    if (allRooms[i].includes(element)) {
+                        console.log(allRooms[i][1].size)
+                        console.log('chat =',element ,'count = ',allRooms[i][1].size)
+                        userCount.push({ chat: element,count: allRooms[i][1].size }) 
+                    }
+                })
+            })
+            socket.emit("allTexts", {
+                userCount:   userCount  ,
+                collections: data.texts.collections,
+                data: data.texts.allTextsWithinThisChat,
+                username: data.user.userInfo[0].username 
             });
         });
-    //===================SOCKET EVENTS
+    //===================SOCKET EVENTS  
+    socket.on('disconnecting', () => {
+        var userRooms = Array.from(socket.rooms)
+        var allRooms = Array.from(socket.adapter.rooms)
+        userRooms.forEach((element) => {
+            allRooms.forEach((element1, i) => {
+                if (allRooms[i].includes(element)) {
+                    console.log(allRooms[i][1].size -1)
+                    socket.to(element).emit('userCount', {chat: element,userCount: allRooms[i][1].size - 1 });
+                }
+            })
+        })
+    })
     socket.on('texts', (body) => {
         if (Object.keys(body).length !== 0) {
             var chat = body.chat
@@ -80,6 +117,9 @@ function sockets(socket) {
                         let specificWsRoom = Array.from(wsRooms[i][1])
                         if (specificWsRoom.includes(socket.id)) {
                             //start
+                          
+                                
+
                             var dataDb = {
                                 text: body.text,
                                 time: body.time,
