@@ -6,7 +6,7 @@ exports.main = function(request, response) {
     var cookie = request.headers.cookie
 //security phase 1
     if (cookie === undefined || cookie === null || cookie === '') {
-        response.status(403)
+        response.status(200)
         response.sendFile(path.join(__dirname + '/../views/home/index.html'));
     } else {
 //security phase 2
@@ -17,8 +17,7 @@ exports.main = function(request, response) {
 //security phase 3
             var cookie = methods.cookieParse(request.headers.cookie, 'userId')
             if (cookie === undefined || cookie === null || cookie === '') {
-                console.log('denied1')
-                response.status(403)
+                response.status(200)
                 response.sendFile(path.join(__dirname + '/../views/home/index.html'));
             } else {
 //security phase 4
