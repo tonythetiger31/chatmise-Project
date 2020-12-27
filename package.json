@@ -20,8 +20,8 @@
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
-    "mongoose": "^5.10.17",
+    "mongoose": "^5.11.7",
     "nodemon": "^2.0.6",
-    "socket.io": "^3.0.3"
+    "socket.io": "^3.0.4"
   }
 }
