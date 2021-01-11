@@ -19,13 +19,13 @@ exports.get = function (request, response) {
                     response.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
                 } else {
     //redirect phase 4
-    userDb.userToken.find({
+    userDb.userToken.findOne({
                             token: cookie
                         })
                         .then((data) => {
                             if (data == '') {
                                 response.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
-                            } else if (data[0].token == cookie) {
+                            } else if (data.token == cookie) {
                                 response.status(307)
                                 response.redirect('/')
                             }

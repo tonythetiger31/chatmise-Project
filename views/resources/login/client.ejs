@@ -52,9 +52,9 @@
                 return resp.text(); // or resp.text() or whatever the server sends
             }).then((body) => {
                 console.log(body)
-                if (body != 'Wrong password or Username') {
+                if (body != 'incorrect') {
                     location.replace("/")
-                } else if (body == 'Wrong password or Username') {
+                } else if (body == 'incorrect') {
                     alert(body)
                 }
             })

@@ -18,7 +18,6 @@ module.exports = { sockets }
 function sockets(socket) {
     var sender
     //===================ON CONNECTION 
-    console.log('made socket connection')
     var tokenSecurity = (() => {
         //checks that token is valid
         return new Promise((resolve) => {
@@ -28,8 +27,8 @@ function sockets(socket) {
                     socket.emit("allTexts", 'invalid credentials');
                     socket.disconnect(true)
                     resolve(null)
-                } else if (data.userInfo[0].token == data.sender) {
-                    sender = data.userInfo[0].username
+                } else if (data.userInfo.token == data.sender) {
+                    sender = data.userInfo.username
                     resolve(data)
                 };
             });
@@ -38,8 +37,8 @@ function sockets(socket) {
         .then(data => {
             //get user chat and text info
             return new Promise((resolve) => {
-                userDb.users.find({
-                    username: data.userInfo[0].username
+                userDb.users.findOne({
+                    username: data.userInfo.username
                 }).then((data2) => {
                     textsMethods.grabAllThisUserChats(data2)
                         .then(data3 => {
@@ -52,7 +51,6 @@ function sockets(socket) {
             });
         })
         .then(data => {
-            
             //join socket rooms
             return new Promise((resolve) => {
                 data.texts.collections.forEach(element => {
@@ -62,7 +60,6 @@ function sockets(socket) {
                     allRooms.forEach((element1, i) => {
                         let allRooms = Array.from(socket.adapter.rooms)
                         if (allRooms[i].includes(element)) {
-                            console.log(allRooms[i][1].size)
                             socket.to(element).emit('userCount', {
                                 chat: element,
                                 userCount: allRooms[i][1].size
@@ -80,8 +77,6 @@ function sockets(socket) {
                 let allRooms = Array.from(socket.adapter.rooms)
                 allRooms.forEach((element1, i) => {
                     if (allRooms[i].includes(element)) {
-                        console.log(allRooms[i][1].size)
-                        console.log('chat =',element ,'count = ',allRooms[i][1].size)
                         userCount.push({ chat: element,count: allRooms[i][1].size }) 
                     }
                 })
@@ -90,7 +85,7 @@ function sockets(socket) {
                 userCount:   userCount  ,
                 collections: data.texts.collections,
                 data: data.texts.allTextsWithinThisChat,
-                username: data.user.userInfo[0].username 
+                username: data.user.userInfo.username 
             });
         });
     //===================SOCKET EVENTS  
@@ -100,7 +95,6 @@ function sockets(socket) {
         userRooms.forEach((element) => {
             allRooms.forEach((element1, i) => {
                 if (allRooms[i].includes(element)) {
-                    console.log(allRooms[i][1].size -1)
                     socket.to(element).emit('userCount', {chat: element,userCount: allRooms[i][1].size - 1 });
                 }
             })
@@ -117,9 +111,6 @@ function sockets(socket) {
                         let specificWsRoom = Array.from(wsRooms[i][1])
                         if (specificWsRoom.includes(socket.id)) {
                             //start
-                          
-                                
-
                             var dataDb = {
                                 text: body.text,
                                 time: body.time,

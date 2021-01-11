@@ -6,11 +6,11 @@ exports.post = (request, response) => {
     var val = request.body.val
     var user = methods.cookieParse(request.headers.cookie, 'userId')
 //find user by token   
-userDb.userToken.find({
+userDb.userToken.findOne({
         token: user
     }).then((data) => {
 //update user data
-        user = data[0].username
+        user = data.username
         userDb.users.findOneAndUpdate({
             username: user
         }, {
@@ -33,17 +33,17 @@ exports.get = (request, response) => {
     var val = request.body.val
     var user = methods.cookieParse(request.headers.cookie, 'userId')
 //find user by token
-userDb.userToken.find({
+userDb.userToken.findOne({
         token: user
     }).then((data) => {
 //find users theme setting
-        user = data[0].username
-        userDb.users.find({
+        user = data.username
+        userDb.users.findOne({
                 username: user
             })
             .then((data) => {
 //response
-                info = data[0].settings
+                info = data.settings
                 response.status(200)
                 response.send({"settings": info})
             })
