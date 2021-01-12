@@ -79,20 +79,36 @@ const
             bcrypt.compare(normPw, dbPw, (err, result) => { resolve(result) })
         })
     },
-    sanitize = (arr, maxLength) => {
-        try {
-            var bool
-            arr.forEach((element)=>{
-                if (element.length > maxLength || typeof element !== 'string') {
-                    bool = true
+    validate = {
+        "cookie": (arg, maxLength) => {
+            //limit max length && deny ! string
+            try {
+                console.log(typeof arg === 'string' &&  arg.length < maxLength ,"----",arg)
+                if (typeof arg === 'string' &&  arg.length < maxLength ) {
+                    return true
                 }
-            });
-            if (bool) {
+                return false
+            } catch (err) {
                 return false
             }
-            return true
-        } catch (err) {
-            return false
+        },
+        "input" : (arr, maxLength) => {
+            try {
+                var badInput
+                arr.forEach((element)=>{
+                    if (typeof element !== 'string'|| element.length > maxLength || element.length < 1) {
+                        badInput = true
+                    }
+                });
+                if (badInput) {
+                    return false
+                }
+                return true
+            } catch (err) {
+                console.log(err)
+                return false
+            }
         }
     }
-module.exports = { hashComparison, securityCheck3Phase, cookieParse, securityPhase1, securityPhase2, securityPhase3, sanitize }
+    
+module.exports = { hashComparison, securityCheck3Phase, cookieParse, securityPhase1, securityPhase2, securityPhase3, validate }

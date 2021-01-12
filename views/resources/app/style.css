@@ -286,7 +286,7 @@ html,body{
 }
 .hamburger{
     -webkit-tap-highlight-color: transparent;
-    content:url('https://docs.google.com/drawings/d/e/2PACX-1vS3e1kzM75xEe-MQROzoY9dl6JZgR_0FPQbnOo0PRbmrx-e2E12xdXpu-4vynWbAbPaofckWS0MZeky/pub?w=396&h=291');
+    content:url('/resources/images/hamburger.svg');
     filter: var(--hamburgerColor);
     display: inline-block;
     position: absolute;

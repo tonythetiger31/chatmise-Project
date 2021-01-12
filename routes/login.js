@@ -5,33 +5,51 @@ const userDb = require('../database/user-data'),
     cryptoRandomString = require('crypto-random-string')
 //===============================================================GET
 exports.get = function (request, response) {
-    //var declaration
-    var cookie = request.headers.cookie,
-        clientEjs = __dirname + '/../views/resources/login/client.ejs',
-        cookieCondition = cookie === undefined || cookie === null || cookie === ''
-    //redirect phase 1
-    if (cookieCondition === true || cookie.length > 400) {
-        response.render(clientEjs)
-    } else {
-        //redirect phase 2
-        var cookie = methods.cookieParse(request.headers.cookie, 'userId')
-        if (cookieCondition === true) {
-            response.render(clientEjs)
-        } else {
-            //redirect phase 3
-            userDb.userToken.findOne({
-                token: cookie
-            })
-                .then((data) => {
-                    if (data === null) {
-                        response.render(clientEjs)
-                    } else {
-                        response.status(307)
-                        response.redirect('/')
-                    }
+    try {
+        console.log('--------------------------------------------------------------')
+        var cookie = request.headers.cookie,
+            clientEjs = __dirname + '/../views/resources/login/client.ejs'
+        const
+            validateWholeCookie = () => {
+                if (cookie === undefined) {
+                    response.render(clientEjs)
+                } else if (methods.validate.cookie(cookie, 400)){
+                    parseCookie()
+                } else {
+                    response.status(400).send("error 400");
+                }
+            },
+            parseCookie = () => {
+                cookie = methods.cookieParse(request.headers.cookie, 'userId')
+                validateParsedCookie()
+            },
+            validateParsedCookie = () => {//render max length and not string allow length and string
+                if (methods.validate.cookie(cookie, 50)) {
+                    checkCookie()
+                } else {
+                    response.render(clientEjs)
+                }
+            },
+            checkCookie = () => {
+                userDb.userToken.findOne({
+                    token: cookie
                 })
-        }
-
+                    .then((data) => {
+                        redirect(data)
+                    })
+            },
+            redirect = (data) => {
+                if (data === null) {
+                    response.render(clientEjs)
+                } else {
+                    response.status(307)
+                    response.redirect('/')
+                }
+            }
+            validateWholeCookie()
+    } catch (err) {
+        console.log(err)
+        response.status(500).send("error 500");
     }
 }
 //===============================================================POST
@@ -42,7 +60,7 @@ exports.post = function (request, response) {
         const cookieSettings = { maxAge: 302400000, httpOnly: true, sameSite: 'Strict' },
             //function declaration
             validateInput = () => {
-                if (methods.sanitize([username, password], 50) === false) {
+                if (methods.validate.input([username, password], 50) === false) {
                     response.status(400).send("error 400");
                 } else {
                     findUser()
