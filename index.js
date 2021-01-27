@@ -1,16 +1,12 @@
 /*contents
 -package declaration
--database
--server info/ start server
--var declaration
--function declaration
+-server options
 -page directories rendered
 -page directories un-rendered
--setInterval functions
-*/                                                                                                                                                                                                                                                                                                             
-//_______________________________________________________|
+-error page
+-server start server
+*/                                                               
 //____________________________________|package declaration
-//_______________________________________________________|
 "use strict"
 //dependencies
 const express = require('express')
@@ -29,35 +25,26 @@ mainDir = require('./routes/app'),
 loginDir = require('./routes/login'),
 logoutDir = require('./routes/logout'),
 signupDir = require('./routes/signup')
-//
+//_______________________________|server options
 app.use(express.urlencoded({
     extended: true
   })) 
-//header_options
-app.disable('x-powered-by');  
-//_______________________________________________________|
-//______________________________|server info/ start server
-//_______________________________________________________|
-const PORT = process.env.PORT || 80; 
-server.listen(PORT, () => console.log('--server started on port ' + PORT));
+app.disable('x-powered-by');
 app.use(express.static('views'))
 app.use(express.json())
-//_______________________________________________________|
 //_______________________________|page directories rendered
-//_______________________________________________________|
 app.get('/', mainDir.main)
 app.get('/login', loginDir.get)
 // app.get('/signup', signupDir.get);
-app.get('/admin',signupDir.get);
-//_______________________________________________________|
-//____________________________|page directories un-rendered
-//_______________________________________________________|
-//=========================================/sockets
+//_______________________________|page directories un-rendered 
 io.on('connection', textsDir.sockets)
-//=========================================/loginPost
 app.post('/login', loginDir.post)
-//=========================================/LOGOUT
 app.delete('/logout', logoutDir.main)
-//=========================================/theme
 app.post('/theme', themeDir.post)
 app.get('/theme', themeDir.get)
+//_______________________________|404 page
+app.get('*', methods.pageNotFound)
+
+//_______________________________|server info/ start server
+const PORT = process.env.PORT || 80; 
+server.listen(PORT, () => console.log('--server started on port ' + PORT));

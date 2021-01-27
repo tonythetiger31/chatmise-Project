@@ -1,51 +1,61 @@
 const userDb = require('../database/user-data')
 const methods = require('../methods')
 //===============================================================POST
-exports.post = (request, response) => {
-//variable declaration
-    var val = request.body.val
-    var user = methods.cookieParse(request.headers.cookie, 'userId')
-//find user by token   
-userDb.userToken.findOne({
-        token: user
-    }).then((data) => {
-//update user data
-        user = data.username
-        userDb.users.findOneAndUpdate({
-            username: user
-        }, {
-            settings: val
-        }, (err)=> {
-//response
+exports.post = (req, res) => {
+   const ERR_MSG = "Something wrong when updating theme data!"
+   const sendBadRequest = () => { res.status(400).send("error 400") }
+   validateInput()
+   function validateInput() {
+      if (methods.validate.input([req.body.val], 10, 'string') === false) {
+         sendBadRequest()
+      } else {
+         hanldeCookieLogic()
+      }
+   }
+   function hanldeCookieLogic() {
+      methods.handleCookie(req, res, () => { sendBadRequest() })
+         .then((data) => {
+            updateThemeValue(data)
+         })
+   }
+   function updateThemeValue(data) {
+      if (data === null) {
+         sendBadRequest()
+      } else {
+         userDb.users.findOneAndUpdate({
+            username: data.username
+         }, {
+            settings: req.body.val
+         }, (err) => {
             if (err) {
-                console.log("Something wrong when updating theme data!");
-                response.status(500)
-                response.send('something when wrong while updating your preferences')
+               console.log(ERR_MSG);
+               res.status(500).send(ERR_MSG);
             }
-            response.status(200)
-            response.send({ response: 'theme options updated'})
-        });
-    })
+            res.status(200).send({ response: 'theme options updated' })
+         })
+      }
+   }
 }
 //===============================================================GET
-exports.get = (request, response) => {
-//variable declaration
-    var val = request.body.val
-    var user = methods.cookieParse(request.headers.cookie, 'userId')
-//find user by token
-userDb.userToken.findOne({
-        token: user
-    }).then((data) => {
-//find users theme setting
-        user = data.username
-        userDb.users.findOne({
-                username: user
+exports.get = (req, res) => {
+   const sendBadRequest = () => { res.status(400).send("error 400") }
+   hanldeCookieLogic()
+   function hanldeCookieLogic() {
+      methods.handleCookie(req, res, () => { sendBadRequest() })
+         .then((data) => {
+            findTheme(data)
+         })
+   }
+   function findTheme(data) {
+      if (data === null) {
+         sendBadRequest()
+      } else {
+         userDb.users.findOne({
+            username: data.username
+         })
+            .then((data1) => {
+               res.status(200).send({ "settings": data1.settings })
             })
-            .then((data) => {
-//response
-                info = data.settings
-                response.status(200)
-                response.send({"settings": info})
-            })
-    })
+      }
+   }
 }
