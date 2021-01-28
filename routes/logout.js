@@ -1,32 +1,32 @@
 const userDb = require('../database/user-data')
 const methods = require('../methods')
-exports.main = function(request, response){
-//variable declaration
-    var cookie = request.headers.cookie
-//check 1
-    if (cookie === undefined || cookie === null || cookie === '') {
-        response.status(200)
-        response.send({'response':'success'})
-    } else {
-//check 2
-            var cookie = methods.cookieParse(request.headers.cookie, 'userId')
-            if (cookie === undefined || cookie === null || cookie === '') {
-                response.status(200)
-                response.send({'response':'success'})
-            } else {
-//check 3
-userDb.userToken.deleteOne({token: cookie}, (err, result)=>{
-                    if(err){
-                        console.log('error removing user token')  
-                        response.status(200)
-                        response.send({'response':'success'})
-                    }
-                    else {
-                        response.cookie('userId','', { maxAge: 0, httpOnly: true })
-                        response.status(200)
-                        response.send({'response':'success'})
-                    }
-                });
-            }
-        }
+exports.main = function (req, res) {
+   try {
+      var cookie = req.headers.cookie
+      const sendBadRequest = () => { res.status(400).send("error 400") }
+
+      methods.handleCookie(req, res, () => { sendBadRequest() })
+         .then((data) => { 
+            deleteToken(data) 
+         })
+      function deleteToken(data) {
+         if (data === null){
+            sendBadRequest()
+         }else{
+            userDb.userToken.deleteOne({ token: cookie }, (err) => {
+               if (err) {
+                  console.log('error removing user token')
+                  res.status(200).send({ 'response': 'success' })
+               }
+               else {
+                  res.cookie('userId', '', { maxAge: 0, httpOnly: true })
+                  res.status(200).send({ 'response': 'success' })
+               }
+            });
+         }
+      }
+   } catch (err) {
+      console.log(err)
+      res.status(500).send("error 500")
+   }
 } 
