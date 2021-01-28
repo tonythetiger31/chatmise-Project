@@ -1,34 +1,24 @@
-/*
-WARNING
--if the user is trying to communicate with another tab on the same browser, no data will be sent
--if the user is on two devices, the devices won't be able to communicate
--only different users on separate devices will be able to communicate
-*/
 "use strict"
 const
    chatDb = require('../../database/chat-data'),
    userDb = require('../../database/user-data'),
    methods = require('../../methods'),
    textsMethods = require('./methods');
-// const textMethods = require('texts-route')
-
-module.exports = { sockets }
-
 //===============================================================SOCKETS
-function sockets(socket) {
+exports.sockets = function sockets(socket) {
    var sender
    //===================ON CONNECTION 
    var tokenSecurity = (() => {
       //checks that token is valid
       return new Promise((resolve) => {
          var cookie = socket.handshake.headers.cookie;
-         methods.securityCheck3Phase(cookie, 'GET').then((data) => {
-            if (data == false) {
+         methods.handleCookie(cookie).then((data) => {
+            if (data === null) {
                socket.emit("allTexts", 'invalid credentials');
                socket.disconnect(true)
                resolve(null)
-            } else if (data.userInfo.token == data.sender) {
-               sender = data.userInfo.username
+            } else {
+               sender = data.username
                resolve(data)
             };
          });
@@ -38,7 +28,7 @@ function sockets(socket) {
          //get user chat and text info
          return new Promise((resolve) => {
             userDb.users.findOne({
-               username: data.userInfo.username
+               username: data.username
             }).then((data2) => {
                textsMethods.grabAllThisUserChats(data2)
                   .then(data3 => {
@@ -85,7 +75,7 @@ function sockets(socket) {
             userCount: userCount,
             collections: data.texts.collections,
             data: data.texts.allTextsWithinThisChat,
-            username: data.user.userInfo.username
+            username: data.user.username
          });
       });
    //===================SOCKET EVENTS  

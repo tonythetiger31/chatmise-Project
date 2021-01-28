@@ -5,7 +5,7 @@ exports.main = function (req, res) {
       var cookie = req.headers.cookie
       const sendBadRequest = () => { res.status(400).send("error 400") }
 
-      methods.handleCookie(req, res, () => { sendBadRequest() })
+      methods.handleCookie(req.headers.cookie)
          .then((data) => { 
             deleteToken(data) 
          })

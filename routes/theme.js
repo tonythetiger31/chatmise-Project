@@ -13,7 +13,7 @@ exports.post = (req, res) => {
       }
    }
    function hanldeCookieLogic() {
-      methods.handleCookie(req, res, () => { sendBadRequest() })
+      methods.handleCookie(req.headers.cookie)
          .then((data) => {
             updateThemeValue(data)
          })
@@ -41,7 +41,7 @@ exports.get = (req, res) => {
    const sendBadRequest = () => { res.status(400).send("error 400") }
    hanldeCookieLogic()
    function hanldeCookieLogic() {
-      methods.handleCookie(req, res, () => { sendBadRequest() })
+      methods.handleCookie(req.headers.cookie)
          .then((data) => {
             findTheme(data)
          })

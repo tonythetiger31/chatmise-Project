@@ -6,7 +6,7 @@ exports.main = function (req, res) {
     try {
         var homeHtml = __dirname + '/../views/home/index.html',
             appEjs = __dirname + '/../views/resources/app/index.ejs'
-        methods.handleCookie(req, res, ()=>{res.sendFile(path.join(homeHtml))})
+        methods.handleCookie(req.headers.cookie)
             .then((data) => { sendPage(data) })
         function sendPage(data) {
             if (data === null) {

@@ -8,7 +8,7 @@ var path = require('path');
 exports.get = function (req, res) {
   try {
     var clientHtml = __dirname + '/../views/resources/login/client.html'
-    methods.handleCookie(req, res,()=>{res.sendFile(path.join(clientHtml))})
+    methods.handleCookie(req.headers.cookie)
       .then((data) => { sendPage(data) })
     function sendPage(data) {
       if (data === null) {
