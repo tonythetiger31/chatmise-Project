@@ -2,22 +2,22 @@
 const userDb = require('../database/user-data')
 const methods = require('../methods')
 var path = require('path');
-exports.main = function (request, response) {
+exports.main = function (req, res) {
     try {
         var homeHtml = __dirname + '/../views/home/index.html',
             appEjs = __dirname + '/../views/resources/app/index.ejs'
-        methods.handleCookie(request, response, ()=>{response.sendFile(path.join(homeHtml))})
+        methods.handleCookie(req, res, ()=>{res.sendFile(path.join(homeHtml))})
             .then((data) => { sendPage(data) })
         function sendPage(data) {
             if (data === null) {
-                response.sendFile(path.join(homeHtml));
+                res.sendFile(path.join(homeHtml));
             } else {
                 var username = data.username
-                response.render(appEjs, { username: username })
+                res.render(appEjs, { username: username })
             }
         }
     } catch (err) {
         console.log(err)
-        response.status(500).send("error 500");
+        res.status(500).send("error 500");
     }
 }

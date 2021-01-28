@@ -2,21 +2,21 @@ const userDb = require('../database/user-data')
 const users = userDb.users
 var path = require('path')
 const methods = require('../methods')
-exports.get = function (request, response) {
+exports.get = function (req, res) {
     //var declaration
-        var cookie = request.headers.cookie
+        var cookie = req.headers.cookie
     //redirect phase 1
         if (cookie === undefined || cookie === null || cookie === '') {
-            response.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
+            res.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
         } else {
     //redirect phase 2
             if (cookie.length > 400) {
-                response.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
+                res.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
             } else {
     //redirect phase 3
-                var cookie = methods.cookieParse(request.headers.cookie, 'userId')
+                var cookie = methods.cookieParse(req.headers.cookie, 'userId')
                 if (cookie === undefined || cookie === null || cookie === '') {
-                    response.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
+                    res.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
                 } else {
     //redirect phase 4
     userDb.userToken.findOne({
@@ -24,10 +24,10 @@ exports.get = function (request, response) {
                         })
                         .then((data) => {
                             if (data == '') {
-                                response.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
+                                res.sendFile(path.join(__dirname + '/../views/resources/signup/index.html'));
                             } else if (data.token == cookie) {
-                                response.status(307)
-                                response.redirect('/')
+                                res.status(307)
+                                res.redirect('/')
                             }
                         })
                 }
