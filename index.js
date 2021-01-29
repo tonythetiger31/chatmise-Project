@@ -18,7 +18,7 @@ var path = require('path')
 require('dotenv').config()
 //project files
 const
-textsDir = require('./routes/texts/texts'),
+textsDir = require('./routes/texts'),
 themeDir = require('./routes/theme'),
 methods = require('./methods'),
 mainDir = require('./routes/app'),

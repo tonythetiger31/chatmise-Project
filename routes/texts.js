@@ -1,83 +1,73 @@
 "use strict"
 const
-   chatDb = require('../../database/chat-data'),
-   userDb = require('../../database/user-data'),
-   methods = require('../../methods'),
-   textsMethods = require('./methods');
+   chatDb = require('../database/chat-data'),
+   userDb = require('../database/user-data'),
+   methods = require('../methods')
 //===============================================================SOCKETS
 exports.sockets = function sockets(socket) {
    var sender
-   //===================ON CONNECTION 
-   var tokenSecurity = (() => {
-      //checks that token is valid
-      return new Promise((resolve) => {
+   //===================ON CONNECTION
+   const  connectToSocket = (() => {
+      const handleCookieLogic = (() => {
          var cookie = socket.handshake.headers.cookie;
-         methods.handleCookie(cookie).then((data) => {
-            if (data === null) {
+         methods.handleCookie(cookie).then((user) => {
+            if (user === null) {
                socket.emit("allTexts", 'invalid credentials');
                socket.disconnect(true)
-               resolve(null)
             } else {
-               sender = data.username
-               resolve(data)
+               sender = user.username
+               findUserInfo(user)
             };
          });
-      })
-   })()
-      .then(data => {
-         //get user chat and text info
-         return new Promise((resolve) => {
-            userDb.users.findOne({
-               username: data.username
-            }).then((data2) => {
-               textsMethods.grabAllThisUserChats(data2)
-                  .then(data3 => {
-                     resolve({
-                        texts: data3,
-                        user: data
-                     });
-                  });
+      })()
+      function findUserInfo(user) {
+         userDb.users.findOne({
+            username: user.username
+         }).then((userInfo) => {
+            getAllChatsTexts(userInfo)
+         })
+      }
+      function getAllChatsTexts(user) {
+         methods.grabAllThisUserChats(user.chats)
+            .then(allChatsTexts => {
+               console.log(allChatsTexts,"allChatsTexts")
+               joinSocketRooms(allChatsTexts, user)
             });
-         });
-      })
-      .then(data => {
-         //join socket rooms
-         return new Promise((resolve) => {
-            data.texts.collections.forEach(element => {
-               socket.join(element);
-
-               let allRooms = Array.from(socket.adapter.rooms)
-               allRooms.forEach((element1, i) => {
-                  let allRooms = Array.from(socket.adapter.rooms)
-                  if (allRooms[i].includes(element)) {
-                     socket.to(element).emit('userCount', {
-                        chat: element,
-                        userCount: allRooms[i][1].size
-                     });
-                  }
-               })
-            });
-            resolve(data);
-         });
-      })
-      .then(data => {
-         //send data to user
-         var userCount = []
-         data.texts.collections.forEach(element => {
-            let allRooms = Array.from(socket.adapter.rooms)
+      }
+      function joinSocketRooms(allChatsTexts, user) {
+         var roomUserCount = []
+         user.chats.forEach(element => {
+            socket.join(element);
+            var allRooms = Array.from(socket.adapter.rooms)
             allRooms.forEach((element1, i) => {
                if (allRooms[i].includes(element)) {
-                  userCount.push({ chat: element, count: allRooms[i][1].size })
+                  roomUserCount.push(allRooms[i][1].size)
+                  socket.to(element).emit('userCount', {
+                     chat: element,
+                     userCount: allRooms[i][1].size
+                  });
                }
             })
-         })
-         socket.emit("allTexts", {
-            userCount: userCount,
-            collections: data.texts.collections,
-            data: data.texts.allTextsWithinThisChat,
-            username: data.user.username
          });
-      });
+         sendDataToUser(allChatsTexts, user, roomUserCount);
+      }
+      function sendDataToUser(allChatsTexts, user, roomUserCount) {
+         console.log(roomUserCount, "--------------")
+         var allRoomUserCount = []
+         user.chats.forEach((element, i) => {
+            allRoomUserCount.push({
+               chat: element,
+               count: roomUserCount[i]
+            })
+         });
+         socket.emit("allTexts", {
+            userCount: allRoomUserCount,
+            collections: user.chats,
+            data: allChatsTexts,
+            username: user.username
+         });
+      }
+   })()
    //===================SOCKET EVENTS  
    socket.on('disconnecting', () => {
       var userRooms = Array.from(socket.rooms)

@@ -1,5 +1,7 @@
+
 //module declaration
 const userDb = require('./database/user-data')
+const chatDb = require('./database/chat-data')
 const { response } = require('express');
 const bcrypt = require('bcryptjs')
 var path = require('path');
@@ -29,6 +31,22 @@ const
    },
    pageNotFound = (req, res) => {
       res.send('<h1>404 Page Not Found :(</h1>').status(404)
+   },
+   grabAllThisUserChats = (chatNames) => {
+      return new Promise((resolve) => {
+         var allChatsTexts = [],
+            findAllChatsAndReturn = (async () => {
+               for (let element of chatNames) {
+                  await chatDb.chats.findOne({ chatName: element })
+                     .then((data) => {
+                        allChatsTexts.push(data.messages)
+                        if (allChatsTexts.length === chatNames.length) {
+                           resolve(allChatsTexts);
+                        }
+                     })
+               }
+            })()
+      })
    },
    validate = {
       "cookie": (arg, maxLength) => {
@@ -95,5 +113,5 @@ const
    }
 module.exports = {
    hashComparison, cookieParse, pageNotFound,
-   validate, handleCookie
+   validate, handleCookie, grabAllThisUserChats
 }
