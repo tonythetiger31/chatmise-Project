@@ -7,7 +7,7 @@ const
 exports.sockets = function sockets(socket) {
    var sender
    //===================ON CONNECTION
-   const  connectToSocket = (() => {
+   const connectToSocket = (() => {
       const handleCookieLogic = (() => {
          var cookie = socket.handshake.headers.cookie;
          methods.handleCookie(cookie).then((user) => {
@@ -30,7 +30,7 @@ exports.sockets = function sockets(socket) {
       function getAllChatsTexts(user) {
          methods.grabAllThisUserChats(user.chats)
             .then(allChatsTexts => {
-               console.log(allChatsTexts,"allChatsTexts")
+               console.log(allChatsTexts, "allChatsTexts")
                joinSocketRooms(allChatsTexts, user)
             });
       }
@@ -80,46 +80,46 @@ exports.sockets = function sockets(socket) {
          })
       })
    })
-   socket.on('texts', (body) => {
-      if (Object.keys(body).length !== 0) {
-         var chat = body.chat
-         console.log('new transmission', sender, body)
-         if (chat != '' || chat != undefined || chat != null) {
-            let wsRooms = Array.from(socket.adapter.rooms)
-            wsRooms.forEach((element, i) => {
-               if (wsRooms[i].includes(chat)) {
-                  let specificWsRoom = Array.from(wsRooms[i][1])
-                  if (specificWsRoom.includes(socket.id)) {
-                     //start
-                     var dataDb = {
-                        text: body.text,
-                        time: body.time,
-                        sender: sender
-                     },
-                        socketSend = {
-                           text: body.text,
-                           time: body.time,
-                           sender: sender,
-                           chat: chat
-                        }
-                     socket.to(chat).emit('text', socketSend);
-                     chatDb.chats.updateOne({
-                        chatName: chat
-                     }, { $push: { messages: dataDb } }, (err) => {
-                        if (err) {
-                           console.log('something happened with the db -texts');
-                        } else {
-                           console.log('text saved')
-                        }
-
-                     })
-                     //end
+socket.on('texts', (body) => { 
+   if (Object.keys(body).length !== 0) {
+      var chat = body.chat
+      console.log('new transmission', sender, body)
+      if (chat != '' || chat != undefined || chat != null) {
+         let wsRooms = Array.from(socket.adapter.rooms)
+         wsRooms.forEach((element, i) => {
+            if (wsRooms[i].includes(chat)) {
+               let specificWsRoom = Array.from(wsRooms[i][1])
+               if (specificWsRoom.includes(socket.id)) {
+                  //start
+                  var dataDb = {
+                     text: body.text,
+                     time: body.time,
+                     sender: sender
+                  },
+                  socketSend = {
+                     text: body.text,
+                     time: body.time,
+                     sender: sender,
+                     chat: chat
                   }
-               }
-            })
+                  socket.to(chat).emit('text', socketSend);
+                  chatDb.chats.updateOne({
+                     chatName: chat
+                  }, { $push: { messages: dataDb } }, (err) => {
+                     if (err) {
+                        console.log('something happened with the db -texts');
+                     } else {
+                        console.log('text saved')
+                     }
 
-         }
+                  })
+                  //end
+               }
+            }
+         })
+
       }
-   });
+   }
+});
 
 };

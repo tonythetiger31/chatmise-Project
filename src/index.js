@@ -30,7 +30,7 @@ app.use(express.urlencoded({
     extended: true
   })) 
 app.disable('x-powered-by');
-app.use(express.static('views'))
+app.use(express.static('src/views'))
 app.use(express.json())
 //_______________________________|page directories rendered
 app.get('/', mainDir.main)
@@ -44,7 +44,6 @@ app.post('/theme', themeDir.post)
 app.get('/theme', themeDir.get)
 //_______________________________|404 page
 app.get('*', methods.pageNotFound)
-
 //_______________________________|server info/ start server
 const PORT = process.env.PORT || 80; 
 server.listen(PORT, () => console.log('--server started on port ' + PORT));
