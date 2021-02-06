@@ -30,7 +30,6 @@ exports.sockets = function sockets(socket) {
       function getAllChatsTexts(user) {
          methods.grabAllThisUserChats(user.chats)
             .then(allChatsTexts => {
-               console.log(allChatsTexts, "allChatsTexts")
                joinSocketRooms(allChatsTexts, user)
             });
       }
@@ -39,7 +38,7 @@ exports.sockets = function sockets(socket) {
          user.chats.forEach(element => {
             socket.join(element);
             var allRooms = Array.from(socket.adapter.rooms)
-            allRooms.forEach((element1, i) => {
+            allRooms.forEach((_, i) => {
                if (allRooms[i].includes(element)) {
                   roomUserCount.push(allRooms[i][1].size)
                   socket.to(element).emit('userCount', {
@@ -80,46 +79,67 @@ exports.sockets = function sockets(socket) {
          })
       })
    })
-socket.on('texts', (body) => { 
-   if (Object.keys(body).length !== 0) {
-      var chat = body.chat
-      console.log('new transmission', sender, body)
-      if (chat != '' || chat != undefined || chat != null) {
-         let wsRooms = Array.from(socket.adapter.rooms)
-         wsRooms.forEach((element, i) => {
-            if (wsRooms[i].includes(chat)) {
-               let specificWsRoom = Array.from(wsRooms[i][1])
-               if (specificWsRoom.includes(socket.id)) {
-                  //start
-                  var dataDb = {
-                     text: body.text,
-                     time: body.time,
-                     sender: sender
-                  },
-                  socketSend = {
-                     text: body.text,
-                     time: body.time,
-                     sender: sender,
-                     chat: chat
-                  }
-                  socket.to(chat).emit('text', socketSend);
-                  chatDb.chats.updateOne({
-                     chatName: chat
-                  }, { $push: { messages: dataDb } }, (err) => {
-                     if (err) {
-                        console.log('something happened with the db -texts');
-                     } else {
-                        console.log('text saved')
-                     }
-
-                  })
-                  //end
+   socket.on('texts', (body) => {
+      var textInfo = {
+         text: body.text,
+         time: body.time,
+         sender: sender
+      }
+      const validate = (() => {
+         var textIsValid = methods.validate.input([body.text], 170, "string")
+         var chatIsValid = methods.validate.input([body.chat], 20, "string")
+         var timeIsValid = methods.validate.input([body.time.toString()], 14, "string")
+         if (textIsValid && chatIsValid && timeIsValid) {
+            console.log('new transmission', sender, body)
+            checkIfChatRoomIsValid()
+         } else {
+            console.log("someone tryna hack")
+            socket.disconnect(true)
+         }
+      })()
+      function checkIfChatRoomIsValid() {
+         var validChatRoom
+         const chatRoomFound = () => {
+            var wsRooms = Array.from(socket.adapter.rooms)
+            for (var element of wsRooms) {
+               if (element.includes(body.chat)) {
+                  validChatRoom = element
+                  return true
                }
             }
-         })
-
+            return false
+         }
+         if (chatRoomFound()) {
+            checkIfUserHasAccessToChatRoom(validChatRoom)
+         } else {
+            console.log("someone tryna hack2")
+            socket.disconnect(true)
+         }
       }
-   }
-});
-
+      function checkIfUserHasAccessToChatRoom(validChatRoom) {
+         var specificWsRoom = Array.from(validChatRoom[1])
+         if (specificWsRoom.includes(socket.id)) {
+            saveTextToDB()
+         } else {
+            console.log("someone tryna hack3")
+            socket.disconnect(true)
+         }
+      }
+      function saveTextToDB() {
+         chatDb.chats.updateOne({
+            chatName: body.chat
+         }, { $push: { messages: textInfo } }, (err) => {
+            if (err) {
+               console.log('something happened with the db -texts');
+            } else {
+               console.log('text saved')
+               sendSocketMessageToAll()
+            }
+         })
+      }
+      function sendSocketMessageToAll() {
+         textInfo.chat = body.chat
+         socket.to(body.chat).emit('text', textInfo);
+      }
+   });
 };
