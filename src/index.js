@@ -20,7 +20,7 @@ require('dotenv').config()
 
 //project files
 const
-   textsDir = require('./routes/texts'),
+   socketDir = require('./routes/socket'),
    themeDir = require('./routes/theme'),
    methods = require('./methods'),
    mainDir = require('./routes/app'),
@@ -56,7 +56,7 @@ app.get('/', mainDir.main)
 app.get('/login', loginDir.get)
 // app.get('/signup', signupDir.get);
 //_______________________________|page directories un-rendered 
-io.on('connection', textsDir.sockets)
+io.on('connection', socketDir.sockets)
 app.post('/login', loginDir.post)
 app.delete('/logout', logoutDir.main)
 app.post('/theme', themeDir.post)

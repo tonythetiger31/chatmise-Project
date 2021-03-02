@@ -3,6 +3,7 @@ const
    chatDb = require('../database/chat-data'),
    userDb = require('../database/user-data'),
    methods = require('../methods')
+   const ERR_MSG = "Something wrong when updating theme data!"
 //===============================================================SOCKETS
 exports.sockets = function sockets(socket) {
    var sender
@@ -63,7 +64,8 @@ exports.sockets = function sockets(socket) {
             userCount: allRoomUserCount,
             collections: user.chats,
             data: allChatsTexts,
-            username: user.username
+            username: user.username,
+            settings: user.settings
          });
       }
    })()
@@ -77,6 +79,17 @@ exports.sockets = function sockets(socket) {
                socket.to(element).emit('userCount', { chat: element, userCount: allRooms[i][1].size - 1 });
             }
          })
+      })
+   })
+   socket.on('settings',(body)=>{
+      userDb.users.findOneAndUpdate({
+         username: sender
+      }, {
+         settings: body.settings
+      }, (err) => {
+         if (err) {
+            console.log(ERR_MSG);
+         }
       })
    })
    socket.on('texts', (body) => {
