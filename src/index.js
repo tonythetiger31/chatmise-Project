@@ -61,11 +61,8 @@ app.post('/login', loginDir.post)
 app.delete('/logout', logoutDir.main)
 app.post('/theme', themeDir.post)
 app.get('/theme', themeDir.get)
-app.get('/build',(req,res)=>{
-   res.sendFile(path.join(__dirname +'/views/resources/build/index.html'))
-})
 //_______________________________|404 page
 app.get('*', methods.pageNotFound)
 //_______________________________|server info/ start server
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => console.log('--server started on port ' + PORT));

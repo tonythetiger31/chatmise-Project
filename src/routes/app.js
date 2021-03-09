@@ -5,15 +5,14 @@ var path = require('path');
 exports.main = function (req, res) {
     try {
         var homeHtml = __dirname + '/../views/home/index.html',
-            appEjs = __dirname + '/../views/resources/app/index.ejs'
+            reactApp = __dirname + '/../views/resources/build/index.html'
         methods.handleCookie(req.headers.cookie)
             .then((data) => { sendPage(data) })
         function sendPage(data) {
             if (data === null) {
                 res.sendFile(path.join(homeHtml));
             } else {
-                var username = data.username
-                res.render(appEjs, { username: username })
+                res.sendFile(path.join(reactApp));
             }
         }
     } catch (err) {
