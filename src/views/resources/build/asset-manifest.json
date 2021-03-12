@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.92db12f6.chunk.css",
-    "main.js": "/static/js/main.83e175d0.chunk.js",
-    "main.js.map": "/static/js/main.83e175d0.chunk.js.map",
+    "main.css": "/static/css/main.04bfe59c.chunk.css",
+    "main.js": "/static/js/main.f661acf6.chunk.js",
+    "main.js.map": "/static/js/main.f661acf6.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.9220ed35.js",
     "runtime-main.js.map": "/static/js/runtime-main.9220ed35.js.map",
     "static/js/2.284d2095.chunk.js": "/static/js/2.284d2095.chunk.js",
@@ -10,7 +10,7 @@
     "static/js/3.cc2a0161.chunk.js": "/static/js/3.cc2a0161.chunk.js",
     "static/js/3.cc2a0161.chunk.js.map": "/static/js/3.cc2a0161.chunk.js.map",
     "index.html": "/index.html",
-    "static/css/main.92db12f6.chunk.css.map": "/static/css/main.92db12f6.chunk.css.map",
+    "static/css/main.04bfe59c.chunk.css.map": "/static/css/main.04bfe59c.chunk.css.map",
     "static/js/2.284d2095.chunk.js.LICENSE.txt": "/static/js/2.284d2095.chunk.js.LICENSE.txt",
     "static/media/App.scss": "/static/media/hamburger.ede0bbc5.svg",
     "static/media/ping.6f864733.mp3": "/static/media/ping.6f864733.mp3"
@@ -18,7 +18,7 @@
   "entrypoints": [
     "static/js/runtime-main.9220ed35.js",
     "static/js/2.284d2095.chunk.js",
-    "static/css/main.92db12f6.chunk.css",
-    "static/js/main.83e175d0.chunk.js"
+    "static/css/main.04bfe59c.chunk.css",
+    "static/js/main.f661acf6.chunk.js"
   ]
 }
