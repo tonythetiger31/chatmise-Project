@@ -32,20 +32,25 @@ const
    pageNotFound = (req, res) => {
       res.send('<h1>404 Page Not Found :(</h1>').status(404)
    },
-   grabAllThisUserChats = (chatNames) => {
+   grabAllThisUserChats = (chatIds) => {
       return new Promise((resolve) => {
          var allChatsTexts = [],
-            findAllChatsAndReturn = (async () => {
-               for (let element of chatNames) {
-                  await chatDb.chats.findOne({ chatName: element })
-                     .then((data) => {
-                        allChatsTexts.push(data.messages)
-                        if (allChatsTexts.length === chatNames.length) {
-                           resolve(allChatsTexts);
-                        }
-                     })
-               }
-            })()
+            chatNames = []
+         findAllChatsAndReturn = (async () => {
+            for (let element of chatIds) {
+               await chatDb.chats.findOne({ _id: element })
+                  .then((data) => {
+                     allChatsTexts.push(data.messages)
+                     chatNames.push(data.chatName)
+                     if (chatNames.length === chatIds.length) {
+                        resolve({
+                           "allChatsTexts": allChatsTexts,
+                           "chatNames": chatNames
+                        });
+                     }
+                  })
+            }
+         })()
       })
    },
    validate = {

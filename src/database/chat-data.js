@@ -21,12 +21,12 @@ const messagesSchema = new mongoose.Schema({
 })
 const schema = new mongoose.Schema({
     chatName: String,
-    chatId: String,
     messages: {
         type: [
           "Mixed"
         ]
-      }
+      },
+   admin: String
 })
 const chats = conn.model('chats', schema) 
 module.exports = {chats}

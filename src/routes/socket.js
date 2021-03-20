@@ -3,10 +3,10 @@ const
    chatDb = require('../database/chat-data'),
    userDb = require('../database/user-data'),
    methods = require('../methods')
-   const ERR_MSG = "Something wrong when updating theme data!"
+const ERR_MSG = "Something wrong when updating theme data!"
 //===============================================================SOCKETS
 exports.sockets = function sockets(socket) {
-   var sender
+   var sender //userName
    //===================ON CONNECTION
    const connectToSocket = (() => {
       const handleCookieLogic = (() => {
@@ -30,11 +30,14 @@ exports.sockets = function sockets(socket) {
       }
       function getAllChatsTexts(user) {
          methods.grabAllThisUserChats(user.chats)
-            .then(allChatsTexts => {
-               joinSocketRooms(allChatsTexts, user)
+            .then(data => {
+               joinSocketRooms({
+                  "allChatsTexts": data.allChatsTexts,
+                  "chatName": data.chatNames
+               }, user)
             });
       }
-      function joinSocketRooms(allChatsTexts, user) {
+      function joinSocketRooms(chatInfo, user) {
          var roomUserCount = []
          user.chats.forEach(element => {
             socket.join(element);
@@ -49,9 +52,9 @@ exports.sockets = function sockets(socket) {
                }
             })
          });
-         sendDataToUser(allChatsTexts, user, roomUserCount);
+         sendDataToUser(chatInfo, user, roomUserCount);
       }
-      function sendDataToUser(allChatsTexts, user, roomUserCount) {
+      function sendDataToUser(chatInfo, user, roomUserCount) {
          console.log(roomUserCount, "--------------")
          var allRoomUserCount = []
          user.chats.forEach((element, i) => {
@@ -62,8 +65,9 @@ exports.sockets = function sockets(socket) {
          });
          socket.emit("allTexts", {
             userCount: allRoomUserCount,
-            collections: user.chats,
-            data: allChatsTexts,
+            chatIds: user.chats,
+            chatNames: chatInfo.chatName,
+            data: chatInfo.allChatsTexts,
             username: user.username,
             settings: user.settings
          });
@@ -76,12 +80,15 @@ exports.sockets = function sockets(socket) {
       userRooms.forEach((element) => {
          allRooms.forEach((element1, i) => {
             if (allRooms[i].includes(element)) {
-               socket.to(element).emit('userCount', { chat: element, userCount: allRooms[i][1].size - 1 });
+               socket.to(element).emit('userCount', {
+                  chat: element,
+                  userCount: allRooms[i][1].size - 1
+               });
             }
          })
       })
    })
-   socket.on('settings',(body)=>{
+   socket.on('settings', (body) => {
       userDb.users.findOneAndUpdate({
          username: sender
       }, {
@@ -92,6 +99,62 @@ exports.sockets = function sockets(socket) {
          }
       })
    })
+
+
+   //new chat endpoint
+   socket.on('newChat', (body) => {
+      const findIfAllowedToCreateMoreChats = (() => {
+         userDb.users.findOne({ username: sender })
+            .then(data => {
+               if (data.chatsCreated >= 5) {
+                  socket.emit("newChat", 400)
+               } else {
+                  validate(data.chatsCreated)
+               }
+            })
+      })()
+      function validate(chatsCreated) {
+         var chatNameIsValid = methods.validate.input([body.chatName], 10, "string")
+         if (chatNameIsValid) {
+            createNewChat(body.chatName, chatsCreated)
+         }
+      }
+      function createNewChat(chatName, chatsCreated) {
+         var chat = {
+            chatName: chatName,
+            members: [],
+            admin: sender
+         }
+         var newChat = new chatDb.chats(chat)
+         newChat.save((err, createdChat) => {
+            if (err) {
+               console.log('something happened with the db')
+               socket.emit("newChat", 500)
+            } else {
+               addChatToUserProfile(createdChat._id, chatsCreated)
+            }
+         })
+      }
+      function addChatToUserProfile(chatId, chatsCreated) {
+         userDb.users.updateOne({
+            username: sender
+         }, {
+            $push: {
+               chats: chatId,
+            },
+            chatsCreated: chatsCreated + 1
+         }, err => {
+            if (err) {
+               console.log('something happened with the db')
+               socket.emit("newChat", 500)
+            } else {
+               socket.emit("newChat", 200)
+            }
+         })
+      }
+   })
+
+
    socket.on('texts', (body) => {
       var textInfo = {
          text: body.text,
@@ -100,7 +163,7 @@ exports.sockets = function sockets(socket) {
       }
       const validate = (() => {
          var textIsValid = methods.validate.input([body.text], 170, "string")
-         var chatIsValid = methods.validate.input([body.chat], 20, "string")
+         var chatIsValid = methods.validate.input([body.chat], 40, "string")
          var timeIsValid = methods.validate.input([body.time.toString()], 14, "string")
          if (textIsValid && chatIsValid && timeIsValid) {
             console.log('new transmission', sender, body)
@@ -115,7 +178,7 @@ exports.sockets = function sockets(socket) {
          const chatRoomFound = () => {
             var wsRooms = Array.from(socket.adapter.rooms)
             for (var element of wsRooms) {
-               if (element.includes(body.chat)) {
+               if (element.toString().includes(body.chat)) {
                   validChatRoom = element
                   return true
                }
@@ -140,7 +203,7 @@ exports.sockets = function sockets(socket) {
       }
       function saveTextToDB() {
          chatDb.chats.updateOne({
-            chatName: body.chat
+            _id: body.chat
          }, { $push: { messages: textInfo } }, (err) => {
             if (err) {
                console.log('something happened with the db -texts');

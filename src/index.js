@@ -1,12 +1,3 @@
-/*contents
--package declaration
--server options
--page directories rendered
--page directories un-rendered
--error page
--server start server
-*/
-//____________________________________|package declaration
 "use strict"
 //dependencies
 const express = require('express')

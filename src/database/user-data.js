@@ -21,7 +21,8 @@ const schema = new mongoose.Schema({
     password: String,
     chats: Array,
     token: String,
-    settings: Number
+    settings: Number,
+    chatsCreated: Number
 })
 //model
 const
