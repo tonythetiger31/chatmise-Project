@@ -35,17 +35,23 @@ const
    grabAllThisUserChats = (chatIds) => {
       return new Promise((resolve) => {
          var allChatsTexts = [],
-            chatNames = []
+            chatNames = [],
+            members = [],
+            admins = []
          findAllChatsAndReturn = (async () => {
             for (let element of chatIds) {
                await chatDb.chats.findOne({ _id: element })
                   .then((data) => {
                      allChatsTexts.push(data.messages)
                      chatNames.push(data.chatName)
+                     members.push(data.members)
+                     admins.push(data.admin)
                      if (chatNames.length === chatIds.length) {
                         resolve({
                            "allChatsTexts": allChatsTexts,
-                           "chatNames": chatNames
+                           "chatNames": chatNames,
+                           "admins": admins,
+                           "members" : members
                         });
                      }
                   })

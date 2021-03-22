@@ -33,7 +33,9 @@ exports.sockets = function sockets(socket) {
             .then(data => {
                joinSocketRooms({
                   "allChatsTexts": data.allChatsTexts,
-                  "chatName": data.chatNames
+                  "chatName": data.chatNames,
+                  "members": data.members,
+                  "admins": data.admins
                }, user)
             });
       }
@@ -64,12 +66,14 @@ exports.sockets = function sockets(socket) {
             })
          });
          socket.emit("allTexts", {
-            userCount: allRoomUserCount,
-            chatIds: user.chats,
-            chatNames: chatInfo.chatName,
-            data: chatInfo.allChatsTexts,
-            username: user.username,
-            settings: user.settings
+            "chatNames": chatInfo.chatName,
+            "data": chatInfo.allChatsTexts,
+            "members": chatInfo.members,
+            "admins": chatInfo.admins,
+            "chatIds": user.chats,
+            "username": user.username,
+            "settings": user.settings,
+            "userCount": allRoomUserCount
          });
       }
    })()

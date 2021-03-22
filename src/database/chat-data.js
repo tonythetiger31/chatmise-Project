@@ -26,6 +26,7 @@ const schema = new mongoose.Schema({
           "Mixed"
         ]
       },
+   members: Array,
    admin: String
 })
 const chats = conn.model('chats', schema) 
