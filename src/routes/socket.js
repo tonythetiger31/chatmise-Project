@@ -92,6 +92,7 @@ exports.sockets = function sockets(socket) {
          })
       })
    })
+
    socket.on('settings', (body) => {
       userDb.users.findOneAndUpdate({
          username: sender
@@ -104,6 +105,41 @@ exports.sockets = function sockets(socket) {
       })
    })
 
+   socket.on('invite', (body) => {
+      try {
+         const validate = (() => {
+            (typeof body.chatId === 'string' && typeof body.invitee === 'string') ?
+               checkIfSenderIsAdmin() :
+               socket.emit('invite', 400)
+         })()
+         function checkIfSenderIsAdmin() {
+            chatDb.chats.findOne({ _id: body.chatId })
+               .then(data => {
+                  (!data || data.admin !== sender) ?
+                     socket.emit('invite', 400) :
+                     (data.admin === sender) &&
+                     pushInviteToInvitee();
+               })
+         }
+         function pushInviteToInvitee() {
+            userDb.users.updateOne({ "username": body.invitee },
+               { $addToSet: { "invites": body.chatId } },
+               (err, docs) => {
+                  (err) ?
+                     socket.emit('invite', 500) :
+                     (docs.n === 0) ? //not found
+                     socket.emit('invite', 404) :
+                     (docs.nModified === 0) ? //aleady invited
+                     socket.emit('invite', 409) :
+                     socket.emit('invite', 200)
+               }
+            )
+         }
+      } catch (err) {
+         socket.emit(500)
+         console.error(err)
+      }
+   })
 
    //new chat endpoint
    socket.on('newChat', (body) => {

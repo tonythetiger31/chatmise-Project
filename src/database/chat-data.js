@@ -12,13 +12,10 @@ conn = mongoose.createConnection(process.env.uriChatData, {
 })()
 //connection test + create chat models
 conn.on('connected', () => {
-    console.log('--mongodb successfully connected to chatData')
+    console.log('--mongoose successfully connected to chatData')
 })
 
 //schema
-const messagesSchema = new mongoose.Schema({
-    
-})
 const schema = new mongoose.Schema({
     chatName: String,
     messages: {

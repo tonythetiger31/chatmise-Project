@@ -13,8 +13,8 @@ conn = mongoose.createConnection(process.env.uriUserData, {
 })()
 //connection
 conn.on('connected', () => {
-    console.log('--mongodb successfully connected to userData')
-})
+    console.log('--mongoose successfully connected to userData')
+}) 
 //schema
 const schema = new mongoose.Schema({
     username: String,
@@ -22,7 +22,8 @@ const schema = new mongoose.Schema({
     chats: Array,
     token: String,
     settings: Number,
-    chatsCreated: Number
+    chatsCreated: Number,
+    invites: Array
 })
 //model
 const
