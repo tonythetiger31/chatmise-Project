@@ -1,5 +1,6 @@
 "use strict"
 const
+   validator = require('validator'),
    chatDb = require('../database/chat-data'),
    userDb = require('../database/user-data'),
    methods = require('../methods')
@@ -108,9 +109,12 @@ exports.sockets = function sockets(socket) {
    socket.on('invite', (body) => {
       try {
          const validate = (() => {
-            (typeof body.chatId === 'string' && typeof body.invitee === 'string') ?
-               checkIfSenderIsAdmin() :
-               socket.emit('invite', 400)
+            (validator.isMongoId(body.chatId + '')
+               && validator.isAlphanumeric(body.invitee + '')
+               && validator.isLength(body.invitee + '', { min: 0, max: 10 })
+               && !validator.equals(sender, body.invitee + ''))
+               ? checkIfSenderIsAdmin()
+               : socket.emit('invite', 400)
          })()
          function checkIfSenderIsAdmin() {
             chatDb.chats.findOne({ _id: body.chatId })
@@ -136,7 +140,7 @@ exports.sockets = function sockets(socket) {
             )
          }
       } catch (err) {
-         socket.emit(500)
+         socket.emit('invite',500)
          console.error(err)
       }
    })
