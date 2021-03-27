@@ -78,6 +78,8 @@ exports.sockets = function sockets(socket) {
          });
       }
    })()
+
+
    //===================SOCKET EVENTS  
    socket.on('disconnecting', () => {
       var userRooms = Array.from(socket.rooms)
@@ -94,6 +96,7 @@ exports.sockets = function sockets(socket) {
       })
    })
 
+
    socket.on('settings', (body) => {
       userDb.users.findOneAndUpdate({
          username: sender
@@ -105,6 +108,7 @@ exports.sockets = function sockets(socket) {
          }
       })
    })
+
 
    socket.on('invite', (body) => {
       try {
@@ -119,82 +123,85 @@ exports.sockets = function sockets(socket) {
          function checkIfSenderIsAdmin() {
             chatDb.chats.findOne({ _id: body.chatId })
                .then(data => {
-                  (!data || data.admin !== sender) ?
-                     socket.emit('invite', 400) :
-                     (data.admin === sender) &&
-                     pushInviteToInvitee();
+                  (!data || data.admin !== sender)
+                     ? socket.emit('invite', 400)
+                     : (data.admin === sender)
+                     && pushInviteToInvitee();
                })
          }
          function pushInviteToInvitee() {
             userDb.users.updateOne({ "username": body.invitee },
                { $addToSet: { "invites": body.chatId } },
                (err, docs) => {
-                  (err) ?
-                     socket.emit('invite', 500) :
-                     (docs.n === 0) ? //not found
-                     socket.emit('invite', 404) :
-                     (docs.nModified === 0) ? //aleady invited
-                     socket.emit('invite', 409) :
-                     socket.emit('invite', 200)
+                  (err)
+                     ? socket.emit('invite', 500)
+                     : (docs.n === 0)  //not found
+                        ? socket.emit('invite', 404)
+                        : (docs.nModified === 0)  //aleady invited
+                           ? socket.emit('invite', 409)
+                           : socket.emit('invite', 200)
                }
             )
          }
       } catch (err) {
-         socket.emit('invite',500)
+         socket.emit('invite', 500)
          console.error(err)
       }
    })
 
-   //new chat endpoint
+
    socket.on('newChat', (body) => {
-      const findIfAllowedToCreateMoreChats = (() => {
-         userDb.users.findOne({ username: sender })
-            .then(data => {
-               if (data.chatsCreated >= 5) {
-                  socket.emit("newChat", 400)
+      try {
+         const validate = (() => {
+            (validator.isAlphanumeric(body.chatName + '')
+               && validator.isLength(body.chatName + '', { min: 0, max: 10 }))
+               ? findIfAllowedToCreateMoreChats()
+               : socket.emit('newChat', 400)
+         })()
+         function findIfAllowedToCreateMoreChats() {
+            userDb.users.findOne({ username: sender })
+               .then(data => {
+                  (data.chatsCreated >= 5)
+                     ? socket.emit("newChat", 403)
+                     : createNewChat(body.chatName, data.chatsCreated)
+               })
+         }
+         function createNewChat(chatName, chatsCreated) {
+            var chat = {
+               chatName: chatName,
+               members: [],
+               admin: sender
+            }
+            var newChat = new chatDb.chats(chat)
+            newChat.save((err, createdChat) => {
+               if (err) {
+                  console.log('something happened with the db')
+                  socket.emit("newChat", 500)
                } else {
-                  validate(data.chatsCreated)
+                  addChatToUserProfile(createdChat._id, chatsCreated)
                }
             })
-      })()
-      function validate(chatsCreated) {
-         var chatNameIsValid = methods.validate.input([body.chatName], 10, "string")
-         if (chatNameIsValid) {
-            createNewChat(body.chatName, chatsCreated)
          }
-      }
-      function createNewChat(chatName, chatsCreated) {
-         var chat = {
-            chatName: chatName,
-            members: [],
-            admin: sender
+         function addChatToUserProfile(chatId, chatsCreated) {
+            userDb.users.updateOne({
+               username: sender
+            }, {
+               $push: {
+                  chats: chatId,
+               },
+               chatsCreated: chatsCreated + 1
+            }, err => {
+               if (err) {
+                  console.log('something happened with the db')
+                  socket.emit("newChat", 500)
+               } else {
+                  socket.emit("newChat", 200)
+               }
+            })
          }
-         var newChat = new chatDb.chats(chat)
-         newChat.save((err, createdChat) => {
-            if (err) {
-               console.log('something happened with the db')
-               socket.emit("newChat", 500)
-            } else {
-               addChatToUserProfile(createdChat._id, chatsCreated)
-            }
-         })
-      }
-      function addChatToUserProfile(chatId, chatsCreated) {
-         userDb.users.updateOne({
-            username: sender
-         }, {
-            $push: {
-               chats: chatId,
-            },
-            chatsCreated: chatsCreated + 1
-         }, err => {
-            if (err) {
-               console.log('something happened with the db')
-               socket.emit("newChat", 500)
-            } else {
-               socket.emit("newChat", 200)
-            }
-         })
+      } catch (err) {
+         socket.emit("newChat", 500)
+         console.error(err)
       }
    })
 
