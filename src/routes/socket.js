@@ -10,9 +10,10 @@ exports.sockets = function sockets(socket) {
    var sender //userName
    //===================ON CONNECTION
    const connectToSocket = (() => {
-      const handleCookieLogic = (() => {
-         var cookie = socket.handshake.headers.cookie;
-         methods.handleCookie(cookie).then((user) => {
+      try {
+         const handleCookieLogic = (async () => {
+            var cookie = socket.handshake.headers.cookie;
+            var user = await methods.handleCookie(cookie)
             if (user === null) {
                socket.emit("allTexts", 'invalid credentials');
                socket.disconnect(true)
@@ -20,65 +21,67 @@ exports.sockets = function sockets(socket) {
                sender = user.username
                findUserInfo(user)
             };
-         });
-      })()
-      function findUserInfo(user) {
-         userDb.users.findOne({
-            username: user.username
-         }).then((userInfo) => {
-            getAllChatsTexts(userInfo)
-         })
-      }
-      function getAllChatsTexts(user) {
-         methods.grabAllThisUserChats(user.chats)
-            .then(data => {
-               joinSocketRooms({
-                  "allChatsTexts": data.allChatsTexts,
-                  "chatName": data.chatNames,
-                  "members": data.members,
-                  "admins": data.admins
-               }, user)
+         })()
+         async function findUserInfo(user) {
+            var data = await userDb.users.findOne({ username: user.username })
+            getAllChatsTexts(data)
+         }
+         async function getAllChatsTexts(user) {
+            var data = await methods.grabAllThisUserChats(user.chats)
+            getChatInviteData(data, user)
+         }
+         async function getChatInviteData(chatInfo, user) {
+            var invitedChatData = []
+            for (var element of user.invites) {
+               var data = await chatDb.chats.findById(element, 'chatName admin _id');
+               (data) && invitedChatData.push(data);
+            }
+            chatInfo.invitesData = invitedChatData
+            joinSocketRooms(chatInfo, user)
+         }
+         function joinSocketRooms(chatInfo, user) {
+            var roomUserCount = []
+            chatInfo.chatIds.forEach(element => {
+               socket.join(element);
+               var allRooms = Array.from(socket.adapter.rooms)
+               allRooms.forEach((_, i) => {
+                  if (allRooms[i].includes(element)) {
+                     roomUserCount.push(allRooms[i][1].size)
+                     // socket.to(element).emit('userCount', {
+                     //    chat: element,
+                     //    userCount: allRooms[i][1].size
+                     // });
+                  }
+               })
             });
-      }
-      function joinSocketRooms(chatInfo, user) {
-         var roomUserCount = []
-         user.chats.forEach(element => {
-            socket.join(element);
-            var allRooms = Array.from(socket.adapter.rooms)
-            allRooms.forEach((_, i) => {
-               if (allRooms[i].includes(element)) {
-                  roomUserCount.push(allRooms[i][1].size)
-                  socket.to(element).emit('userCount', {
-                     chat: element,
-                     userCount: allRooms[i][1].size
-                  });
-               }
-            })
-         });
-         sendDataToUser(chatInfo, user, roomUserCount);
-      }
-      function sendDataToUser(chatInfo, user, roomUserCount) {
-         console.log(roomUserCount, "--------------")
-         var allRoomUserCount = []
-         user.chats.forEach((element, i) => {
-            allRoomUserCount.push({
-               chat: element,
-               count: roomUserCount[i]
-            })
-         });
-         socket.emit("allTexts", {
-            "chatNames": chatInfo.chatName,
-            "data": chatInfo.allChatsTexts,
-            "members": chatInfo.members,
-            "admins": chatInfo.admins,
-            "chatIds": user.chats,
-            "username": user.username,
-            "settings": user.settings,
-            "userCount": allRoomUserCount
-         });
+            sendDataToUser(chatInfo, user, roomUserCount);
+         }
+         function sendDataToUser(chatInfo, user, roomUserCount) {
+            console.log(roomUserCount, "--------------")
+            var allRoomUserCount = []
+            chatInfo.chatIds.forEach((element, i) => {
+               allRoomUserCount.push({
+                  chat: element,
+                  count: roomUserCount[i]
+               })
+            });
+            socket.emit("allTexts", {
+               "chatNames": chatInfo.chatNames,
+               "texts": chatInfo.allChatsTexts,
+               "members": chatInfo.members,
+               "admins": chatInfo.admins,
+               "invites": chatInfo.invitesData,
+               "chatIds": chatInfo.chatIds,
+               "username": user.username,
+               "settings": user.settings
+               // "userCount": allRoomUserCount
+            });
+         }
+      } catch (err) {
+         socket.emit('allTexts', 500)
+         console.error(err)
       }
    })()
-
 
    //===================SOCKET EVENTS  
    socket.on('disconnecting', () => {
@@ -86,47 +89,108 @@ exports.sockets = function sockets(socket) {
       var allRooms = Array.from(socket.adapter.rooms)
       userRooms.forEach((element) => {
          allRooms.forEach((element1, i) => {
-            if (allRooms[i].includes(element)) {
-               socket.to(element).emit('userCount', {
-                  chat: element,
-                  userCount: allRooms[i][1].size - 1
-               });
-            }
+            // (allRooms[i].includes(element))
+            //    && socket.to(element)
+            //       .emit('userCount', {
+            //          chat: element,
+            //          userCount: allRooms[i][1].size - 1
+            //       });
          })
       })
    })
 
 
-   socket.on('settings', (body) => {
-      userDb.users.findOneAndUpdate({
-         username: sender
-      }, {
-         settings: body.settings
-      }, (err) => {
-         if (err) {
-            console.log(ERR_MSG);
+   socket.on('acceptInvite', body => {
+      try {
+         const validate = (_ => {
+            (validator.isMongoId(body.chatId + '')
+               && validator.isBoolean(body.isAccepted + ''))
+               ? handleRequest()
+               : socket.emit('acceptInvite', 400)
+         })()
+         function handleRequest() {
+            (body.isAccepted) ? pushSenderToChat() : updateUser(false)
          }
-      })
+         function pushSenderToChat() {
+            chatDb.chats.updateOne({ "_id": body.chatId },
+               { $addToSet: { 'members': sender } },
+               (err, docs) => {
+                  (err)
+                     ? socket.emit('acceptInvite', 500)
+                     : (docs.n === 0)//not found
+                        ? socket.emit('acceptInvite', 404)
+                        : (docs.nModified === 0)//aready updated
+                           ? socket.emit('acceptInvite', 409)
+                           : updateUser(true)
+               })
+         }
+         function updateUser(isAccepted) {
+            var toUpdate = { $pull: { "invites": body.chatId } };
+            (isAccepted) && (toUpdate.$addToSet = { "chats": body.chatId });
+            userDb.users.updateOne(
+               { "username": sender }, toUpdate,
+               (err, docs) => {
+                  (err)
+                     ? socket.emit('acceptInvite', 500)
+                     : (docs.n === 0)//not found
+                        ? socket.emit('acceptInvite', 404)
+                        : (docs.nModified === 0)//aready updated
+                           ? socket.emit('acceptInvite', 409)
+                           : socket.emit('acceptInvite', 200)
+               })
+         }
+      } catch (err) {
+         socket.emit('acceptInvite', 500)
+         console.error(err)
+      }
    })
 
 
-   socket.on('invite', (body) => {
+   socket.on('settings', body => {
+      try {
+         const validate = (() => {
+            (validator.isInt(body.settings)
+               && validator.isLength(body.settings, { min: 0, max: 10 }))
+               ? updateSettings()
+               : socket.emit('settings', 400)
+         })()
+         function updateSettings() {
+            userDb.users.findOneAndUpdate(
+               { username: sender },
+               { settings: body.settings },
+               (err, docs) => {
+                  (err)
+                     ? socket.emit('settings', 500)
+                     : (docs.n === 0)
+                        ? socket.emit('settings', 500)
+                        : socket.emit('settings', 200)
+               })
+         }
+      } catch (err) {
+         socket.emit(500)
+         console.error(err)
+      }
+   })
+
+
+   socket.on('invite', body => {
       try {
          const validate = (() => {
             (validator.isMongoId(body.chatId + '')
                && validator.isAlphanumeric(body.invitee + '')
                && validator.isLength(body.invitee + '', { min: 0, max: 10 })
                && !validator.equals(sender, body.invitee + ''))
-               ? checkIfSenderIsAdmin()
+               ? checkChatInfo()
                : socket.emit('invite', 400)
          })()
-         function checkIfSenderIsAdmin() {
+         function checkChatInfo() {//checks if sender is admin and if invitee is not already in chat
             chatDb.chats.findOne({ _id: body.chatId })
                .then(data => {
                   (!data || data.admin !== sender)
                      ? socket.emit('invite', 400)
-                     : (data.admin === sender)
-                     && pushInviteToInvitee();
+                     : (data.members.includes(body.invitee))
+                        ? socket.emit('invite', 409)
+                        : pushInviteToInvitee()
                })
          }
          function pushInviteToInvitee() {
@@ -150,7 +214,7 @@ exports.sockets = function sockets(socket) {
    })
 
 
-   socket.on('newChat', (body) => {
+   socket.on('newChat', body => {
       try {
          const validate = (() => {
             (validator.isAlphanumeric(body.chatName + '')
@@ -175,10 +239,9 @@ exports.sockets = function sockets(socket) {
             var newChat = new chatDb.chats(chat)
             newChat.save((err, createdChat) => {
                if (err) {
-                  console.log('something happened with the db')
                   socket.emit("newChat", 500)
                } else {
-                  addChatToUserProfile(createdChat._id, chatsCreated)
+                  addChatToUserProfile(createdChat._id.toString(), chatsCreated)
                }
             })
          }
@@ -186,13 +249,12 @@ exports.sockets = function sockets(socket) {
             userDb.users.updateOne({
                username: sender
             }, {
-               $push: {
+               $addToSet: {
                   chats: chatId,
                },
                chatsCreated: chatsCreated + 1
             }, err => {
                if (err) {
-                  console.log('something happened with the db')
                   socket.emit("newChat", 500)
                } else {
                   socket.emit("newChat", 200)
@@ -206,67 +268,63 @@ exports.sockets = function sockets(socket) {
    })
 
 
-   socket.on('texts', (body) => {
-      var textInfo = {
-         text: body.text,
-         time: body.time,
-         sender: sender
-      }
-      const validate = (() => {
-         var textIsValid = methods.validate.input([body.text], 170, "string")
-         var chatIsValid = methods.validate.input([body.chat], 40, "string")
-         var timeIsValid = methods.validate.input([body.time.toString()], 14, "string")
-         if (textIsValid && chatIsValid && timeIsValid) {
-            console.log('new transmission', sender, body)
-            checkIfChatRoomIsValid()
-         } else {
-            console.log("someone tryna hack")
-            socket.disconnect(true)
+   socket.on('texts', body => {
+      try {
+         var dbInfo = {
+            text: body.text,
+            time: body.time,
+            sender: sender
          }
-      })()
-      function checkIfChatRoomIsValid() {
-         var validChatRoom
-         const chatRoomFound = () => {
-            var wsRooms = Array.from(socket.adapter.rooms)
-            for (var element of wsRooms) {
-               if (element.toString().includes(body.chat)) {
-                  validChatRoom = element
-                  return true
-               }
-            }
-            return false
+         const validate = (() => {
+            (
+               !validator.contains(body.text, '\\')
+               && validator.isLength(body.text + '', { min: 0, max: 170 })
+               && validator.isMongoId(body.chatId + '')
+               && validator.isLength(body.time + '', { min: 0, max: 14 })
+               && validator.isInt(body.time + '')
+            )
+               ? checkIfSenderHasPremitions()
+               : socket.emit('textsResponse', 400)
+         })()
+         function checkIfSenderHasPremitions() {
+            chatDb.chats.findOne({ _id: body.chatId })
+               .then(data => {
+                  var senderHasPremitons = false
+                  for (var element of data.members) {
+                     (element === sender)
+                        && (senderHasPremitons = true);
+                  }
+                  (data.admin === sender)
+                     && (senderHasPremitons = true);
+
+                  (senderHasPremitons)
+                     ? saveTextToDB()
+                     : socket.emit('textsResponse', 403)
+               })
          }
-         if (chatRoomFound()) {
-            checkIfUserHasAccessToChatRoom(validChatRoom)
-         } else {
-            console.log("someone tryna hack2")
-            socket.disconnect(true)
+         function saveTextToDB() {
+            chatDb.chats.updateOne(
+               { _id: body.chatId },
+               { $push: { messages: dbInfo } },
+               (err, docs) => {
+                  (err)
+                     ? socket.emit('textsResponse', 500)
+                     : (docs.n === 0)
+                        ? socket.emit('textsResponse', 404)
+                        : sendSocketMessageToAll()
+               })
          }
-      }
-      function checkIfUserHasAccessToChatRoom(validChatRoom) {
-         var specificWsRoom = Array.from(validChatRoom[1])
-         if (specificWsRoom.includes(socket.id)) {
-            saveTextToDB()
-         } else {
-            console.log("someone tryna hack3")
-            socket.disconnect(true)
+         function sendSocketMessageToAll() {
+            var socketInfo = Object.assign({}, body)
+            socketInfo.sender = sender
+            
+            socket.emit('textsResponse', 200)
+            socket.to(body.chatId)
+            .emit('texts', socketInfo);
          }
-      }
-      function saveTextToDB() {
-         chatDb.chats.updateOne({
-            _id: body.chat
-         }, { $push: { messages: textInfo } }, (err) => {
-            if (err) {
-               console.log('something happened with the db -texts');
-            } else {
-               console.log('text saved')
-               sendSocketMessageToAll()
-            }
-         })
-      }
-      function sendSocketMessageToAll() {
-         textInfo.chat = body.chat
-         socket.to(body.chat).emit('text', textInfo);
+      } catch (err) {
+         socket.emit("textsResponse", 500)
+         console.error(err)
       }
    });
 };

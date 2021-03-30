@@ -32,32 +32,25 @@ const
    pageNotFound = (req, res) => {
       res.send('<h1>404 Page Not Found :(</h1>').status(404)
    },
-   grabAllThisUserChats = (chatIds) => {
-      return new Promise((resolve) => {
-         var allChatsTexts = [],
-            chatNames = [],
-            members = [],
-            admins = []
-         findAllChatsAndReturn = (async () => {
-            for (let element of chatIds) {
-               await chatDb.chats.findOne({ _id: element })
-                  .then((data) => {
-                     allChatsTexts.push(data.messages)
-                     chatNames.push(data.chatName)
-                     members.push(data.members)
-                     admins.push(data.admin)
-                     if (chatNames.length === chatIds.length) {
-                        resolve({
-                           "allChatsTexts": allChatsTexts,
-                           "chatNames": chatNames,
-                           "admins": admins,
-                           "members" : members
-                        });
-                     }
-                  })
-            }
-         })()
-      })
+   grabAllThisUserChats = async (chatIds) => {
+      var dataObj = {
+         allChatsTexts: [],
+         chatNames: [],
+         members: [],
+         admins: [],
+         chatIds: []
+      }
+      for (let element of chatIds) {
+         var data = await chatDb.chats.findById(element)
+         if (data) {
+            dataObj.allChatsTexts.push(data.messages)
+            dataObj.chatNames.push(data.chatName)
+            dataObj.members.push(data.members)
+            dataObj.admins.push(data.admin);
+            dataObj.chatIds.push(element)
+         }
+      }
+      return (dataObj)
    },
    validate = {
       "cookie": (arg, maxLength) => {
