@@ -218,7 +218,7 @@ exports.sockets = function sockets(socket) {
       try {
          const validate = (() => {
             (validator.isAlphanumeric(body.chatName + '')
-               && validator.isLength(body.chatName + '', { min: 0, max: 10 }))
+               && validator.isLength(body.chatName + '', { min: 4, max: 10 }))
                ? findIfAllowedToCreateMoreChats()
                : socket.emit('newChat', 400)
          })()
