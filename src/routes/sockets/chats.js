@@ -1,6 +1,6 @@
 const validator = require('validator'),
-   chatDb = require('../../database/chat-data'),
-   userDb = require('../../database/user-data');
+	chatDb = require('../../database/chat-data'),
+	userDb = require('../../database/user-data');
 
 function acceptInvite(socket, sender) {
 	socket.on('acceptInvite', body => {
@@ -63,15 +63,17 @@ function invite(socket, sender) {
 					? checkChatInfo()
 					: socket.emit('invite', 400);
 			})();
-			function checkChatInfo() {
+			async function checkChatInfo() {
 				//checks if sender is admin and if invitee is not already in chat
-				chatDb.chats.findOne({ _id: body.chatId }).then(data => {
-					!data || data.admin !== sender
-						? socket.emit('invite', 400)
-						: data.members.includes(body.invitee)
-						? socket.emit('invite', 409)
-						: pushInviteToInvitee();
-				});
+				const data = await chatDb.chats.findOne(
+					{ _id: body.chatId },
+					'admin members'
+				);
+				!data || data.admin !== sender
+					? socket.emit('invite', 400)
+					: data.members.includes(body.invitee)
+					? socket.emit('invite', 409)
+					: pushInviteToInvitee();
 			}
 			function pushInviteToInvitee() {
 				userDb.users.updateOne(
@@ -104,12 +106,14 @@ function newChat(socket, sender) {
 					? findIfAllowedToCreateMoreChats()
 					: socket.emit('newChat', 400);
 			})();
-			function findIfAllowedToCreateMoreChats() {
-				userDb.users.findOne({ username: sender }).then(data => {
-					data.chatsCreated >= 5
-						? socket.emit('newChat', 403)
-						: createNewChat(body.chatName, data.chatsCreated);
-				});
+			async function findIfAllowedToCreateMoreChats() {
+				const data = await userDb.users.findOne(
+					{ username: sender },
+					'chatsCreated'
+				);
+				data.chatsCreated >= 5
+					? socket.emit('newChat', 403)
+					: createNewChat(body.chatName, data.chatsCreated);
 			}
 			function createNewChat(chatName, chatsCreated) {
 				var chat = {

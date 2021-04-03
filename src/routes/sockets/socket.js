@@ -7,9 +7,9 @@ const validator = require('validator'),
 const ERR_MSG = 'Something wrong when updating theme data!';
 
 exports.sockets = async socket => {
-   var sender = await onConnect(socket);//onConnect returns username of person connecting
-	
-   //SOCKET EVENTS
+	var sender = await onConnect(socket); //onConnect returns username of person connecting
+
+	//SOCKET EVENTS
 	acceptInvite(socket, sender);
 	invite(socket, sender);
 	newChat(socket, sender);
@@ -42,21 +42,19 @@ exports.sockets = async socket => {
 					? updateSettings()
 					: socket.emit('settings', 400);
 			})();
-			function updateSettings() {
-				userDb.users.findOneAndUpdate(
+			async function updateSettings() {
+				var docs = await userDb.users.updateOne(
 					{ username: sender },
-					{ settings: body.settings },
-					(err, docs) => {
-						err
-							? socket.emit('settings', 500)
-							: docs === null || docs.n === 0
-							? socket.emit('settings', 500)
-							: socket.emit('settings', 200);
-					}
+					{ settings: body.settings }
 				);
+				!docs
+					? socket.emit('settings', 500)
+					: docs.n === 0
+					? socket.emit('settings', 500)
+					: socket.emit('settings', 200);
 			}
 		} catch (err) {
-			socket.emit(500);
+			socket.emit('settings', 500);
 			console.error(err);
 		}
 	});
@@ -77,31 +75,30 @@ exports.sockets = async socket => {
 					? checkIfSenderHasPremitions()
 					: socket.emit('textsResponse', 400);
 			})();
-			function checkIfSenderHasPremitions() {
-				chatDb.chats.findOne({ _id: body.chatId }).then(data => {
-					var senderHasPremitons = false;
-					for (var element of data.members) {
-						element === sender && (senderHasPremitons = true);
-					}
-					data.admin === sender && (senderHasPremitons = true);
-
-					senderHasPremitons
-						? saveTextToDB()
-						: socket.emit('textsResponse', 403);
-				});
-			}
-			function saveTextToDB() {
-				chatDb.chats.updateOne(
+			async function checkIfSenderHasPremitions() {
+				const data = await chatDb.chats.findOne(
 					{ _id: body.chatId },
-					{ $push: { messages: dbInfo } },
-					(err, docs) => {
-						err
-							? socket.emit('textsResponse', 500)
-							: docs.n === 0
-							? socket.emit('textsResponse', 404)
-							: sendSocketMessageToAll();
-					}
+					'members admin'
 				);
+				var senderHasPremitons = false;
+				for (var element of data.members) {
+					element === sender && (senderHasPremitons = true);
+				}
+				data.admin === sender && (senderHasPremitons = true);
+				senderHasPremitons
+					? saveTextToDB()
+					: socket.emit('textsResponse', 403);
+			}
+			async function saveTextToDB() {
+				const docs = await chatDb.chats.updateOne(
+					{ _id: body.chatId },
+					{ $push: { messages: dbInfo } }
+				);
+				!docs
+					? socket.emit('textsResponse', 500)
+					: docs.n === 0
+					? socket.emit('textsResponse', 404)
+					: sendSocketMessageToAll();
 			}
 			function sendSocketMessageToAll() {
 				var socketInfo = Object.assign({}, body);
