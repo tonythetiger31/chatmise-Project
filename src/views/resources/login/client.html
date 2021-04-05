@@ -26,7 +26,7 @@
 
 <body>
     <div class="form">
-        <div class="title">chatmise.com</div>
+        <div class="title">chatmise</div>
         <form id="theform" method="POST" action="/login">
             <input autocomplete="username" name="username" maxlength="25" class="Username" type="text"
                 placeholder="Username" required><br>
@@ -40,9 +40,6 @@
         <a href="/home">Home page</a>
     </div>
     <script>
-        //function declaration
-
-        //===================
         document.forms['theform'].addEventListener('submit', (event) => {
             event.preventDefault();
             fetch('/login', {
