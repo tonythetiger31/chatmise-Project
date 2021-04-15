@@ -7,7 +7,7 @@ var path = require('path');
 //===============================================================GET
 exports.get = function (req, res) {
   try {
-    var clientHtml = __dirname + '/../views/resources/login/client.html'
+    var clientHtml = __dirname + '/../views/resources/auth/login.html'
     methods.handleCookie(req.headers.cookie)
       .then((data) => { sendPage(data) })
     function sendPage(data) {

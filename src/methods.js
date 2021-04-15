@@ -4,6 +4,7 @@ const userDb = require('./database/user-data')
 const chatDb = require('./database/chat-data')
 const { response } = require('express');
 const bcrypt = require('bcryptjs')
+const { OAuth2Client } = require('google-auth-library');
 var path = require('path');
 //functions
 const
@@ -114,8 +115,27 @@ const
                })
          }
       })
+   },
+   verifyGoogleToken = async (encryptedToken) => {
+      const CLIENT_ID =
+		'407415747373-v23ak1k7kp37k3s986mu5qh9cpqh9bdh.apps.googleusercontent.com';
+      const client = new OAuth2Client(CLIENT_ID);
+		async function verify() {
+			const ticket = await client.verifyIdToken({
+				idToken: encryptedToken,
+				audience: CLIENT_ID,
+			});
+			const payload = ticket.getPayload(); //decrypted token info
+			return payload['sub']; //userid
+		}
+		verify()
+         .then(userid => {return userid} )
+			.catch(e => {
+            console.error(e);
+            return null
+			});
    }
 module.exports = {
    hashComparison, cookieParse, pageNotFound,
-   validate, handleCookie, grabAllThisUserChats
+   validate, handleCookie, grabAllThisUserChats, verifyGoogleToken
 }

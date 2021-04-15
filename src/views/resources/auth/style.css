@@ -3,20 +3,22 @@ html {
 	background-color: rgb(30, 30, 30);
 	margin: 0;
 }
+.centerWraper{
+   font-family: 'Montserrat', sans-serif;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   text-align: center;
+}
 .form {
-	position: absolute;
-	background-color: rgb(20, 20, 20);
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	text-align: center;
-	padding: 30px;
-	border: none;
-	border-radius: 8px;
+   border: none;
+   border-radius: 8px;
+   padding: 30px;
+   background-color: rgb(20, 20, 20);
 }
 .title {
 	font-size: 40px;
-	font-family: 'Montserrat', sans-serif;
 	color: white;
 	letter-spacing: 0.03em;
 }
@@ -29,6 +31,7 @@ html {
 	padding-left: 8px;
 	border-radius: 2px;
 	border: none;
+   width: 350px;
 }
 .Username::placeholder {
 	color: #ebebdf;
@@ -37,17 +40,17 @@ html {
 	color: #ebebdf;
 }
 .Username {
-	margin: 30px 0 15px;
+	margin: 20px 0 15px;
 }
 .Password {
-	margin-bottom: 25px;
+	margin-bottom: 15px;
 }
 .LoginButton {
 	color: #ebebdf;
 	outline: none;
 	border-radius: 3px;
-	padding: 0 156px;
-	color: black;
+   width: 360px;
+   color: black;
 	background-color: #73ffb2;
 	border: none;
 	font-size: 30px;
@@ -60,19 +63,25 @@ html {
 	box-shadow: #73ffb228 2px 3px 10px 4px;
 	cursor: pointer;
 }
-.form a {
+.homeLink{
 	color: white;
-	font-family: Arial, Helvetica, sans-serif;
-	display: inline-block;
+	font-family: 'Roboto', sans-serif;
+	display: block;
 	font-size: 20px;
-	margin: 20px 0 0 0;
+	margin: 5px 0 0;
+}
+/* google sign-in button */
+#my-signin2{
+   font-size: 30px;
+	margin: 25px 0 -10px;
 }
 @media only screen and (max-device-width: 760px) {
    .form{
       padding: 15px;
    }
    .LoginButton{
-   	padding: 0 105px;   
+      width: 250px;
+      padding: 2px 0;
    }
    .form a{
       font-size: 10px;
@@ -90,6 +99,7 @@ html {
 	.Username,
 	.Password,
 	.LoginButton {
+      width: 250px;
 		font-size: 20px;
 	}
 }

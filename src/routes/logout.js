@@ -1,6 +1,6 @@
 const userDb = require('../database/user-data')
 const methods = require('../methods')
-exports.main = function (req, res) {
+function logout(req, res){
    try {
       var cookie = req.headers.cookie
       const sendBadRequest = () => { res.status(400).send("error 400") }
@@ -29,4 +29,5 @@ exports.main = function (req, res) {
       console.log(err)
       res.status(500).send("error 500")
    }
-} 
+}
+module.exports = logout

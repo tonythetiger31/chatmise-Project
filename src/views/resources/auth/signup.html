@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <!-- Global site tag (gtag.js) - Google Analytics -->
+   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-176266475-4"></script>
+   <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+         dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'UA-176266475-4');
+   </script>
+   <script src="https://apis.google.com/js/platform.js" async defer></script>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="google-signin-client_id"
+      content="407415747373-v23ak1k7kp37k3s986mu5qh9cpqh9bdh.apps.googleusercontent.com">
+   <link href="/resources/auth/style.css" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap" rel="stylesheet">
+   <title>Login</title>
+</head>
+
+<body>
+   <div class="centerWraper">
+      <div class="form">
+         <div class="title">Sign up</div>
+         <div class="g-signin2" data-onsuccess="onSignIn"></div><br>
+      </div>
+      <a class="homeLink" href="/home">Home page</a>
+   </div>
+   <script>
+      function onSignIn(googleUser) {
+         var profile = googleUser.getBasicProfile();
+         console.log('ID: ' + googleUser.getAuthResponse().id_token);
+         console.log('Name: ' + profile.getName());
+         console.log('Image URL: ' + profile.getImageUrl());
+         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+      }
+   </script>
+</body>
+
+</html>

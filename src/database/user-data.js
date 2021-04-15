@@ -23,7 +23,9 @@ const schema = new mongoose.Schema({
     token: String,
     settings: Number,
     chatsCreated: Number,
-    invites: Array
+    invites: Array,
+    googleId: String
+    
 })
 //model
 const
