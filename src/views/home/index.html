@@ -13,30 +13,142 @@
       gtag('js', new Date());
       gtag('config', 'UA-176266475-4');
    </script>
+   <script src="https://apis.google.com/js/platform.js?onload=renderButton" async
+      defer>//for frictionless signin</script>
+   <meta name="google-signin-client_id"
+      content="407415747373-v23ak1k7kp37k3s986mu5qh9cpqh9bdh.apps.googleusercontent.com">
+
    <meta charset="UTF-8">
+   <title>chatmise</title>
+   <meta name="author" content="Tony">
    <meta name="description"
       content="The messaging platform that puts the power of customizability onto the users hands">
    <meta name="keywords" content="customizability, messaging, chatmise">
-   <meta name="author" content="Tony">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="apple-touch-icon" sizes="180x180" href="/resources/icons/apple-touch-icon.png">
    <link rel="icon" type="image/png" sizes="32x32" href="/resources/icons/favicon-32x32.png">
    <link rel="icon" type="image/png" sizes="16x16" href="/resources/icons/favicon-16x16.png">
    <link rel="manifest" href="/manifest.json">
-   <title>chatmise</title>
    <link rel="stylesheet" href="/home/style.css">
    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
-   <link rel="stylesheet" type="text/css" href="/home/style.css">
 </head>
+
 
 <body>
    <a href="https://twitter.com/Tony_314159"> <img alt="twitter logo" class="twitterLink"
          src="/resources/images/twitter.png"></img></a>
-   <button class="loginButton" onclick="window.location.href = '/login';">Login</button>
-   <button class="signUpButton" onclick="window.location.href = '/signup';">Sign
-      up</button>
    <div class="mainText">The messaging platform that puts the power of customizability onto the users hands</div>
+   <div id="my-signin2"></div>
    <div class="subText">currently this project is under development</div>
+   <script>
+      function renderButton() {
+         gapi.signin2.render('my-signin2', {
+            'scope': 'profile email',
+            'width': 230,
+            'height': 50,
+            'longtitle': true,
+            'theme': 'dark',
+            'onsuccess': onSuccess,
+            'onfailure': onFailure
+         });
+      }
+      async function onSuccess(googleUser) {
+         const token = googleUser.getAuthResponse().id_token
+         const data = {
+            "token": token
+         }
+         const options = {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+         }
+         const res = await fetch('/auth', options);
+         const status = res.status;
+         console.log(status);
+
+         status === 300
+            ? newAccountConfirm()
+            : status === 200
+               ? goToAppConfirm()
+               : console.error('auth error')
+
+         function goToAppConfirm(){
+            confirm('Would you like to go to the chatmise Web App?')
+            && window.location.replace('/')
+         }
+         function newAccountConfirm() {
+            confirm('Create a new account?')
+               ? window.location.replace('/new-account')
+               : signOut()
+         }
+      }
+      function onFailure(error) {
+         console.log(error);
+      }
+      function signOut() {
+         var auth2 = gapi.auth2.getAuthInstance();
+         auth2.signOut().then(function () {
+            console.log('User signed out.');
+         });
+      }
+   </script>
 </body>
+
+<style>
+   body {
+      background-color: #383838;
+      margin: 100px 120px 80px 120px;
+   }
+
+   .twitterLink {
+      position: fixed;
+      height: 100px;
+      top: 0;
+      right: 0;
+   }
+
+   .mainText {
+      color: white;
+      font-family: 'Roboto', sans-serif;
+      font-size: 60px;
+      margin: 0;
+   }
+
+   /* google sign-in button */
+   #my-signin2 {
+      margin: 20px 0;
+   }
+
+   .subText {
+      color: white;
+      font-family: 'Roboto', sans-serif;
+      font-size: 40px;
+      margin: 0;
+   }
+
+   @media only screen and (max-width: 760px) {
+      body {
+         margin: 50px 20px 80px;
+      }
+
+      .twitterLink {
+         height: 70px;
+      }
+
+      .mainText {
+         font-size: 40px;
+      }
+
+      #my-signin2 {
+         margin: 10px 0;
+      }
+
+      .subText {
+         font-size: 25px;
+      }
+   }
+</style>
 
 </html>

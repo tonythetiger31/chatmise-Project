@@ -9,12 +9,12 @@ var cors, io;
 
 //project files
 const socketDir = require('./routes/sockets/socket'),
-   { pageNotFound } = require('./methods'),
-   main = require('./routes/app'),
-   signup = require('./routes/signup'),
-   login = require('./routes/login'),
-   logout = require('./routes/logout'),
-   { auth } = require('./routes/auth');
+	{ pageNotFound } = require('./methods'),
+	main = require('./routes/app'),
+	login = require('./routes/login'),
+	logout = require('./routes/logout'),
+	{ auth } = require('./routes/auth'),
+	{ newAccount } = require('./routes/new-account');
 //development enviorment check
 const envCheck = (() => {
 	if (process.env.NODE_ENV === 'development') {
@@ -47,9 +47,10 @@ app.get('/login', login.get);
 io.on('connection', socketDir.sockets); //socket
 
 //page directories un-rendered
+app.post('/new-account', newAccount);
 app.post('/login', login.post);
 app.delete('/logout', logout);
-app.post('/auth', auth)
+app.post('/auth', auth);
 
 app.get('*', pageNotFound); //404 page
 

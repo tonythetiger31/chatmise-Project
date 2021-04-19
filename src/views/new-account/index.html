@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>new account</title>
+</head>
+
+<body>
+   <div class="mainDiv">
+      <div class="title">New Account</div>
+      <div class="subTitle">what would you like your username to be?</div>
+      <form onsubmit="event.preventDefault()">
+         <input id="inputFeild" placeholder="username" maxlength="10" required><br>
+         <button onclick="validateForm()">Create New Account</button>
+      </form>
+   </div>
+   <script>
+   var tokenId
+      function init() {
+         gapi.load('auth2', async () => {
+            const googleAuth = await gapi.auth2.init({client_id: "407415747373-v23ak1k7kp37k3s986mu5qh9cpqh9bdh.apps.googleusercontent.com"})
+            const googleUser = googleAuth.currentUser.get()
+            tokenId = googleUser.getAuthResponse().id_token
+         });
+      }
+      function validateForm() {
+         const formValue = document.getElementById('inputFeild').value;
+         !formValue
+            ? null //empty
+            : formValue.length > 4
+               ? sendForm(formValue)
+               : alert('username must be greater than 5 characters')
+      }
+      async function sendForm(formValue) {
+         const options = {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+               username: formValue,
+               token: tokenId
+            })
+         }
+         const res = await fetch('/new-account', options)
+         res.status === 400
+         ? alert('only use alphaNumberic characters')
+         : window.location.replace('/')
+      }
+
+   </script>
+</body>
+
+
+<style>
+   body {
+      background-color: #383838;
+      margin: 0;
+   }
+
+   .mainDiv {
+      font-family: 'Montserrat', sans-serif;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background-color: rgb(20, 20, 20);
+      border: none;
+      border-radius: 8px;
+      padding: 30px;
+      background-color: rgb(20, 20, 20);
+   }
+
+   .title {
+      font-size: 40px;
+      color: white;
+      letter-spacing: 0.03em;
+   }
+
+   .subTitle {
+      margin: 10px 0;
+      font-size: 19px;
+      color: white;
+   }
+
+   input {
+      font-family: 'Roboto', sans-serif;
+      font-size: 30px;
+      background-color: #1e1e1e;
+      color: #73ffb2;
+      padding-left: 8px;
+      border-radius: 2px;
+      border: none;
+      width: 350px;
+   }
+
+   button {
+      font-family: 'Roboto', sans-serif;
+      margin-top: 10px;
+      color: #ebebdf;
+      border-radius: 3px;
+      width: 360px;
+      color: black;
+      background-color: #73ffb2;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+   }
+</style>
+
+
+</html>
