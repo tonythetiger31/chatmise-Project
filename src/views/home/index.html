@@ -75,11 +75,11 @@
                : console.error('auth error')
 
          function goToAppConfirm(){
-            confirm('Would you like to go to the chatmise Web App?')
+            confirm('would you like to go to the chatmise app?\nNOTE: make sure you arent using a ad or cookie blocker as it may cause issues.')
             && window.location.replace('/')
          }
          function newAccountConfirm() {
-            confirm('Create a new account?')
+            confirm('Create a new account?\nNOTE: make sure you arent using a ad or cookie blocker as it may cause issues.')
                ? window.location.replace('/new-account')
                : signOut()
          }
@@ -119,6 +119,12 @@
    /* google sign-in button */
    #my-signin2 {
       margin: 20px 0;
+   }
+   .abcRioButton.abcRioButtonBlue{
+      border-radius: 7px;
+   } 
+   .abcRioButtonContents{
+      font-weight: 700;
    }
 
    .subText {

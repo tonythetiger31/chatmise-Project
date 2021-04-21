@@ -6,20 +6,17 @@ exports.onConnect = async socket => {
 	var sender;
 	try {
 		const handleCookieLogic = await (async () => {
-			var cookie = socket.handshake.headers.cookie;
-			var user = await methods.handleCookie(cookie);
-			if (user === null) {
-				socket.emit('allTexts', 'invalid credentials');
+         const token = socket.handshake.query.token;
+			const data = await methods.tokenAuth(token);
+			if (!data || data.status === 300) {
+            socket.emit('allTexts', 'invalid credentials');
 				socket.disconnect(true);
-			} else {
-				sender = user.username;
-				findUserInfo(user);
+         } else {
+            const user = await userDb.users.findOne({ googleId: data.userid })
+            sender = user.username
+            getAllChatsTexts(user);
 			}
 		})();
-		async function findUserInfo(user) {
-			var data = await userDb.users.findOne({ username: user.username });
-			getAllChatsTexts(data);
-		}
 		async function getAllChatsTexts(user) {
 			var data = await methods.grabAllThisUserChats(user.chats);
 			getChatInviteData(data, user);
@@ -62,7 +59,7 @@ exports.onConnect = async socket => {
 					count: roomUserCount[i],
 				});
 			});
-			socket.emit('allTexts', {
+			const emitData = {
 				chatNames: chatInfo.chatNames,
 				texts: chatInfo.allChatsTexts,
 				members: chatInfo.members,
@@ -72,7 +69,8 @@ exports.onConnect = async socket => {
 				username: user.username,
 				settings: user.settings,
 				// "userCount": allRoomUserCount
-			});
+			};
+			socket.emit('allTexts', emitData);
 		}
 	} catch (err) {
 		socket.emit('allTexts', 500);

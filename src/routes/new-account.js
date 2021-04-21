@@ -4,7 +4,7 @@ const validator = require('validator');
 const { verifyGoogleToken, tokenAuth } = require('../methods');
 
 exports.newAccount = (req, res) => {
-	const username = req.body.username,
+	var username = req.body.username,
 		token = req.body.token;
 	const validateToken = (async () => {
 		const data = await tokenAuth(token);
@@ -15,11 +15,12 @@ exports.newAccount = (req, res) => {
 			: data.status === 200 && res.sendStatus(403);
 	})();
 	function vaidateUsername(userid) {
+		const invalidNames = ['loading', 'admin', 'chatmise', 'username'];
 		const usernameIsValid =
-			username &&
+			typeof(username) === 'string' &&
 			validator.isAlphanumeric(username) &&
-			!validator.contains(username + '', '\\') &&
-			validator.isLength(username + '', { min: 5, max: 10 });
+         validator.isLength(username, { min: 5, max: 10 })
+      && !invalidNames.includes(username.toLowerCase());
 		usernameIsValid
 			? checkIfUsernameAlreadyUsed(userid)
 			: res.sendStatus(400);
@@ -45,4 +46,3 @@ exports.newAccount = (req, res) => {
 		}
 	}
 };
-//FIGURE OUT HOW TO GET GOOGLE AUTH IN REACT APP

@@ -11,8 +11,6 @@ var cors, io;
 const socketDir = require('./routes/sockets/socket'),
 	{ pageNotFound } = require('./methods'),
 	main = require('./routes/app'),
-	login = require('./routes/login'),
-	logout = require('./routes/logout'),
 	{ auth } = require('./routes/auth'),
 	{ newAccount } = require('./routes/new-account');
 //development enviorment check
@@ -42,14 +40,11 @@ app.use(express.json());
 
 //page directories rendered
 app.get('/', main);
-app.get('/login', login.get);
 
 io.on('connection', socketDir.sockets); //socket
 
 //page directories un-rendered
 app.post('/new-account', newAccount);
-app.post('/login', login.post);
-app.delete('/logout', logout);
 app.post('/auth', auth);
 
 app.get('*', pageNotFound); //404 page

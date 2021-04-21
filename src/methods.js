@@ -136,8 +136,7 @@ const cookieParse = (cookie, key) => {
 		}
 		try {
 			return await verify();
-		} catch (e) {
-			console.error(e);
+		} catch {
 			return null;
 		}
 	},
@@ -146,9 +145,9 @@ const cookieParse = (cookie, key) => {
 		return await validate();
 		async function validate() {
 			const tokenIsValid =
-				encryptedToken &&
-				validator.isLength(encryptedToken + '', { min: 0, max: 2000 }) &&
-				!validator.contains(encryptedToken + '', '\\');
+				typeof(encryptedToken) === 'string' &&
+				validator.isLength(encryptedToken, { min: 0, max: 2000 }) &&
+				!validator.contains(encryptedToken, '\\');
 			if (tokenIsValid) {
 				return await handleVerification();
 			}

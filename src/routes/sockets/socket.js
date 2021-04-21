@@ -8,31 +8,11 @@ const ERR_MSG = 'Something wrong when updating theme data!';
 
 exports.sockets = async socket => {
 	var sender = await onConnect(socket); //onConnect returns username of person connecting
-
+   console.log(sender)
 	//SOCKET EVENTS
 	acceptInvite(socket, sender);
 	invite(socket, sender);
 	newChat(socket, sender);
-
-	socket.on('disconnecting', () => {
-		try {
-			var userRooms = Array.from(socket.rooms);
-			var allRooms = Array.from(socket.adapter.rooms);
-			userRooms.forEach(element => {
-				allRooms.forEach((element1, i) => {
-					// (allRooms[i].includes(element))
-					//    && socket.to(element)
-					//       .emit('userCount', {
-					//          chat: element,
-					//          userCount: allRooms[i][1].size - 1
-					//       });
-				});
-			});
-		} catch (err) {
-			socket.emit(500);
-			console.error(err);
-		}
-	});
 
 	socket.on('settings', body => {
 		try {
