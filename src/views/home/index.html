@@ -13,7 +13,7 @@
       gtag('js', new Date());
       gtag('config', 'UA-176266475-4');
    </script>
-   <script src="https://apis.google.com/js/platform.js?onload=renderButton" async
+   <script src="https://apis.google.com/js/platform.js" async
       defer>//for frictionless signin</script>
    <meta name="google-signin-client_id"
       content="407415747373-v23ak1k7kp37k3s986mu5qh9cpqh9bdh.apps.googleusercontent.com">
@@ -29,29 +29,18 @@
    <link rel="icon" type="image/png" sizes="32x32" href="/resources/icons/favicon-32x32.png">
    <link rel="icon" type="image/png" sizes="16x16" href="/resources/icons/favicon-16x16.png">
    <link rel="manifest" href="/manifest.json">
-   <link rel="stylesheet" href="/home/style.css">
+   <link rel="stylesheet" type="text/css" href="/home/style.css">
    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 </head>
-
 
 <body>
    <a href="https://twitter.com/Tony_314159"> <img alt="twitter logo" class="twitterLink"
          src="/resources/images/twitter.png"></img></a>
    <div class="mainText">The messaging platform that puts the power of customizability onto the users hands</div>
-   <div id="my-signin2"></div>
+   <div class="g-signin2" data-width="230" data-height="50" data-longtitle="true" data-onsuccess="onSuccess"
+      data-onfailure="onFailure" data-theme="dark"></div>
    <div class="subText">currently this project is under development</div>
    <script>
-      function renderButton() {
-         gapi.signin2.render('my-signin2', {
-            'scope': 'profile email',
-            'width': 230,
-            'height': 50,
-            'longtitle': true,
-            'theme': 'dark',
-            'onsuccess': onSuccess,
-            'onfailure': onFailure
-         });
-      }
       async function onSuccess(googleUser) {
          const token = googleUser.getAuthResponse().id_token
          const data = {
@@ -74,9 +63,9 @@
                ? goToAppConfirm()
                : console.error('auth error')
 
-         function goToAppConfirm(){
+         function goToAppConfirm() {
             confirm('would you like to go to the chatmise app?\nNOTE: make sure you arent using a ad or cookie blocker as it may cause issues.')
-            && window.location.replace('/')
+               && window.location.replace('/')
          }
          function newAccountConfirm() {
             confirm('Create a new account?\nNOTE: make sure you arent using a ad or cookie blocker as it may cause issues.')
@@ -120,10 +109,12 @@
    #my-signin2 {
       margin: 20px 0;
    }
-   .abcRioButton.abcRioButtonBlue{
+
+   .abcRioButton.abcRioButtonBlue {
       border-radius: 7px;
-   } 
-   .abcRioButtonContents{
+   }
+
+   .abcRioButtonContents {
       font-weight: 700;
    }
 
