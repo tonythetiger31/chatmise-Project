@@ -136,7 +136,7 @@ const cookieParse = (cookie, key) => {
 		}
 		try {
 			return await verify();
-		} catch {
+      } catch (e) {
 			return null;
 		}
 	},

@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.6f82bfc6.chunk.css",
-    "main.js": "/static/js/main.a7cdff90.chunk.js",
-    "main.js.map": "/static/js/main.a7cdff90.chunk.js.map",
+    "main.css": "/static/css/main.e64090cd.chunk.css",
+    "main.js": "/static/js/main.ec7a0d0f.chunk.js",
+    "main.js.map": "/static/js/main.ec7a0d0f.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.f297e5ea.js",
     "runtime-main.js.map": "/static/js/runtime-main.f297e5ea.js.map",
     "static/js/2.3bac308a.chunk.js": "/static/js/2.3bac308a.chunk.js",
     "static/js/2.3bac308a.chunk.js.map": "/static/js/2.3bac308a.chunk.js.map",
     "index.html": "/index.html",
-    "static/css/main.6f82bfc6.chunk.css.map": "/static/css/main.6f82bfc6.chunk.css.map",
+    "static/css/main.e64090cd.chunk.css.map": "/static/css/main.e64090cd.chunk.css.map",
     "static/js/2.3bac308a.chunk.js.LICENSE.txt": "/static/js/2.3bac308a.chunk.js.LICENSE.txt",
     "static/media/App.scss": "/static/media/hamburger.8d514b40.svg",
     "static/media/ping.6f864733.mp3": "/static/media/ping.6f864733.mp3"
@@ -16,7 +16,7 @@
   "entrypoints": [
     "static/js/runtime-main.f297e5ea.js",
     "static/js/2.3bac308a.chunk.js",
-    "static/css/main.6f82bfc6.chunk.css",
-    "static/js/main.a7cdff90.chunk.js"
+    "static/css/main.e64090cd.chunk.css",
+    "static/js/main.ec7a0d0f.chunk.js"
   ]
 }

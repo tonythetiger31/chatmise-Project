@@ -1,6 +1,6 @@
 const validator = require('validator'),
-	chatDb = require('../../database/chat-data'),
-	userDb = require('../../database/user-data');
+	chatDb = require('../database/chat-data'),
+	userDb = require('../database/user-data');
 
 function acceptInvite(socket, sender) {
 	socket.on('acceptInvite', body => {

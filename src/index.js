@@ -8,11 +8,12 @@ require('dotenv').config();
 var cors, io;
 
 //project files
-const socketDir = require('./routes/sockets/socket'),
+const socketDir = require('./socket.io/socketIndex.js'),
 	{ pageNotFound } = require('./methods'),
 	main = require('./routes/app'),
 	{ auth } = require('./routes/auth'),
-	{ newAccount } = require('./routes/new-account');
+   { newAccount } = require('./routes/new-account');
+   
 //development enviorment check
 const envCheck = (() => {
 	if (process.env.NODE_ENV === 'development') {

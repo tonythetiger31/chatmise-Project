@@ -6,7 +6,7 @@ const userDb = require('../database/user-data');
 exports.auth = (req, res) => {
 	const encryptedToken = req.body.token;
 	tokenAuth(encryptedToken).then(data => {
-		!data.status
+		!data
 			? res.sendStatus(400)
 			: data.status === 300
 			? res.sendStatus(300)

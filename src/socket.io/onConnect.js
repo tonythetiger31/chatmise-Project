@@ -1,6 +1,6 @@
-const methods = require('../../methods'),
-	chatDb = require('../../database/chat-data'),
-	userDb = require('../../database/user-data');
+const methods = require('../methods'),
+	chatDb = require('../database/chat-data'),
+	userDb = require('../database/user-data');
 
 exports.onConnect = async socket => {
 	var sender;

@@ -1,7 +1,7 @@
 'use strict';
 const validator = require('validator'),
-	chatDb = require('../../database/chat-data'),
-	userDb = require('../../database/user-data'),
+	chatDb = require('../database/chat-data'),
+	userDb = require('../database/user-data'),
 	{ acceptInvite, invite, newChat } = require('./chats'),
 	{ onConnect } = require('./onConnect');
 const ERR_MSG = 'Something wrong when updating theme data!';
