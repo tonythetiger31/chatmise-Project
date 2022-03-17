@@ -31,7 +31,7 @@ const envCheck = (() => {
 		console.log('\x1b[42m', '<PRODUCTION-ENV>', '\x1b[0m');
 		io = require('socket.io')(server, {
 			cors: {
-				origin: CLIENT_URL,
+				origin: process.env.CLIENT_URL,
 				methods: ['GET', 'POST'],
 				credentials: true,
 			}
