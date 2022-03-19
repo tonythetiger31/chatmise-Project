@@ -5,20 +5,19 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 require('dotenv').config();
-var cors, io;
+const cors = require('cors');
+var io;
 
 //project files
 const socketDir = require('./socket.io/socketIndex.js'),
 	{ pageNotFound } = require('./methods'),
 	main = require('./routes/app'),
 	{ auth } = require('./routes/auth'),
-   { newAccount } = require('./routes/new-account');
-   
+	{ newAccount } = require('./routes/new-account');
 //development enviorment check
 const envCheck = (() => {
 	if (process.env.NODE_ENV === 'development') {
 		console.log('\x1b[43m\x1b[30m', '<DEVELOPMENT-ENV>', '\x1b[0m');
-		cors = require('cors');
 		app.use(cors());
 		io = require('socket.io')(server, {
 			cors: {
@@ -28,13 +27,17 @@ const envCheck = (() => {
 			},
 		});
 	} else {
+		const corsOptions = {
+			origin: process.env.CLIENT_URL,
+		};
+		app.use(cors(corsOptions));
 		console.log('\x1b[42m', '<PRODUCTION-ENV>', '\x1b[0m');
 		io = require('socket.io')(server, {
 			cors: {
 				origin: process.env.CLIENT_URL,
 				methods: ['GET', 'POST'],
 				credentials: true,
-			}
+			},
 		});
 	}
 })();
